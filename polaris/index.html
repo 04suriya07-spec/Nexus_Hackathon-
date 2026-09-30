@@ -3,404 +3,746 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>POLARIS — Indian Antarctic Remote Operations Portal</title>
+  <title>POLARIS — Indian Antarctic Remote Operations</title>
   <meta name="description" content="POLARIS is India's unified remote operations portal for managing Antarctic research stations Maitri and Bharati, featuring live telemetry, digital twins, AI-assisted monitoring, and offline-first autonomous operations." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <nav class="topnav" id="topnav">
-    <div class="topnav-left">
-      <div class="logo-mark" id="nav-logo">
-        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="18,2 34,28 2,28" fill="none" stroke="#00d4ff" stroke-width="2.5"/>
-          <polygon points="18,8 30,26 6,26" fill="#00d4ff" opacity="0.15"/>
-          <circle cx="18" cy="18" r="3" fill="#00d4ff"/>
-          <line x1="18" y1="2" x2="18" y2="28" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
-        </svg>
-      </div>
-      <div class="logo-text">
-        <span class="logo-title">POLARIS</span>
-        <span class="logo-sub">Antarctic Operations Portal</span>
-      </div>
-    </div>
-    <div class="topnav-center">
-      <button class="nav-btn active" id="nav-overview" onclick="navigate('overview')"><span class="nav-icon">&#x1F310;</span> Overview</button>
-      <button class="nav-btn" id="nav-command" onclick="navigate('command')"><span class="nav-icon">&#x26A1;</span> Command Control</button>
-      <button class="nav-btn" id="nav-maitri" onclick="navigate('maitri')"><span class="nav-icon">&#x1F3D4;&#xFE0F;</span> Maitri</button>
-      <button class="nav-btn" id="nav-bharati" onclick="navigate('bharati')"><span class="nav-icon">&#x2744;&#xFE0F;</span> Bharati</button>
-    </div>
-    <div class="topnav-right">
-      <div class="mission-status-pill" id="mission-pill">
-        <span class="pulse-dot green"></span>
-        <span id="mission-text">MISSION ACTIVE</span>
-      </div>
-      <div class="satcom-widget" id="satcom-widget" onclick="demoScenario('satcom')" title="Click to simulate SATCOM outage">
-        <span class="satcom-icon">&#x1F4E1;</span>
-        <span id="satcom-status-text">SATCOM LIVE</span>
-      </div>
-      <button class="demo-btn" id="demo-toggle-btn" onclick="toggleDemoPanel()" title="Demo Mode (Ctrl+D)">&#x1F3AC; Demo</button>
-      <div class="time-display" id="time-display">--:--:-- UTC</div>
-    </div>
-  </nav>
 
-  <div class="satcom-banner hidden" id="satcom-banner">
-    <span class="banner-icon">&#x26A0;&#xFE0F;</span>
-    <span><strong>SATCOM LOST</strong> &mdash; LOCAL AUTONOMOUS MODE ACTIVE &nbsp;|&nbsp; Local monitoring: RUNNING &nbsp;|&nbsp; Cloud AI: UNAVAILABLE &nbsp;|&nbsp; Queued: <span id="queued-mb">0</span> MB &nbsp;|&nbsp; Last sync: <span id="last-sync">00:00:00</span> ago</span>
-    <button class="restore-btn" onclick="restoreSatcom()">RESTORE SATCOM</button>
+  <!-- TOP FLOATING GLASS CAPSULE NAVIGATION -->
+  <div class="nav-wrapper">
+    <nav class="topnav" id="topnav">
+      <div class="topnav-left" onclick="navigate('overview')">
+        <div class="logo-badge" id="nav-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.4)"/>
+            <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2" fill="url(#logo-grad)"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0A84FF"/>
+                <stop offset="1" stop-color="#64D2FF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">POLARIS</span>
+          <span class="logo-sub">Antarctic Operations</span>
+        </div>
+      </div>
+
+      <!-- Segmented Tab Switcher -->
+      <div class="topnav-center">
+        <button class="nav-btn active" id="nav-overview" onclick="navigate('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          Overview
+        </button>
+        <button class="nav-btn" id="nav-command" onclick="navigate('command')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+            <line x1="4" y1="22" x2="4" y2="15"/>
+          </svg>
+          Command Control
+        </button>
+        <button class="nav-btn" id="nav-maitri" onclick="navigate('maitri')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+          </svg>
+          Maitri
+        </button>
+        <button class="nav-btn" id="nav-bharati" onclick="navigate('bharati')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Bharati
+        </button>
+      </div>
+
+      <!-- Pill Status Group -->
+      <div class="topnav-right">
+        <div class="status-pill" id="mission-pill">
+          <span class="pulse-dot"></span>
+          <span id="mission-text">MISSION ACTIVE</span>
+        </div>
+
+        <div class="satcom-pill" id="satcom-widget" onclick="demoScenario('satcom')" title="Click to test SATCOM outage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.93 19.07A10 10 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.76-1.12 5.26-2.93 7.07"/>
+            <path d="M7.76 16.24A6 6 0 0 1 6 12a6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-1.76 4.24"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+          <span id="satcom-status-text">SATCOM LIVE</span>
+        </div>
+
+        <button class="aira-nav-btn" onclick="toggleAira()" title="AIRA Copilot (Ctrl+A)">
+          <span class="aira-glow-dot"></span>
+          <span>AIRA</span>
+        </button>
+
+        <button class="demo-nav-btn" id="demo-toggle-btn" onclick="toggleDemoPanel()" title="Simulation Scenarios (Ctrl+D)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Scenarios
+        </button>
+
+        <div class="time-pill" id="time-display">--:--:-- UTC</div>
+      </div>
+    </nav>
   </div>
 
-  <div class="demo-panel hidden" id="demo-panel">
-    <div class="demo-panel-header"><span>&#x1F3AC; DEMO MODE CONTROL PANEL</span><button onclick="toggleDemoPanel()">&#x2715;</button></div>
-    <div class="demo-scenarios">
-      <button onclick="demoScenario('normal')" class="scenario-btn s-green">&#x2705; Normal Operations</button>
-      <button onclick="demoScenario('generator')" class="scenario-btn s-yellow">&#x26A0;&#xFE0F; Generator Degradation</button>
-      <button onclick="demoScenario('blizzard')" class="scenario-btn s-orange">&#x1F328;&#xFE0F; Blizzard Risk</button>
-      <button onclick="demoScenario('satcom')" class="scenario-btn s-red">&#x1F4E1; SATCOM Outage</button>
-      <button onclick="demoScenario('critical')" class="scenario-btn s-red">&#x1F6A8; Multi-System Critical</button>
-      <button onclick="demoScenario('recover')" class="scenario-btn s-blue">&#x1F504; Recovery Sequence</button>
-    </div>
-    <div class="demo-script">
-      <div class="demo-script-title">2-MIN DEMO FLOW</div>
-      <ol>
-        <li onclick="navigate('overview')">Overview &rarr; Show both stations on Antarctic map</li>
-        <li onclick="navigate('command')">Command Control &rarr; Mission status comparison</li>
-        <li onclick="demoThenNavigate('generator','bharati')">Bharati &rarr; Generator 02 degradation</li>
-        <li onclick="triggerAira('generator')">Ask AIRA why the warning occurred</li>
-        <li onclick="demoScenario('blizzard')">Trigger blizzard &rarr; Field team warning</li>
-        <li onclick="demoScenario('satcom')">SATCOM outage &rarr; Local Autonomous Mode</li>
-        <li onclick="restoreSatcom()">Restore SATCOM &rarr; Watch sync queue</li>
-        <li onclick="navigate('command')">Command Control &rarr; Incident resolved</li>
-      </ol>
+  <!-- APPLE DYNAMIC ISLAND ALERT BANNER (SATCOM OUTAGE) -->
+  <div class="satcom-banner-container">
+    <div class="satcom-banner hidden" id="satcom-banner">
+      <div class="satcom-banner-info">
+        <div class="satcom-alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <span class="satcom-tag">SATCOM OFFLINE</span>
+          <span><strong>Local Autonomous Mode Active</strong> &bull; Queued: <strong id="queued-mb">0</strong> MB &bull; Last sync: <span id="last-sync">00:00:00</span> ago</span>
+        </div>
+      </div>
+      <button class="restore-btn" onclick="restoreSatcom()">Reconnect SATCOM</button>
     </div>
   </div>
 
-  <div class="aira-panel" id="aira-panel">
-    <div class="aira-header" onclick="toggleAira()">
-      <div class="aira-avatar">AI</div>
-      <div class="aira-title"><span>AIRA</span><span class="aira-sub">Antarctic Intelligence &amp; Response Assistant</span></div>
-      <span class="aira-toggle-icon" id="aira-toggle-icon">&#x25B2;</span>
-    </div>
-    <div class="aira-body" id="aira-body">
-      <div class="aira-messages" id="aira-messages">
-        <div class="aira-msg system"><span class="msg-time" id="aira-init-time">--:--</span><span>AIRA online. Monitoring Maitri &amp; Bharati stations. All systems nominal. Ready for queries.</span></div>
-      </div>
-      <div class="aira-input-row">
-        <input type="text" id="aira-input" placeholder="Ask AIRA about station conditions..." onkeydown="if(event.key==='Enter') sendAiraMessage()" />
-        <button onclick="sendAiraMessage()" id="aira-send-btn">&#x2192;</button>
-      </div>
-      <div class="aira-quick-prompts">
-        <button onclick="quickAira('Why is Generator 02 vibrating?')">Generator vibration</button>
-        <button onclick="quickAira('Field team safety status?')">Field team status</button>
-        <button onclick="quickAira('Station health summary')">Health summary</button>
-        <button onclick="quickAira('Predictive maintenance alerts')">Maintenance alerts</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- MAIN APPLICATION CONTENT -->
   <main class="main-content" id="main-content">
 
-    <!-- OVERVIEW PAGE -->
+    <!-- ========================================== -->
+    <!-- 1. OVERVIEW PAGE                           -->
+    <!-- ========================================== -->
     <section class="page active" id="page-overview">
-      <div class="page-header">
+      <div class="page-hero">
         <div>
-          <h1 class="page-title">Indian Antarctic Operations</h1>
-          <p class="page-sub">National Overview &mdash; Maitri &amp; Bharati Research Stations</p>
+          <h1 class="page-hero-title">Antarctic Remote Operations</h1>
+          <p class="page-hero-sub">Unified telemetry and mission telemetry for Maitri &amp; Bharati research stations</p>
         </div>
-        <div class="header-stats">
-          <div class="header-stat"><span class="hs-val" id="total-crew">34</span><span class="hs-label">Total Crew</span></div>
-          <div class="header-stat"><span class="hs-val red-text" id="active-alerts-count">0</span><span class="hs-label">Active Alerts</span></div>
-          <div class="header-stat"><span class="hs-val" id="mission-day">847</span><span class="hs-label">Mission Day</span></div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="total-crew">34</span>
+            <span class="hero-stat-label">Active Crew</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val red-text" id="active-alerts-count">0</span>
+            <span class="hero-stat-label">Active Alerts</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="mission-day">847</span>
+            <span class="hero-stat-label">Mission Day</span>
+          </div>
         </div>
       </div>
 
-      <div class="antarctica-map-container">
+      <!-- Antarctica Map Hero Bento Card -->
+      <div class="antarctica-map-card">
         <canvas id="antarctica-canvas"></canvas>
-        <div class="map-station-label maitri-label" id="maitri-map-label" onclick="navigate('maitri')">
-          <div class="station-beacon maitri-beacon"></div>
-          <div class="station-info-popup">
-            <div class="sip-name">&#x1F3D4;&#xFE0F; MAITRI</div>
-            <div class="sip-loc">70&deg;45'S, 11&deg;44'E &mdash; Queen Maud Land</div>
-            <div class="sip-health"><span id="maitri-health-dot" class="health-dot green-dot">&#x25CF;</span> <span id="maitri-score-mini">87</span> Health</div>
+
+        <!-- Maitri Station Floating Pin -->
+        <div class="map-station-badge maitri-badge" id="maitri-map-label" onclick="navigate('maitri')">
+          <div class="station-pin-pill">
+            <span class="station-beacon maitri-beacon"></span>
+            <div class="station-pin-meta">
+              <span class="station-pin-title">Maitri Station</span>
+              <span class="station-pin-coords">70&deg;45'S, 11&deg;44'E</span>
+            </div>
+            <span class="station-pin-health" id="maitri-map-health">
+              <span id="maitri-health-dot" class="legend-dot green-dot"></span>
+              <span id="maitri-score-mini">87</span>%
+            </span>
           </div>
         </div>
-        <div class="map-station-label bharati-label" id="bharati-map-label" onclick="navigate('bharati')">
-          <div class="station-beacon bharati-beacon"></div>
-          <div class="station-info-popup">
-            <div class="sip-name">&#x2744;&#xFE0F; BHARATI</div>
-            <div class="sip-loc">69&deg;24'S, 76&deg;11'E &mdash; Larsemann Hills</div>
-            <div class="sip-health"><span id="bharati-health-dot" class="health-dot green-dot">&#x25CF;</span> <span id="bharati-score-mini">92</span> Health</div>
+
+        <!-- Bharati Station Floating Pin -->
+        <div class="map-station-badge bharati-badge" id="bharati-map-label" onclick="navigate('bharati')">
+          <div class="station-pin-pill">
+            <span class="station-beacon bharati-beacon"></span>
+            <div class="station-pin-meta">
+              <span class="station-pin-title">Bharati Station</span>
+              <span class="station-pin-coords">69&deg;24'S, 76&deg;11'E</span>
+            </div>
+            <span class="station-pin-health" id="bharati-map-health">
+              <span id="bharati-health-dot" class="legend-dot green-dot"></span>
+              <span id="bharati-score-mini">92</span>%
+            </span>
           </div>
         </div>
-        <div class="map-legend">
-          <div class="leg-item"><span class="leg-dot green-dot">&#x25CF;</span> Station Online</div>
-          <div class="leg-item"><span class="leg-dot yellow-dot">&#x25CF;</span> Warning State</div>
-          <div class="leg-item"><span class="leg-dot red-dot">&#x25CF;</span> Critical</div>
+
+        <div class="map-floating-legend">
+          <span><span class="legend-dot green-dot"></span> Nominal</span>
+          <span><span class="legend-dot yellow-dot"></span> Warning</span>
+          <span><span class="legend-dot red-dot"></span> Critical</span>
         </div>
       </div>
 
-      <div class="metrics-grid-4">
-        <div class="metric-card maitri-card" onclick="navigate('maitri')">
-          <div class="mc-header"><span class="mc-icon">&#x1F3D4;&#xFE0F;</span><span class="mc-name">MAITRI</span><span class="status-dot yellow" id="maitri-status-dot">&#x25CF;</span></div>
-          <div class="mc-health-ring-wrap">
+      <!-- Apple Bento Grid: 4 Core Modules -->
+      <div class="bento-grid-4">
+        <!-- Maitri Health Card -->
+        <div class="bento-card" onclick="navigate('maitri')">
+          <div class="card-header-clean">
+            <div class="title-wrap">
+              <div class="card-icon-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+              </div>
+              <span class="card-title-text">MAITRI</span>
+            </div>
+            <span class="status-indicator-dot yellow" id="maitri-status-dot"></span>
+          </div>
+
+          <div class="ring-center-wrap">
             <canvas id="maitri-health-canvas" width="120" height="120"></canvas>
-            <div class="mc-score-center"><span class="mc-score" id="maitri-health-score">87</span><span class="mc-score-label">HEALTH</span></div>
+            <div class="ring-center-score">
+              <span class="ring-score-val" id="maitri-health-score">87</span>
+              <span class="ring-score-label">HEALTH</span>
+            </div>
           </div>
-          <div class="mc-quick-stats">
-            <div class="qs-item"><span class="qs-label">Crew</span><span class="qs-val" id="maitri-crew">18</span></div>
-            <div class="qs-item"><span class="qs-label">Temp</span><span class="qs-val" id="maitri-temp">-24&deg;C</span></div>
-            <div class="qs-item"><span class="qs-label">Power</span><span class="qs-val" id="maitri-power">92%</span></div>
-            <div class="qs-item"><span class="qs-label">Alerts</span><span class="qs-val red-text" id="maitri-alerts">1</span></div>
+
+          <div class="bento-stats-row">
+            <div class="bento-stat-item"><span class="bento-stat-label">Crew</span><span class="bento-stat-val" id="maitri-crew">18</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Temp</span><span class="bento-stat-val" id="maitri-temp">-24&deg;C</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Power</span><span class="bento-stat-val" id="maitri-power">92%</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Alerts</span><span class="bento-stat-val red-text" id="maitri-alerts">1</span></div>
           </div>
-          <button class="mc-action-btn" onclick="event.stopPropagation();navigate('maitri')">Open Station &rarr;</button>
+
+          <button class="bento-action-btn" onclick="event.stopPropagation();navigate('maitri')">
+            Inspect Station
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
         </div>
 
-        <div class="metric-card bharati-card" onclick="navigate('bharati')">
-          <div class="mc-header"><span class="mc-icon">&#x2744;&#xFE0F;</span><span class="mc-name">BHARATI</span><span class="status-dot green" id="bharati-status-dot">&#x25CF;</span></div>
-          <div class="mc-health-ring-wrap">
+        <!-- Bharati Health Card -->
+        <div class="bento-card" onclick="navigate('bharati')">
+          <div class="card-header-clean">
+            <div class="title-wrap">
+              <div class="card-icon-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <span class="card-title-text">BHARATI</span>
+            </div>
+            <span class="status-indicator-dot" id="bharati-status-dot"></span>
+          </div>
+
+          <div class="ring-center-wrap">
             <canvas id="bharati-health-canvas" width="120" height="120"></canvas>
-            <div class="mc-score-center"><span class="mc-score" id="bharati-health-score">92</span><span class="mc-score-label">HEALTH</span></div>
-          </div>
-          <div class="mc-quick-stats">
-            <div class="qs-item"><span class="qs-label">Crew</span><span class="qs-val" id="bharati-crew">16</span></div>
-            <div class="qs-item"><span class="qs-label">Temp</span><span class="qs-val" id="bharati-temp">-18&deg;C</span></div>
-            <div class="qs-item"><span class="qs-label">Power</span><span class="qs-val" id="bharati-power">96%</span></div>
-            <div class="qs-item"><span class="qs-label">Alerts</span><span class="qs-val" id="bharati-alerts">0</span></div>
-          </div>
-          <button class="mc-action-btn" onclick="event.stopPropagation();navigate('bharati')">Open Station &rarr;</button>
-        </div>
-
-        <div class="metric-card weather-card">
-          <div class="mc-header"><span class="mc-icon">&#x1F328;&#xFE0F;</span><span class="mc-name">WEATHER</span></div>
-          <div class="weather-grid">
-            <div class="wg-station">
-              <div class="wg-name">MAITRI</div>
-              <div class="wg-wind" id="ov-maitri-wind">&#x2197; 28 kt</div>
-              <div class="wg-vis" id="ov-maitri-vis">Vis: 8.2 km</div>
-              <div class="wg-cond" id="ov-maitri-cond">Overcast</div>
-            </div>
-            <div class="wg-div"></div>
-            <div class="wg-station">
-              <div class="wg-name">BHARATI</div>
-              <div class="wg-wind" id="ov-bharati-wind">&#x2196; 15 kt</div>
-              <div class="wg-vis" id="ov-bharati-vis">Vis: 12.4 km</div>
-              <div class="wg-cond" id="ov-bharati-cond">Clear</div>
+            <div class="ring-center-score">
+              <span class="ring-score-val" id="bharati-health-score">92</span>
+              <span class="ring-score-label">HEALTH</span>
             </div>
           </div>
-          <div class="forecast-bar">
-            <div class="fb-item"><span>D+1</span><span>&#x26C5;</span></div>
-            <div class="fb-item"><span>D+2</span><span>&#x1F328;&#xFE0F;</span></div>
-            <div class="fb-item"><span>D+3</span><span>&#x2744;&#xFE0F;</span></div>
-            <div class="fb-item"><span>D+4</span><span>&#x2600;&#xFE0F;</span></div>
-            <div class="fb-item"><span>D+5</span><span>&#x26C5;</span></div>
+
+          <div class="bento-stats-row">
+            <div class="bento-stat-item"><span class="bento-stat-label">Crew</span><span class="bento-stat-val" id="bharati-crew">16</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Temp</span><span class="bento-stat-val" id="bharati-temp">-18&deg;C</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Power</span><span class="bento-stat-val" id="bharati-power">96%</span></div>
+            <div class="bento-stat-item"><span class="bento-stat-label">Alerts</span><span class="bento-stat-val" id="bharati-alerts">0</span></div>
+          </div>
+
+          <button class="bento-action-btn" onclick="event.stopPropagation();navigate('bharati')">
+            Inspect Station
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- iOS Weather Style Bento Card -->
+        <div class="bento-card">
+          <div class="card-header-clean">
+            <div class="title-wrap">
+              <div class="card-icon-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              </div>
+              <span class="card-title-text">WEATHER &amp; ENVIRO</span>
+            </div>
+          </div>
+
+          <div class="weather-bento-content">
+            <div class="weather-station-split">
+              <div class="weather-sub-item">
+                <span class="ws-station-name">Maitri</span>
+                <span class="ws-wind-val" id="ov-maitri-wind">28 kt</span>
+                <span class="ws-sub-meta" id="ov-maitri-vis">Vis 8.2 km</span>
+                <span class="ws-sub-meta" id="ov-maitri-cond">Overcast</span>
+              </div>
+              <div class="weather-split-divider"></div>
+              <div class="weather-sub-item">
+                <span class="ws-station-name">Bharati</span>
+                <span class="ws-wind-val" id="ov-bharati-wind">15 kt</span>
+                <span class="ws-sub-meta" id="ov-bharati-vis">Vis 12.4 km</span>
+                <span class="ws-sub-meta" id="ov-bharati-cond">Clear</span>
+              </div>
+            </div>
+
+            <div class="forecast-strip">
+              <div class="forecast-item"><span>D+1</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg></div>
+              <div class="forecast-item"><span>D+2</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div>
+              <div class="forecast-item"><span>D+3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+              <div class="forecast-item"><span>D+4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/></svg></div>
+              <div class="forecast-item"><span>D+5</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div>
+            </div>
           </div>
         </div>
 
-        <div class="metric-card fleet-card">
-          <div class="mc-header"><span class="mc-icon">&#x1F681;</span><span class="mc-name">FLEET STATUS</span></div>
-          <div class="fleet-list">
-            <div class="fleet-item"><span class="fi-icon">&#x1F681;</span><div class="fi-info"><span class="fi-name">Dhruv ALH-01</span><span class="fi-status green-text">STANDBY</span></div><span class="fi-loc">Maitri Pad</span></div>
-            <div class="fleet-item"><span class="fi-icon">&#x1F697;</span><div class="fi-info"><span class="fi-name">Snowcat SC-04</span><span class="fi-status yellow-text">IN FIELD</span></div><span class="fi-loc">~14km NW</span></div>
-            <div class="fleet-item"><span class="fi-icon">&#x1F6A2;</span><div class="fi-info"><span class="fi-name">MV Nataraj</span><span class="fi-status green-text">EN ROUTE</span></div><span class="fi-loc">ETA D+12</span></div>
-            <div class="fleet-item"><span class="fi-icon">&#x1F697;</span><div class="fi-info"><span class="fi-name">Snowmobile SM-02</span><span class="fi-status green-text">PARKED</span></div><span class="fi-loc">Bharati Bay</span></div>
+        <!-- Fleet Status Bento Card -->
+        <div class="bento-card">
+          <div class="card-header-clean">
+            <div class="title-wrap">
+              <div class="card-icon-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+              <span class="card-title-text">FIELD &amp; FLEET</span>
+            </div>
+          </div>
+
+          <div class="fleet-clean-list">
+            <div class="fleet-clean-item">
+              <div class="fleet-info-side">
+                <div class="fleet-vehicle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
+                <div><div class="fleet-name">Dhruv ALH-01</div><div class="fleet-loc">Maitri Helipad</div></div>
+              </div>
+              <span class="fleet-pill green">STANDBY</span>
+            </div>
+            <div class="fleet-clean-item">
+              <div class="fleet-info-side">
+                <div class="fleet-vehicle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></div>
+                <div><div class="fleet-name">Snowcat SC-04</div><div class="fleet-loc">14 km NW (Field)</div></div>
+              </div>
+              <span class="fleet-pill yellow">DEPLOYED</span>
+            </div>
+            <div class="fleet-clean-item">
+              <div class="fleet-info-side">
+                <div class="fleet-vehicle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1"/></svg></div>
+                <div><div class="fleet-name">MV Nataraj</div><div class="fleet-loc">En route &bull; ETA D+12</div></div>
+              </div>
+              <span class="fleet-pill green">ON SCHEDULE</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="section-header">
-        <h2>Live Event Timeline</h2>
-        <div class="timeline-filter">
-          <button class="tf-btn active" onclick="filterTimeline('all',this)">All</button>
-          <button class="tf-btn" onclick="filterTimeline('alert',this)">Alerts</button>
-          <button class="tf-btn" onclick="filterTimeline('system',this)">System</button>
-          <button class="tf-btn" onclick="filterTimeline('crew',this)">Crew</button>
+      <!-- Live Event Timeline (Notification Feed Style) -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Live Activity Feed</h2>
+        <div class="segmented-filter-bar">
+          <button class="sf-btn tf-btn active" onclick="filterTimeline('all',this)">All</button>
+          <button class="sf-btn tf-btn" onclick="filterTimeline('alert',this)">Alerts</button>
+          <button class="sf-btn tf-btn" onclick="filterTimeline('system',this)">System</button>
+          <button class="sf-btn tf-btn" onclick="filterTimeline('crew',this)">Crew</button>
         </div>
       </div>
       <div class="event-timeline" id="event-timeline"></div>
     </section>
 
-    <!-- COMMAND CONTROL PAGE -->
+    <!-- ========================================== -->
+    <!-- 2. COMMAND CONTROL PAGE                    -->
+    <!-- ========================================== -->
     <section class="page" id="page-command">
-      <div class="page-header">
+      <div class="page-hero">
         <div>
-          <h1 class="page-title">Command &amp; Control</h1>
-          <p class="page-sub">Mission Operations Center &mdash; Cross-Station Coordination</p>
+          <h1 class="page-hero-title">Mission Command &amp; Control</h1>
+          <p class="page-hero-sub">Synchronized cross-station telemetry and operational readiness assessment</p>
         </div>
-        <div class="header-stats">
-          <div class="header-stat"><span class="hs-val green-text" id="cmd-status">NOMINAL</span><span class="hs-label">Mission Status</span></div>
-          <div class="header-stat"><span class="hs-val" id="cmd-uptime">847d 14h</span><span class="hs-label">Uptime</span></div>
-          <div class="header-stat"><span class="hs-val red-text" id="cmd-incidents">2</span><span class="hs-label">Open Incidents</span></div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val green-text" id="cmd-status">NOMINAL</span>
+            <span class="hero-stat-label">Mission Status</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="cmd-uptime">847d 14h</span>
+            <span class="hero-stat-label">Uptime</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val red-text" id="cmd-incidents">2</span>
+            <span class="hero-stat-label">Active Incidents</span>
+          </div>
         </div>
       </div>
 
-      <div class="comparison-grid">
-        <div class="cg-header">
-          <div class="cg-domain-col">Domain</div>
-          <div class="cg-station-col maitri-col">&#x1F3D4;&#xFE0F; MAITRI</div>
-          <div class="cg-station-col bharati-col">&#x2744;&#xFE0F; BHARATI</div>
+      <!-- Subsystem Comparison Matrix -->
+      <div class="comparison-matrix-card">
+        <div class="matrix-header-row">
+          <div>Subsystem Domain</div>
+          <div>Maitri Station</div>
+          <div>Bharati Station</div>
         </div>
-        <div class="cg-row"><div class="cg-domain">&#x26A1; Power</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-mp" style="width:92%"></div></div><span id="txt-mp">92% / 380 kW</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bp" style="width:96%"></div></div><span id="txt-bp">96% / 420 kW</span></div></div>
-        <div class="cg-row"><div class="cg-domain">&#x1F32C;&#xFE0F; Life Support</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-ml" style="width:88%"></div></div><span id="txt-ml">O&#x2082; 20.9% | CO&#x2082; 0.04% | 21&deg;C</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bl" style="width:94%"></div></div><span id="txt-bl">O&#x2082; 20.9% | CO&#x2082; 0.03% | 22&deg;C</span></div></div>
-        <div class="cg-row"><div class="cg-domain">&#x1F4E1; Communications</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-yellow" id="bar-mc" style="width:78%"></div></div><span id="txt-mc">Latency: 620ms | 2.4 Mbps</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bc" style="width:91%"></div></div><span id="txt-bc">Latency: 480ms | 3.1 Mbps</span></div></div>
-        <div class="cg-row"><div class="cg-domain">&#x26FD; Fuel / Resources</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-orange" id="bar-mf" style="width:63%"></div></div><span id="txt-mf">HSD: 63% | Endurance: 84d</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bf" style="width:77%"></div></div><span id="txt-bf">HSD: 77% | Endurance: 102d</span></div></div>
-        <div class="cg-row"><div class="cg-domain">&#x1F527; Maintenance</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-orange" id="bar-mm" style="width:55%"></div></div><span id="txt-mm">WO Open: 5 | 2 Urgent</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bm" style="width:82%"></div></div><span id="txt-bm">WO Open: 2 | 0 Urgent</span></div></div>
-        <div class="cg-row"><div class="cg-domain">&#x1F52C; Science Ops</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-ms" style="width:89%"></div></div><span id="txt-ms">4/5 instruments online</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bs" style="width:100%"></div></div><span id="txt-bs">6/6 instruments online</span></div></div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Power Grid
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-mp" style="width:92%"></div></div>
+            <span class="matrix-readout" id="txt-mp">92% / 380 kW</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bp" style="width:96%"></div></div>
+            <span class="matrix-readout" id="txt-bp">96% / 420 kW</span>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12A10 10 0 0 1 12 2Z"/></svg>
+            Life Support
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-ml" style="width:88%"></div></div>
+            <span class="matrix-readout" id="txt-ml">O&#x2082; 20.9% | CO&#x2082; 0.04% | 21&deg;C</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bl" style="width:94%"></div></div>
+            <span class="matrix-readout" id="txt-bl">O&#x2082; 20.9% | CO&#x2082; 0.03% | 22&deg;C</span>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 19.07A10 10 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.76-1.12 5.26-2.93 7.07"/><circle cx="12" cy="12" r="2"/></svg>
+            Communications
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-yellow" id="bar-mc" style="width:78%"></div></div>
+            <span class="matrix-readout" id="txt-mc">Latency: 620ms | 2.4 Mbps</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bc" style="width:91%"></div></div>
+            <span class="matrix-readout" id="txt-bc">Latency: 480ms | 3.1 Mbps</span>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/></svg>
+            Fuel Reserves
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-orange" id="bar-mf" style="width:63%"></div></div>
+            <span class="matrix-readout" id="txt-mf">HSD: 63% | Endurance: 84d</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bf" style="width:77%"></div></div>
+            <span class="matrix-readout" id="txt-bf">HSD: 77% | Endurance: 102d</span>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Maintenance
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-orange" id="bar-mm" style="width:55%"></div></div>
+            <span class="matrix-readout" id="txt-mm">WO Open: 5 | 2 Urgent</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bm" style="width:82%"></div></div>
+            <span class="matrix-readout" id="txt-bm">WO Open: 2 | 0 Urgent</span>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-domain-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
+            Science Ops
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-ms" style="width:89%"></div></div>
+            <span class="matrix-readout" id="txt-ms">4/5 instruments online</span>
+          </div>
+          <div class="matrix-station-val">
+            <div class="progress-capsule-wrap"><div class="progress-capsule-fill b-green" id="bar-bs" style="width:100%"></div></div>
+            <span class="matrix-readout" id="txt-bs">6/6 instruments online</span>
+          </div>
+        </div>
       </div>
 
-      <div class="section-header mt-24">
-        <h2>Active Incidents</h2>
+      <!-- Active Incidents -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Operational Incidents</h2>
         <button class="btn-outline" onclick="clearResolvedIncidents()">Clear Resolved</button>
       </div>
-      <div class="incidents-list" id="incidents-list">
-        <div class="incident-card yellow-border" id="incident-gen">
-          <div class="ic-header">
-            <span class="ic-severity yellow-badge">WARN</span>
-            <span class="ic-title">Generator 02 Vibration &mdash; Bharati</span>
-            <span class="ic-time">08:42 UTC</span>
+      <div class="incidents-clean-list" id="incidents-list">
+        <div class="incident-apple-card yellow-border" id="incident-gen">
+          <div class="incident-top-bar">
+            <div class="incident-badge-group">
+              <span class="incident-pill warn">WARNING</span>
+              <span class="incident-header-title">Generator 02 Bearing Vibration &mdash; Bharati</span>
+            </div>
+            <span class="incident-timestamp">08:42 UTC</span>
           </div>
-          <p class="ic-desc">Vibration sensor reading 18.4 mm/s (threshold: 15 mm/s). Trending up over past 2h. Predictive model suggests bearing wear. MTBF: ~72h at current rate.</p>
-          <div class="ic-actions">
-            <button class="btn-primary sm" onclick="triggerAira('generator')">Ask AIRA</button>
-            <button class="btn-outline sm" onclick="acknowledgeIncident('incident-gen', this)">Acknowledge</button>
-            <button class="btn-success sm" onclick="resolveIncident('incident-gen')">Resolve</button>
+          <p class="incident-body-text">Vibration sensor telemetry reading 18.4 mm/s (threshold: 15 mm/s). Trending upward over the past 2 hours. Predictive AI analysis suggests early bearing fatigue. MTBF estimated at ~72 hours at current RPM.</p>
+          <div class="incident-button-row">
+            <button class="btn-primary" onclick="triggerAira('generator')">Analyze with AIRA</button>
+            <button class="btn-outline" onclick="acknowledgeIncident('incident-gen', this)">Acknowledge</button>
+            <button class="btn-success" onclick="resolveIncident('incident-gen')">Mark Resolved</button>
           </div>
         </div>
-        <div class="incident-card orange-border" id="incident-fuel">
-          <div class="ic-header">
-            <span class="ic-severity orange-badge">WATCH</span>
-            <span class="ic-title">Fuel Endurance Below 90d &mdash; Maitri</span>
-            <span class="ic-time">Yesterday 16:00 UTC</span>
+
+        <div class="incident-apple-card orange-border" id="incident-fuel">
+          <div class="incident-top-bar">
+            <div class="incident-badge-group">
+              <span class="incident-pill watch">WATCH</span>
+              <span class="incident-header-title">Fuel Reserve Below 90d Threshold &mdash; Maitri</span>
+            </div>
+            <span class="incident-timestamp">Yesterday 16:00 UTC</span>
           </div>
-          <p class="ic-desc">HSD reserve at 63% equates to 84 days endurance. Resupply vessel ETA D+12. Recommend reducing auxiliary heating load by 8% to buffer against blizzard consumption spike.</p>
-          <div class="ic-actions">
-            <button class="btn-primary sm" onclick="triggerAira('fuel')">Ask AIRA</button>
-            <button class="btn-outline sm" onclick="acknowledgeIncident('incident-fuel', this)">Acknowledge</button>
-            <button class="btn-success sm" onclick="resolveIncident('incident-fuel')">Resolve</button>
+          <p class="incident-body-text">HSD reserve at 63% equates to 84 days endurance. Resupply vessel MV Nataraj ETA D+12. Recommended reducing secondary auxiliary heating loads by 8% to buffer against blizzard consumption spikes.</p>
+          <div class="incident-button-row">
+            <button class="btn-primary" onclick="triggerAira('fuel')">Analyze with AIRA</button>
+            <button class="btn-outline" onclick="acknowledgeIncident('incident-fuel', this)">Acknowledge</button>
+            <button class="btn-success" onclick="resolveIncident('incident-fuel')">Mark Resolved</button>
           </div>
         </div>
       </div>
 
-      <div class="section-header mt-24"><h2>Cross-Station Telemetry Charts</h2></div>
-      <div class="charts-row">
-        <div class="chart-card"><div class="chart-title">Power Load (kW) &mdash; Last 24h</div><canvas id="chart-power" width="400" height="160"></canvas></div>
-        <div class="chart-card"><div class="chart-title">Ambient Temperature (&deg;C) &mdash; Last 24h</div><canvas id="chart-temp" width="400" height="160"></canvas></div>
-        <div class="chart-card"><div class="chart-title">SATCOM Latency (ms) &mdash; Last 24h</div><canvas id="chart-latency" width="400" height="160"></canvas></div>
+      <!-- Telemetry Analytics Charts -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Telemetry Trends (24h)</h2>
+      </div>
+      <div class="charts-trio-grid">
+        <div class="chart-bento-card">
+          <div class="chart-header-label">Power Load (kW)</div>
+          <canvas id="chart-power" width="400" height="160"></canvas>
+        </div>
+        <div class="chart-bento-card">
+          <div class="chart-header-label">Ambient Temperature (&deg;C)</div>
+          <canvas id="chart-temp" width="400" height="160"></canvas>
+        </div>
+        <div class="chart-bento-card">
+          <div class="chart-header-label">SATCOM Latency (ms)</div>
+          <canvas id="chart-latency" width="400" height="160"></canvas>
+        </div>
       </div>
     </section>
 
-    <!-- MAITRI PAGE -->
+    <!-- ========================================== -->
+    <!-- 3. MAITRI STATION PAGE                     -->
+    <!-- ========================================== -->
     <section class="page" id="page-maitri">
-      <div class="page-header">
+      <div class="page-hero">
         <div>
-          <h1 class="page-title">&#x1F3D4;&#xFE0F; Maitri Research Station</h1>
-          <p class="page-sub">70&deg;45'S, 11&deg;44'E &mdash; Queen Maud Land, East Antarctica &mdash; Est. 1989</p>
+          <h1 class="page-hero-title">Maitri Research Station</h1>
+          <p class="page-hero-sub">70&deg;45'S, 11&deg;44'E &bull; Schirmacher Oasis, Queen Maud Land &bull; Commissioned 1989</p>
         </div>
-        <div class="header-stats">
-          <div class="header-stat"><span class="hs-val" id="maitri-health-display">87</span><span class="hs-label">Station Health</span></div>
-          <div class="header-stat"><span class="hs-val" id="maitri-crew-display">18</span><span class="hs-label">Crew Active</span></div>
-          <div class="header-stat"><span class="hs-val red-text" id="maitri-alerts-display">1</span><span class="hs-label">Active Alerts</span></div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="maitri-health-display">87</span>
+            <span class="hero-stat-label">Health Score</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="maitri-crew-display">18</span>
+            <span class="hero-stat-label">Station Crew</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val red-text" id="maitri-alerts-display">1</span>
+            <span class="hero-stat-label">Active Alerts</span>
+          </div>
         </div>
       </div>
-      <div class="station-layout">
-        <div class="digital-twin-panel">
-          <div class="twin-header">
-            <span>MAITRI DIGITAL TWIN</span>
-            <div class="twin-controls">
-              <button class="twin-ctrl" onclick="rotateTwin('maitri','left')">&#x25C0;</button>
-              <button class="twin-ctrl" onclick="rotateTwin('maitri','right')">&#x25B6;</button>
-              <button class="twin-ctrl" onclick="resetTwinView('maitri')">&#x27F3;</button>
+
+      <!-- Digital Twin & Inspector Split -->
+      <div class="station-twin-layout">
+        <div class="twin-bento-card">
+          <div class="twin-control-bar">
+            <span class="twin-title-clean">DIGITAL TWIN INSPECTOR</span>
+            <div class="twin-action-pills">
+              <button class="twin-pill-btn" onclick="rotateTwin('maitri','left')">&#x25C0; Orbit L</button>
+              <button class="twin-pill-btn" onclick="resetTwinView('maitri')">&#x27F3; Reset</button>
+              <button class="twin-pill-btn" onclick="rotateTwin('maitri','right')">Orbit R &#x25B6;</button>
             </div>
           </div>
-          <canvas id="maitri-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'maitri')" style="cursor:crosshair"></canvas>
-          <div class="twin-legend">
-            <span class="tl-item green-tl">&#x25A0; Normal</span>
-            <span class="tl-item yellow-tl">&#x25A0; Warning</span>
-            <span class="tl-item red-tl">&#x25A0; Critical</span>
-            <span class="tl-item blue-tl">&#x25A0; Selected</span>
+          <div class="twin-canvas-viewport">
+            <canvas id="maitri-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'maitri')" style="cursor:crosshair"></canvas>
           </div>
-          <div class="twin-subsystem-info" id="maitri-subsystem-info"><span class="no-selection">Click a zone to inspect subsystem</span></div>
+          <div class="twin-subsystem-pill-display" id="maitri-subsystem-info">
+            <span class="no-selection">Select any module in the digital twin to inspect real-time subsystem state</span>
+          </div>
         </div>
-        <div class="inspector-panel" id="maitri-inspector">
-          <div class="inspector-tabs">
-            <button class="it-tab active" onclick="selectSubsystem('maitri','power',this)">&#x26A1; Power</button>
-            <button class="it-tab" onclick="selectSubsystem('maitri','life',this)">&#x1F32C;&#xFE0F; Life</button>
-            <button class="it-tab" onclick="selectSubsystem('maitri','comms',this)">&#x1F4E1; Comms</button>
-            <button class="it-tab" onclick="selectSubsystem('maitri','hvac',this)">&#x1F321;&#xFE0F; HVAC</button>
-            <button class="it-tab" onclick="selectSubsystem('maitri','science',this)">&#x1F52C; Science</button>
+
+        <div class="inspector-bento-card" id="maitri-inspector">
+          <div class="inspector-segmented-tabs">
+            <button class="it-tab active" onclick="selectSubsystem('maitri','power',this)">Power</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','life',this)">Life Support</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','comms',this)">Comms</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','hvac',this)">HVAC</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','science',this)">Science</button>
           </div>
-          <div class="inspector-content" id="maitri-inspector-content"></div>
+          <div class="inspector-content-pane" id="maitri-inspector-content"></div>
         </div>
       </div>
-      <div class="section-header mt-24">
-        <h2>Live Telemetry &mdash; Maitri</h2>
-        <div class="update-indicator"><span class="pulse-dot green small"></span><span id="maitri-last-update">Live</span></div>
+
+      <!-- Live Telemetry Grid -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Sensor Telemetry</h2>
+        <div class="status-pill"><span class="pulse-dot"></span><span id="maitri-last-update">Live 2s</span></div>
       </div>
       <div class="telemetry-grid" id="maitri-telemetry-grid"></div>
-      <div class="section-header mt-24"><h2>Crew Status</h2></div>
+
+      <!-- Crew Health & Roster -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Station Crew Vitals</h2>
+      </div>
       <div class="crew-grid" id="maitri-crew-grid"></div>
     </section>
 
-    <!-- BHARATI PAGE -->
+    <!-- ========================================== -->
+    <!-- 4. BHARATI STATION PAGE                    -->
+    <!-- ========================================== -->
     <section class="page" id="page-bharati">
-      <div class="page-header">
+      <div class="page-hero">
         <div>
-          <h1 class="page-title">&#x2744;&#xFE0F; Bharati Research Station</h1>
-          <p class="page-sub">69&deg;24'S, 76&deg;11'E &mdash; Larsemann Hills, East Antarctica &mdash; Est. 2012</p>
+          <h1 class="page-hero-title">Bharati Research Station</h1>
+          <p class="page-hero-sub">69&deg;24'S, 76&deg;11'E &bull; Larsemann Hills, East Antarctica &bull; Commissioned 2012</p>
         </div>
-        <div class="header-stats">
-          <div class="header-stat"><span class="hs-val" id="bharati-health-display">92</span><span class="hs-label">Station Health</span></div>
-          <div class="header-stat"><span class="hs-val" id="bharati-crew-display">16</span><span class="hs-label">Crew Active</span></div>
-          <div class="header-stat"><span class="hs-val" id="bharati-alerts-display">0</span><span class="hs-label">Active Alerts</span></div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="bharati-health-display">92</span>
+            <span class="hero-stat-label">Health Score</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="bharati-crew-display">16</span>
+            <span class="hero-stat-label">Station Crew</span>
+          </div>
+          <div class="hero-stat-pill">
+            <span class="hero-stat-val" id="bharati-alerts-display">0</span>
+            <span class="hero-stat-label">Active Alerts</span>
+          </div>
         </div>
       </div>
-      <div class="station-layout">
-        <div class="digital-twin-panel">
-          <div class="twin-header">
-            <span>BHARATI DIGITAL TWIN</span>
-            <div class="twin-controls">
-              <button class="twin-ctrl" onclick="rotateTwin('bharati','left')">&#x25C0;</button>
-              <button class="twin-ctrl" onclick="rotateTwin('bharati','right')">&#x25B6;</button>
-              <button class="twin-ctrl" onclick="resetTwinView('bharati')">&#x27F3;</button>
+
+      <!-- Digital Twin & Inspector Split -->
+      <div class="station-twin-layout">
+        <div class="twin-bento-card">
+          <div class="twin-control-bar">
+            <span class="twin-title-clean">DIGITAL TWIN INSPECTOR</span>
+            <div class="twin-action-pills">
+              <button class="twin-pill-btn" onclick="rotateTwin('bharati','left')">&#x25C0; Orbit L</button>
+              <button class="twin-pill-btn" onclick="resetTwinView('bharati')">&#x27F3; Reset</button>
+              <button class="twin-pill-btn" onclick="rotateTwin('bharati','right')">Orbit R &#x25B6;</button>
             </div>
           </div>
-          <canvas id="bharati-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'bharati')" style="cursor:crosshair"></canvas>
-          <div class="twin-legend">
-            <span class="tl-item green-tl">&#x25A0; Normal</span>
-            <span class="tl-item yellow-tl">&#x25A0; Warning</span>
-            <span class="tl-item red-tl">&#x25A0; Critical</span>
-            <span class="tl-item blue-tl">&#x25A0; Selected</span>
+          <div class="twin-canvas-viewport">
+            <canvas id="bharati-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'bharati')" style="cursor:crosshair"></canvas>
           </div>
-          <div class="twin-subsystem-info" id="bharati-subsystem-info"><span class="no-selection">Click a zone to inspect subsystem &mdash; Try Generator 02</span></div>
+          <div class="twin-subsystem-pill-display" id="bharati-subsystem-info">
+            <span class="no-selection">Click a zone to inspect subsystem &bull; Try Generator 02</span>
+          </div>
         </div>
-        <div class="inspector-panel" id="bharati-inspector">
-          <div class="inspector-tabs">
-            <button class="it-tab active" onclick="selectSubsystem('bharati','power',this)">&#x26A1; Power</button>
-            <button class="it-tab" onclick="selectSubsystem('bharati','life',this)">&#x1F32C;&#xFE0F; Life</button>
-            <button class="it-tab" onclick="selectSubsystem('bharati','comms',this)">&#x1F4E1; Comms</button>
-            <button class="it-tab" onclick="selectSubsystem('bharati','fuel',this)">&#x26FD; Fuel</button>
-            <button class="it-tab" onclick="selectSubsystem('bharati','science',this)">&#x1F52C; Science</button>
+
+        <div class="inspector-bento-card" id="bharati-inspector">
+          <div class="inspector-segmented-tabs">
+            <button class="it-tab active" onclick="selectSubsystem('bharati','power',this)">Power</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','life',this)">Life Support</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','comms',this)">Comms</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','fuel',this)">Fuel</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','science',this)">Science</button>
           </div>
-          <div class="inspector-content" id="bharati-inspector-content"></div>
+          <div class="inspector-content-pane" id="bharati-inspector-content"></div>
         </div>
       </div>
-      <div class="section-header mt-24">
-        <h2>Live Telemetry &mdash; Bharati</h2>
-        <div class="update-indicator"><span class="pulse-dot green small"></span><span id="bharati-last-update">Live</span></div>
+
+      <!-- Live Telemetry Grid -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Sensor Telemetry</h2>
+        <div class="status-pill"><span class="pulse-dot"></span><span id="bharati-last-update">Live 2s</span></div>
       </div>
       <div class="telemetry-grid" id="bharati-telemetry-grid"></div>
-      <div class="section-header mt-24"><h2>Crew Status</h2></div>
+
+      <!-- Crew Health & Roster -->
+      <div class="section-headline-row">
+        <h2 class="section-headline-title">Station Crew Vitals</h2>
+      </div>
       <div class="crew-grid" id="bharati-crew-grid"></div>
     </section>
 
   </main>
 
+  <!-- ========================================== -->
+  <!-- APPLE INTELLIGENCE AIRA COPILOT            -->
+  <!-- ========================================== -->
+  <div class="aira-panel" id="aira-panel">
+    <div class="aira-header" onclick="toggleAira()">
+      <div class="aira-header-left">
+        <div class="aira-siri-icon">
+          <div class="aira-siri-inner"></div>
+        </div>
+        <div>
+          <div class="aira-brand-title">AIRA Intelligence</div>
+          <div class="aira-brand-sub">Antarctic Copilot</div>
+        </div>
+      </div>
+      <div class="aira-toggle-chevron" id="aira-toggle-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="aira-body" id="aira-body">
+      <div class="aira-messages" id="aira-messages">
+        <div class="aira-msg system">
+          <span class="aira-msg-time" id="aira-init-time">--:--</span>
+          <span>AIRA online. Actively monitoring Maitri &amp; Bharati stations. All systems nominal. Ask any question regarding power, life support, predictive maintenance, or weather.</span>
+        </div>
+      </div>
+      <div class="aira-input-row">
+        <input type="text" class="aira-input-clean" id="aira-input" placeholder="Ask AIRA about Antarctic operations..." onkeydown="if(event.key==='Enter') sendAiraMessage()" />
+        <button class="aira-send-pill" onclick="sendAiraMessage()" id="aira-send-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="aira-quick-chips">
+        <button class="aira-chip-btn" onclick="quickAira('Why is Generator 02 vibrating?')">Gen 02 Vibration</button>
+        <button class="aira-chip-btn" onclick="quickAira('Field team safety status?')">Field Team Safety</button>
+        <button class="aira-chip-btn" onclick="quickAira('Station health summary')">Health Summary</button>
+        <button class="aira-chip-btn" onclick="quickAira('Predictive maintenance alerts')">Maintenance Alerts</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- DEMO / SIMULATION ACTION SHEET (MODAL)     -->
+  <!-- ========================================== -->
+  <div class="demo-panel-overlay hidden" id="demo-panel">
+    <div class="demo-modal-card">
+      <div class="demo-modal-header">
+        <div class="demo-modal-title">Simulation Scenario Controller</div>
+        <button class="demo-close-btn" onclick="toggleDemoPanel()">&#x2715;</button>
+      </div>
+
+      <div class="demo-scenario-grid">
+        <button onclick="demoScenario('normal')" class="scenario-pill-btn s-green">Normal Operations</button>
+        <button onclick="demoScenario('generator')" class="scenario-pill-btn s-yellow">Generator Degradation</button>
+        <button onclick="demoScenario('blizzard')" class="scenario-pill-btn s-orange">Blizzard Risk Alert</button>
+        <button onclick="demoScenario('satcom')" class="scenario-pill-btn s-red">SATCOM Link Outage</button>
+        <button onclick="demoScenario('critical')" class="scenario-pill-btn s-red">Multi-System Critical</button>
+        <button onclick="demoScenario('recover')" class="scenario-pill-btn s-blue">System Recovery</button>
+      </div>
+
+      <div class="demo-walkthrough-box">
+        <div class="dw-title">2-Minute Judge Walkthrough Flow</div>
+        <ol class="dw-steps">
+          <li onclick="navigate('overview')">1. Overview &mdash; View continental Antarctic coverage</li>
+          <li onclick="navigate('command')">2. Command Control &mdash; Compare station KPI matrix</li>
+          <li onclick="demoThenNavigate('generator','bharati')">3. Bharati Station &mdash; Trigger Gen 02 vibration</li>
+          <li onclick="triggerAira('generator')">4. Consult AIRA &mdash; Review automated root cause explanation</li>
+          <li onclick="demoScenario('blizzard')">5. Weather Alert &mdash; Trigger approaching Cat-3 blizzard</li>
+          <li onclick="demoScenario('satcom')">6. Disconnect SATCOM &mdash; Test Local Autonomous Mode</li>
+          <li onclick="restoreSatcom()">7. Restore SATCOM &mdash; Watch data synchronizer flush queue</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE ALERTS DRAWER & FAB -->
   <div class="alert-drawer hidden" id="alert-drawer">
-    <div class="alert-drawer-header"><span>&#x1F514; Active Alerts (<span id="alert-count-drawer">0</span>)</span><button onclick="toggleAlertDrawer()">&#x2715;</button></div>
+    <div class="alert-drawer-header">
+      <span>Active Alerts (<span id="alert-count-drawer">0</span>)</span>
+      <button onclick="toggleAlertDrawer()">&#x2715;</button>
+    </div>
     <div class="alert-drawer-content" id="alert-drawer-content"></div>
   </div>
-  <button class="alert-fab" id="alert-fab" onclick="toggleAlertDrawer()">&#x1F514;<span id="alert-fab-count" class="fab-badge">0</span></button>
+
+  <button class="alert-fab" id="alert-fab" onclick="toggleAlertDrawer()" title="Active Alerts">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span id="alert-fab-count" class="fab-badge">0</span>
+  </button>
 
   <script src="app.js"></script>
 </body>

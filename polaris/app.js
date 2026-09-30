@@ -243,7 +243,9 @@ function drawHealthRing(canvasId, score, color) {
 }
 
 function lightenColor(hex) {
-  return hex === '#f59e0b' ? '#fbbf24' : '#00f5cc';
+  if (hex === '#FF9F0A' || hex === '#f59e0b') return '#FFD60A';
+  if (hex === '#64D2FF' || hex === '#00d4ff') return '#30D158';
+  return '#64D2FF';
 }
 
 // ============================================================
@@ -1015,9 +1017,9 @@ function filterTimeline(filter, btn) {
 // TELEMETRY CHARTS (Canvas-based)
 // ============================================================
 function renderCommandCharts() {
-  renderLineChart('chart-power', STATE.chartData.power, 'kW', '#22c55e', '#f59e0b');
-  renderLineChart('chart-temp', STATE.chartData.temp, '°C', '#00d4ff', '#f97316');
-  renderLineChart('chart-latency', STATE.chartData.latency, 'ms', '#a855f7', '#3b82f6');
+  renderLineChart('chart-power', STATE.chartData.power, 'kW', '#30D158', '#0A84FF');
+  renderLineChart('chart-temp', STATE.chartData.temp, '°C', '#FF9F0A', '#64D2FF');
+  renderLineChart('chart-latency', STATE.chartData.latency, 'ms', '#BF5AF2', '#64D2FF');
 }
 
 function renderLineChart(canvasId, data, unit, color1, color2) {
@@ -1173,8 +1175,8 @@ function simulateTelemetry() {
 
   if (STATE.currentPage === 'overview') {
     drawAntarcticaMap();
-    drawHealthRing('maitri-health-canvas', STATE.maitri.health, '#f59e0b');
-    drawHealthRing('bharati-health-canvas', STATE.bharati.health, '#00d4ff');
+    drawHealthRing('maitri-health-canvas', STATE.maitri.health, '#FF9F0A');
+    drawHealthRing('bharati-health-canvas', STATE.bharati.health, '#64D2FF');
   }
   if (STATE.currentPage === 'maitri') { renderMaitriTwin(); if (t % 5 === 0) renderTelemetryGrid('maitri'); }
   if (STATE.currentPage === 'bharati') { renderBharatiTwin(); if (t % 5 === 0) renderTelemetryGrid('bharati'); }
