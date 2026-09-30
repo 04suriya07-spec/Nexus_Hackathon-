@@ -83,7 +83,7 @@
         <!-- Station Selector Buttons -->
         <div class="top-station-switchers">
           <div class="station-pill-card" id="spc-maitri" onclick="window.location.href='maitri.html'">
-            <img class="spc-thumb" id="spc-thumb-maitri" src="assets/station_maitri_thumb_bright.png" alt="Maitri Research Station" />
+            <img class="spc-thumb" id="spc-thumb-maitri" src="assets/real_maitri_live.jpg" alt="Maitri Research Station" />
             <div class="spc-info">
               <div class="spc-name-row">
                 <span class="spc-radio-indicator"></span>
@@ -94,7 +94,7 @@
           </div>
 
           <div class="station-pill-card active" id="spc-bharati" onclick="window.location.href='bharati.html'">
-            <img class="spc-thumb" id="spc-thumb-bharati" src="assets/station_bharati_thumb_bright.png" alt="Bharati Research Station" />
+            <img class="spc-thumb" id="spc-thumb-bharati" src="assets/real_bharati_live.jpg" alt="Bharati Research Station" />
             <div class="spc-info">
               <div class="spc-name-row">
                 <span class="spc-radio-indicator cyan-fill" style="background:#00b4d8; box-shadow:0 0 8px #00b4d8"></span>
@@ -158,7 +158,8 @@
               </div>
               
               <div class="dt-view-selectors">
-                <button class="view-mode-pill active">3D View</button>
+                <button class="view-mode-pill active" id="btn-view-photo" onclick="setStationHeroMode('photo')">📷 Real Station Photo</button>
+                <button class="view-mode-pill" id="btn-view-3d" onclick="setStationHeroMode('3d')">🌐 3D Digital Twin</button>
                 <button class="view-mode-pill" onclick="showPrototypeModal('🗺️ Bharati Topographic Map Layer', '<p>Interactive high-resolution Antarctic coastal topography, Larsemann Hills nunataks, and sea ice bathymetry.</p>')">Map View</button>
                 <button class="view-mode-pill" onclick="showPrototypeModal('📐 Bharati Architectural Blueprint', '<p>3-storey modular aerodynamic container structure designed by Bofinger Partner &amp; Kaulquappe with thermal envelope.</p>')">Site Plan</button>
                 <button class="view-mode-pill btn-icon-square" onclick="showPrototypeModal('⛶ 3D Viewport Fullscreen', '<p>3D WebGL Digital Twin rendered with continuous real-time sensor node overlays.</p>')" title="Fullscreen">&#x26F6;</button>
@@ -167,7 +168,7 @@
 
             <!-- Interactive Visual Container with Hotspots -->
             <div class="station-interactive-visual">
-              <img id="station-main-bg" class="main-twin-img" src="assets/station_bharati_panorama_bright.png" alt="Bharati Digital Twin" />
+              <img id="station-main-bg" class="main-twin-img" src="assets/real_bharati_live.jpg" alt="Bharati Research Station Real View" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.25s ease;" />
 
               <!-- Interactive Hotspot Click Targets -->
               <div class="station-hitbox" style="top: 15%; left: 32%; width: 14%; height: 18%;" onclick="openHotspotInfo('Main Aerodynamic Building', 'Living atrium & laboratories: 20 winter expeditioners, 21.6°C nominal')" title="Main Building"></div>
@@ -246,7 +247,7 @@
             <!-- 4-Channel Thumbnail Switcher -->
             <div class="cam-channels-bar" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:10px;">
               <button class="cam-ch-btn active" id="b-ch-0" onclick="switchBharatiCam(0)">
-                <img class="cam-ch-thumb" src="assets/real_bharati_live.jpg" alt="Bharati Coastal Ice" />
+                <img class="cam-ch-thumb" src="assets/real_bharati_ice.jpg" alt="Bharati Coastal Ice" />
                 <div class="cam-ch-name">CAM-01: Coastal Ice</div>
                 <div class="cam-ch-sub">Prydz Bay &bull; Fast Ice</div>
               </button>
@@ -258,15 +259,15 @@
               </button>
 
               <button class="cam-ch-btn" id="b-ch-2" onclick="switchBharatiCam(2)">
-                <img class="cam-ch-thumb" src="assets/cam2_card_bright.png" alt="Satellite Radome" />
+                <img class="cam-ch-thumb" src="assets/real_bharati_radome.jpg" alt="Satellite Radome" />
                 <div class="cam-ch-name">CAM-03: ISRO Radome</div>
                 <div class="cam-ch-sub">IMGEOS Ground Station</div>
               </button>
 
               <button class="cam-ch-btn" id="b-ch-3" onclick="switchBharatiCam(3)">
-                <img class="cam-ch-thumb" src="assets/cam4_card_bright.png" alt="Helipad Bay" />
-                <div class="cam-ch-name">CAM-04: Helipad Bay</div>
-                <div class="cam-ch-sub">Flight Deck &bull; Fuel Farm</div>
+                <img class="cam-ch-thumb" src="assets/real_bharati_live.jpg" alt="Ground Base Panorama" />
+                <div class="cam-ch-name">CAM-04: Ground Panorama</div>
+                <div class="cam-ch-sub">Larsemann Hills &bull; Complex</div>
               </button>
             </div>
           </div>
@@ -423,13 +424,13 @@
           </div>
 
           <!-- Quick Help Action -->
-          <div style="margin-top:14px; background:var(--bg-card); border:1px solid var(--border-light); border-radius:10px; padding:16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-              <strong style="font-size:13px; color:var(--text-primary)">Bharati Station Support</strong>
+          <div class="station-support-card">
+            <div class="ssc-header">
+              <strong class="ssc-title">Bharati Station Support</strong>
               <span class="online-chip"><span class="dot-green"></span> AIRA AI</span>
             </div>
-            <p style="font-size:12px; color:var(--text-secondary); margin:0 0 12px">Need protocol guidance for RO Desalination or Scania CHP load balancing? AIRA is standby 24/7.</p>
-            <button class="res-action-btn" style="width:100%; justify-content:center;" onclick="window.location.href='support.html'">Open AIRA Support Chatbot &rarr;</button>
+            <p class="ssc-desc">Need protocol guidance for RO Desalination or Scania CHP load balancing? AIRA is standby 24/7.</p>
+            <button class="res-action-btn" onclick="window.location.href='support.html'">Open AIRA Support Chatbot &rarr;</button>
           </div>
 
         </div>
@@ -451,8 +452,8 @@
         title: "CAM-01: Bharati Coastal Sea Ice Deck &bull; Larsemann Hills",
         loc: "Bharati Coastal Deck &bull; Larsemann Hills",
         coords: "69°24'29\"S, 76°11'14\"E &bull; Elevation 35m",
-        src: "assets/real_bharati_live.jpg",
-        fallback: "assets/cam1_card_bright.png"
+        src: "assets/real_bharati_ice.jpg",
+        fallback: "assets/real_bharati_ice.jpg"
       },
       {
         name: "CAM-02: Aerial Complex",
@@ -460,25 +461,52 @@
         loc: "Main Station Complex &bull; Stilt Foundation",
         coords: "69°24'28\"S, 76°11'15\"E &bull; Elevation 42m",
         src: "assets/real_bharati_aerial.jpg",
-        fallback: "assets/cam3_card_bright.png"
+        fallback: "assets/real_bharati_aerial.jpg"
       },
       {
         name: "CAM-03: ISRO Radome",
         title: "CAM-03: ISRO IMGEOS Satellite Tracking Radome Deck",
         loc: "Satellite Radome &bull; High Ridge",
         coords: "69°24'35\"S, 76°11'28\"E &bull; Elevation 58m",
-        src: "assets/cam2_card_bright.png",
-        fallback: "assets/cam2_card_bright.png"
+        src: "assets/real_bharati_radome.jpg",
+        fallback: "assets/real_bharati_radome.jpg"
       },
       {
-        name: "CAM-04: Helipad Bay",
-        title: "CAM-04: Polar Helipad &amp; Cargo Staging Bay",
-        loc: "Helipad Apron &bull; Fuel Farm Approach",
+        name: "CAM-04: Ground Panorama",
+        title: "CAM-04: Larsemann Hills &bull; Bharati Full Ground Panorama",
+        loc: "Larsemann Hills Station Apron",
         coords: "69°24'25\"S, 76°11'05\"E &bull; Elevation 28m",
-        src: "assets/cam4_card_bright.png",
-        fallback: "assets/cam4_card_bright.png"
+        src: "assets/real_bharati_live.jpg",
+        fallback: "assets/real_bharati_live.jpg"
       }
     ];
+
+    function setStationHeroMode(mode) {
+      const bg = document.getElementById('station-main-bg');
+      const btnPhoto = document.getElementById('btn-view-photo');
+      const btn3D = document.getElementById('btn-view-3d');
+      if (mode === 'photo') {
+        if (btnPhoto) btnPhoto.classList.add('active');
+        if (btn3D) btn3D.classList.remove('active');
+        if (bg) {
+          bg.style.opacity = '0';
+          setTimeout(() => {
+            bg.src = 'assets/real_bharati_live.jpg';
+            bg.style.opacity = '1';
+          }, 150);
+        }
+      } else if (mode === '3d') {
+        if (btnPhoto) btnPhoto.classList.remove('active');
+        if (btn3D) btn3D.classList.add('active');
+        if (bg) {
+          bg.style.opacity = '0';
+          setTimeout(() => {
+            bg.src = 'assets/station_bharati_panorama_bright.png';
+            bg.style.opacity = '1';
+          }, 150);
+        }
+      }
+    }
 
     function applyBharatiPTZ() {
       const img = document.getElementById('bharati-main-cam-display');

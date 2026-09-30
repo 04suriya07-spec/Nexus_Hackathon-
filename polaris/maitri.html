@@ -83,7 +83,7 @@
         <!-- Station Selector Buttons -->
         <div class="top-station-switchers">
           <div class="station-pill-card active" id="spc-maitri" onclick="window.location.href='maitri.html'">
-            <img class="spc-thumb" id="spc-thumb-maitri" src="assets/station_maitri_thumb_bright.png" alt="Maitri Research Station" />
+            <img class="spc-thumb" id="spc-thumb-maitri" src="assets/real_maitri_live.jpg" alt="Maitri Research Station" />
             <div class="spc-info">
               <div class="spc-name-row">
                 <span class="spc-radio-indicator orange-fill"></span>
@@ -94,7 +94,7 @@
           </div>
 
           <div class="station-pill-card" id="spc-bharati" onclick="window.location.href='bharati.html'">
-            <img class="spc-thumb" id="spc-thumb-bharati" src="assets/station_bharati_thumb_bright.png" alt="Bharati Research Station" />
+            <img class="spc-thumb" id="spc-thumb-bharati" src="assets/real_bharati_live.jpg" alt="Bharati Research Station" />
             <div class="spc-info">
               <div class="spc-name-row">
                 <span class="spc-radio-indicator"></span>
@@ -158,7 +158,8 @@
               </div>
               
               <div class="dt-view-selectors">
-                <button class="view-mode-pill active">3D View</button>
+                <button class="view-mode-pill active" id="btn-view-photo" onclick="setStationHeroMode('photo')">📷 Real Station Photo</button>
+                <button class="view-mode-pill" id="btn-view-3d" onclick="setStationHeroMode('3d')">🌐 3D Digital Twin</button>
                 <button class="view-mode-pill" onclick="alert('Switching to Topographic Map Layer')">Map View</button>
                 <button class="view-mode-pill" onclick="alert('Switching to Architectural Site Blueprint')">Site Plan</button>
                 <button class="view-mode-pill btn-icon-square" onclick="alert('Toggle Fullscreen 3D Viewport')" title="Fullscreen">&#x26F6;</button>
@@ -167,7 +168,7 @@
 
             <!-- Interactive Visual Container with Hotspots -->
             <div class="station-interactive-visual">
-              <img id="station-main-bg" class="main-twin-img" src="assets/station_maitri_panorama_bright.png" alt="Maitri Digital Twin" />
+              <img id="station-main-bg" class="main-twin-img" src="assets/real_maitri_live.jpg" alt="Maitri Research Station Real View" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.25s ease;" />
 
               <!-- Interactive Hotspot Click Targets -->
               <div class="station-hitbox" style="top: 4.1%; left: 35.7%; width: 9%; height: 9%;" onclick="openHotspotInfo('Communications Mast', 'GSAT-17 Uplink / High-Gain Array: 99.4% Link Quality')" title="Communications Mast: 99.4% Link Quality"></div>
@@ -254,19 +255,19 @@
               </button>
 
               <button class="cam-ch-btn" id="m-ch-1" onclick="switchMaitriCam(1)">
-                <img class="cam-ch-thumb" src="assets/cam3_card_bright.png" alt="Lake Priyadarshini" />
+                <img class="cam-ch-thumb" src="assets/real_maitri_lake.jpg" alt="Lake Priyadarshini" />
                 <div class="cam-ch-name">CAM-02: Priyadarshini</div>
                 <div class="cam-ch-sub">Fresh Water Intake</div>
               </button>
 
               <button class="cam-ch-btn" id="m-ch-2" onclick="switchMaitriCam(2)">
-                <img class="cam-ch-thumb" src="assets/cam2_card_bright.png" alt="East Ridge" />
+                <img class="cam-ch-thumb" src="assets/real_maitri_ridge.jpg" alt="East Ridge" />
                 <div class="cam-ch-name">CAM-03: East Ridge</div>
                 <div class="cam-ch-sub">Microgrid Generator Yard</div>
               </button>
 
               <button class="cam-ch-btn" id="m-ch-3" onclick="switchMaitriCam(3)">
-                <img class="cam-ch-thumb" src="assets/cam1_card_bright.png" alt="Polar Yard" />
+                <img class="cam-ch-thumb" src="assets/real_maitri_live.jpg" alt="Polar Yard" />
                 <div class="cam-ch-name">CAM-04: Logistics Yard</div>
                 <div class="cam-ch-sub">Habitation &amp; Cargo Track</div>
               </button>
@@ -379,7 +380,7 @@
           <!-- Critical Equipment List -->
           <div class="subsystem-equipment-block">
             <div class="seb-header">
-              <span><strong>Subsystem Status</strong></span>
+              <span><strong>Subsystem Status &bull; Maitri</strong></span>
               <span class="text-green" style="font-size:11px;font-weight:700">&bull; 7 Active</span>
             </div>
 
@@ -425,13 +426,13 @@
           </div>
 
           <!-- Quick Help Action -->
-          <div style="margin-top:14px; background:var(--bg-card); border:1px solid var(--border-light); border-radius:10px; padding:16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-              <strong style="font-size:13px; color:var(--text-primary)">Maitri Station Support</strong>
+          <div class="station-support-card">
+            <div class="ssc-header">
+              <strong class="ssc-title">Maitri Station Support</strong>
               <span class="online-chip"><span class="dot-green"></span> AIRA AI</span>
             </div>
-            <p style="font-size:12px; color:var(--text-secondary); margin:0 0 12px">Need protocol guidance for DG-02 vibration or trace heating? AIRA is standby 24/7.</p>
-            <button class="res-action-btn" style="width:100%; justify-content:center;" onclick="window.location.href='support.html'">Open AIRA Support Chatbot &rarr;</button>
+            <p class="ssc-desc">Need protocol guidance for DG-02 vibration or trace heating? AIRA is standby 24/7.</p>
+            <button class="res-action-btn" onclick="window.location.href='support.html'">Open AIRA Support Chatbot &rarr;</button>
           </div>
 
         </div>
@@ -453,33 +454,60 @@
         loc: "Maitri Base &bull; Schirmacher Oasis",
         coords: "70°45'57\"S, 11°44'09\"E &bull; Elevation 117m",
         src: "assets/real_maitri_live.jpg",
-        fallback: "assets/cam2_card_bright.png"
+        fallback: "assets/real_maitri_live.jpg"
       },
       {
         name: "CAM-02: Priyadarshini",
         title: "CAM-02: Priyadarshini Fresh Water Intake &bull; Pipeline Trace Circuit",
         loc: "Lake Priyadarshini &bull; Pump House",
         coords: "70°45'42\"S, 11°43'50\"E &bull; Depth 6m",
-        src: "assets/cam3_card_bright.png",
-        fallback: "assets/cam3_card_bright.png"
+        src: "assets/real_maitri_lake.jpg",
+        fallback: "assets/real_maitri_lake.jpg"
       },
       {
         name: "CAM-03: East Ridge",
         title: "CAM-03: Maitri East Ridge &bull; Microgrid Generator Yard",
         loc: "East Ridge &bull; Queen Maud Land",
         coords: "70°45'50\"S, 11°44'25\"E &bull; Elevation 130m",
-        src: "assets/cam2_card_bright.png",
-        fallback: "assets/cam2_card_bright.png"
+        src: "assets/real_maitri_ridge.jpg",
+        fallback: "assets/real_maitri_ridge.jpg"
       },
       {
         name: "CAM-04: Logistics Yard",
         title: "CAM-04: Habitation Module &bull; Polar Vehicle Staging Yard",
         loc: "Polar Logistics Staging Area",
         coords: "70°45'55\"S, 11°44'02\"E &bull; Cargo Deck",
-        src: "assets/cam1_card_bright.png",
-        fallback: "assets/cam1_card_bright.png"
+        src: "assets/real_maitri_live.jpg",
+        fallback: "assets/real_maitri_live.jpg"
       }
     ];
+
+    function setStationHeroMode(mode) {
+      const bg = document.getElementById('station-main-bg');
+      const btnPhoto = document.getElementById('btn-view-photo');
+      const btn3D = document.getElementById('btn-view-3d');
+      if (mode === 'photo') {
+        if (btnPhoto) btnPhoto.classList.add('active');
+        if (btn3D) btn3D.classList.remove('active');
+        if (bg) {
+          bg.style.opacity = '0';
+          setTimeout(() => {
+            bg.src = 'assets/real_maitri_live.jpg';
+            bg.style.opacity = '1';
+          }, 150);
+        }
+      } else if (mode === '3d') {
+        if (btnPhoto) btnPhoto.classList.remove('active');
+        if (btn3D) btn3D.classList.add('active');
+        if (bg) {
+          bg.style.opacity = '0';
+          setTimeout(() => {
+            bg.src = 'assets/station_maitri_panorama_bright.png';
+            bg.style.opacity = '1';
+          }, 150);
+        }
+      }
+    }
 
     function applyMaitriPTZ() {
       const img = document.getElementById('maitri-main-cam-display');
