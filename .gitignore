@@ -1,5 +1,6 @@
 # Git ignore for POLARIS hackathon project
 *.log
+*.ps1
 .DS_Store
 Thumbs.db
 node_modules/

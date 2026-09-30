@@ -27,20 +27,22 @@
       <!-- Main Navigation -->
       <nav class="main-nav">
         <button class="nav-link-btn active" id="nav-btn-home" onclick="switchView('home')">Home</button>
+        <button class="nav-link-btn" onclick="alert('About National Centre for Polar & Ocean Research (NCPOR), Ministry of Earth Sciences.')">About</button>
         <button class="nav-link-btn" id="nav-btn-stations" onclick="switchView('stations')">Stations</button>
-        <button class="nav-link-btn" id="nav-btn-command" onclick="switchView('command')">Command Control</button>
         <button class="nav-link-btn" onclick="alert('National Polar Data Repository - All datasets synchronized.')">Live Data</button>
         <button class="nav-link-btn" onclick="alert('Indian Antarctic Expeditions Documentation & Research Protocols.')">Resources</button>
         <button class="nav-link-btn" onclick="alert('NCPOR Mission Operations Support Desk: support@ncpor.res.in')">Support</button>
       </nav>
 
-      <!-- Right: Status, India Flag, Time & Theme Switcher -->
+      <!-- Right: Status, India Flag & Theme Switcher -->
       <div class="header-right">
         
         <div class="system-status-indicator">
           <span class="pulse-dot-green"></span>
           <span>System Online</span>
         </div>
+
+        <span class="header-v-sep">|</span>
 
         <div class="gov-india-badge">
           <!-- Indian Tiranga Flag SVG -->
@@ -55,8 +57,6 @@
             <span class="gov-tagline">Science for a Safer Planet</span>
           </div>
         </div>
-
-        <div class="header-time-chip" id="realtime-clock">--:--:-- IST</div>
 
         <!-- THEME TOGGLE: BRIGHT <-> DARK -->
         <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Switch between Bright and Dark theme">
@@ -77,60 +77,55 @@
   <!-- ============================================================
        APPLICATION VIEW CONTAINER
        ============================================================ -->
-  <main class="portal-main">
-
-    <!-- ============================================================
-         PAGE VIEW 1: PORTAL HOME / GATEWAY (MATCHING IMAGE 1)
+  <mai    <!-- ============================================================
+         PAGE VIEW 1: PORTAL HOME / GATEWAY (MATCHING REFERENCE IMAGE 1)
          ============================================================ -->
     <section class="portal-view active" id="view-home">
       
       <!-- Hero Top Section -->
       <div class="home-hero-section">
-        <div class="home-hero-grid">
+        
+        <!-- Hero background globe panorama -->
+        <div class="hero-panorama-wrap">
+          <img id="hero-dynamic-bg" class="hero-globe-panorama" src="assets/hero_globe_bright.png" alt="Antarctica Satellite Link View" />
           
-          <div class="hero-left-content">
-            <span class="hero-eyebrow">INDIA &bull; ANTARCTICA &bull; A SAFER, CLEANER PLANET</span>
-            <h1 class="hero-headline">
-              Remote Operational<br/>
-              Management Portal for<br/>
-              <span class="highlight">Indian Antarctic Research Stations</span>
-            </h1>
-            <div class="hero-tagline-bar">
-              <span class="tagline-accent-line"></span>
-              <span class="tagline-text">Connecting People &nbsp;|&nbsp; Data &nbsp;|&nbsp; Discovery &nbsp;|&nbsp; A Sustainable Tomorrow</span>
+          <!-- Floating Station Status Badge (Top Right) -->
+          <div class="floating-station-status-card">
+            <div class="fssc-header">
+              <span>STATION STATUS</span>
+              <span class="fssc-chevron">&rsaquo;</span>
             </div>
-          </div>
-
-          <!-- Hero Right: Antarctica & Satellite Orbital Link -->
-          <div class="hero-visual-container">
-            <div class="hero-globe-canvas-wrap">
-              <img id="hero-dynamic-bg" class="hero-bg-img" src="assets/bright_home.png" alt="Antarctica Satellite Link View" />
-              
-              <!-- Floating Station Status Badge -->
-              <div class="floating-station-status-card">
-                <div class="fssc-header">
-                  <span>Station Status</span>
-                  <span>&rsaquo;</span>
-                </div>
-                <div class="fssc-row" onclick="switchView('stations', 'maitri')" style="cursor:pointer">
-                  <span class="fssc-ring orange"></span>
-                  <div class="fssc-info">
-                    <span class="fssc-name">Maitri Research Station</span>
-                    <span class="fssc-status">Online &bull; All Systems Nominal</span>
-                  </div>
-                </div>
-                <div class="fssc-row" onclick="switchView('stations', 'bharati')" style="cursor:pointer">
-                  <span class="fssc-ring cyan"></span>
-                  <div class="fssc-info">
-                    <span class="fssc-name">Bharati Research Station</span>
-                    <span class="fssc-status">Online &bull; All Systems Nominal</span>
-                  </div>
-                </div>
+            <div class="fssc-row" onclick="switchView('stations', 'maitri')" title="Open Maitri Station Operations">
+              <span class="fssc-dot orange-dot"></span>
+              <div class="fssc-info">
+                <span class="fssc-name">Maitri Research Station</span>
+                <span class="fssc-status">Online &nbsp;|&nbsp; All Systems Nominal</span>
+              </div>
+            </div>
+            <div class="fssc-row" onclick="switchView('stations', 'bharati')" title="Open Bharati Station Operations">
+              <span class="fssc-dot cyan-dot"></span>
+              <div class="fssc-info">
+                <span class="fssc-name">Bharati Research Station</span>
+                <span class="fssc-status">Online &nbsp;|&nbsp; All Systems Nominal</span>
               </div>
             </div>
           </div>
-
         </div>
+
+        <!-- Hero Left Content -->
+        <div class="hero-left-content">
+          <span class="hero-eyebrow">INDIA &bull; ANTARCTICA &bull; A SAFER, CLEANER PLANET</span>
+          <h1 class="hero-headline">
+            Remote Operational<br/>
+            Management Portal for<br/>
+            <span class="highlight">Indian Antarctic Research Stations</span>
+          </h1>
+          <div class="hero-tagline-bar">
+            <span class="tagline-accent-line"></span>
+            <span class="tagline-text">Connecting People &nbsp;|&nbsp; Data &nbsp;|&nbsp; Discovery &nbsp;|&nbsp; A Sustainable Tomorrow</span>
+          </div>
+        </div>
+
       </div>
 
       <!-- Select Access Portal Cards Row -->
@@ -145,14 +140,7 @@
           <!-- Card 1: Command Control Admin -->
           <div class="access-portal-card card-command">
             <div class="card-img-header">
-              <img src="assets/bright_command.png" alt="Command Control Operations Room" />
-              <span class="secure-access-pill orange-pill">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Secure Access
-              </span>
-              <div class="card-center-icon-badge">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-orange)" stroke-width="2"><path d="M4.93 19.07A10 10 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.76-1.12 5.26-2.93 7.07"/><path d="M7.76 16.24A6 6 0 0 1 6 12a6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-1.76 4.24"/><circle cx="12" cy="12" r="2"/></svg>
-              </div>
+              <img id="card-img-command" src="assets/card_header_command_bright.png" alt="Command Control Operations Room" />
             </div>
             <div class="card-body-content">
               <h3 class="ap-card-title">Command Control Admin</h3>
@@ -163,12 +151,12 @@
                   <span>Operations<br/>Monitoring</span>
                 </div>
                 <div class="ap-feature-item">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/></svg>
                   <span>Field &amp;<br/>Logistics</span>
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                  <span>Data &amp;<br/>Comms</span>
+                  <span>Data &amp;<br/>Communications</span>
                 </div>
               </div>
               <button class="ap-sign-in-btn btn-gradient-orange" id="btn-signin-command" onclick="handlePortalSignIn('command')">
@@ -180,21 +168,14 @@
           <!-- Card 2: Maitri Research Station -->
           <div class="access-portal-card card-maitri">
             <div class="card-img-header">
-              <img src="assets/bright_station.png" alt="Maitri Research Station" />
-              <span class="secure-access-pill cyan-pill">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Secure Access
-              </span>
-              <div class="card-center-icon-badge">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              </div>
+              <img id="card-img-maitri" src="assets/card_header_maitri_bright.png" alt="Maitri Research Station" />
             </div>
             <div class="card-body-content">
               <h3 class="ap-card-title">Maitri Research Station</h3>
               <p class="ap-card-desc">Station operations and research monitoring</p>
               <div class="ap-features-row">
                 <div class="ap-feature-item">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                   <span>Station<br/>Systems</span>
                 </div>
                 <div class="ap-feature-item">
@@ -203,7 +184,7 @@
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  <span>Weather &amp;<br/>Enviro</span>
+                  <span>Weather &amp;<br/>Environment</span>
                 </div>
               </div>
               <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-maitri" onclick="handlePortalSignIn('stations', 'maitri')">
@@ -215,21 +196,14 @@
           <!-- Card 3: Bharati Research Station -->
           <div class="access-portal-card card-bharati">
             <div class="card-img-header">
-              <img src="assets/bright_home.png" style="object-position: bottom;" alt="Bharati Research Station Architecture" />
-              <span class="secure-access-pill cyan-pill">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Secure Access
-              </span>
-              <div class="card-center-icon-badge">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-              </div>
+              <img id="card-img-bharati" src="assets/card_header_bharati_bright.png" alt="Bharati Research Station" />
             </div>
             <div class="card-body-content">
               <h3 class="ap-card-title">Bharati Research Station</h3>
               <p class="ap-card-desc">Station operations and research monitoring</p>
               <div class="ap-features-row">
                 <div class="ap-feature-item">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/><line x1="12" y1="14" x2="12" y2="22"/></svg>
                   <span>Station<br/>Systems</span>
                 </div>
                 <div class="ap-feature-item">
@@ -238,7 +212,7 @@
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  <span>Weather &amp;<br/>Enviro</span>
+                  <span>Weather &amp;<br/>Environment</span>
                 </div>
               </div>
               <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-bharati" onclick="handlePortalSignIn('stations', 'bharati')">
@@ -247,11 +221,22 @@
             </div>
           </div>
 
-          <!-- Card 4: Right Motto / Mission Card -->
-          <div class="portal-motto-card">
-            <span class="motto-bar"></span>
-            <div class="motto-title">Exploring the Last Frontier for a Brighter India</div>
-            <p class="motto-quote">&ldquo;From the Indian Ocean to the Antarctic, for a resilient Earth.&rdquo;</p>
+          <!-- Column 4: Right Motto Column over subtle mountain landscape -->
+          <div class="portal-motto-column">
+            <div class="motto-backdrop-art">
+              <img id="motto-bg-img" src="assets/motto_bg_bright.png" alt="Antarctica Horizon" />
+            </div>
+            <div class="motto-text-content">
+              <div class="motto-accent-bar"></div>
+              <h4 class="motto-title">
+                EXPLORING<br/>
+                THE LAST FRONTIER<br/>
+                FOR A BRIGHTER INDIA
+              </h4>
+              <p class="motto-quote">
+                &ldquo;From the Indian Ocean to the Antarctic, for a resilient Earth.&rdquo;
+              </p>
+            </div>
           </div>
 
         </div>
@@ -260,17 +245,19 @@
       <!-- Bottom Environmental Data Ticker Bar -->
       <footer class="bottom-telemetry-ticker">
         <div class="ticker-content-row">
+          
           <div class="ticker-lead-label">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>Live Environmental Data</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>LIVE ENVIRONMENTAL DATA</span>
           </div>
           
           <div class="ticker-items-group">
+            
             <div class="ticker-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
               <div class="ticker-item-meta">
                 <span class="ti-val">-12.4&deg;C</span>
-                <span class="ti-label">Air Temp (Antarctica)</span>
+                <span class="ti-label">Air Temperature<br/>(Antarctica)</span>
               </div>
             </div>
             
@@ -278,7 +265,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
               <div class="ticker-item-meta">
                 <span class="ti-val">18 km/h</span>
-                <span class="ti-label">Wind Speed (Bharati)</span>
+                <span class="ti-label">Wind Speed<br/>(Bharati)</span>
               </div>
             </div>
 
@@ -286,33 +273,42 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
               <div class="ticker-item-meta">
                 <span class="ti-val">78%</span>
-                <span class="ti-label">Humidity (Bharati)</span>
+                <span class="ti-label">Humidity<br/>(Bharati)</span>
               </div>
             </div>
 
             <div class="ticker-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 19.07A10 10 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.76-1.12 5.26-2.93 7.07"/><circle cx="12" cy="12" r="2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
               <div class="ticker-item-meta">
-                <span class="ti-val text-green">&bull; Connected</span>
-                <span class="ti-label">Satellite Link (620 ms)</span>
+                <div class="ti-status-lead"><span class="dot-green"></span> <strong>SATELLITE LINK</strong></div>
+                <span class="ti-label text-green">&bull; Connected &nbsp;|&nbsp; Latency: 620 ms</span>
               </div>
             </div>
 
             <div class="ticker-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
               <div class="ticker-item-meta">
-                <span class="ti-val text-green">&bull; Nominal</span>
-                <span class="ti-label">Data Sync (2m ago)</span>
+                <div class="ti-status-lead"><span class="dot-green"></span> <strong>DATA SYNC</strong></div>
+                <span class="ti-label text-green">&bull; Nominal &nbsp;|&nbsp; Last Sync: 2 min ago</span>
               </div>
             </div>
 
             <div class="ticker-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <div class="ticker-item-meta">
-                <span class="ti-val">Maitri: 70.8&deg;S | Bharati: 69.4&deg;S</span>
-                <span class="ti-label">Geographic Coordinates</span>
+                <div class="ti-coords-head"><strong>COORDINATES</strong></div>
+                <span class="ti-label">Maitri: 70.8&deg;S 11.7&deg;E &nbsp;&bull;&nbsp; Bharati: 69.4&deg;S 76.2&deg;E</span>
               </div>
             </div>
+
+            <div class="ticker-item-motto-end">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+              <div class="ti-end-text">
+                <span class="ti-end-title">INDIAN SCIENCE</span>
+                <span class="ti-end-sub">FOR A SUSTAINABLE TOMORROW</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </footer>

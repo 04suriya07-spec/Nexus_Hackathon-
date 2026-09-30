@@ -61,12 +61,33 @@ function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('polaris_theme', theme);
 
-  // Update theme-specific images
+  // Update Page 1 Theme-Specific Visual Assets
   const heroBg = document.getElementById('hero-dynamic-bg');
   if (heroBg) {
-    heroBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+    heroBg.src = theme === 'dark' ? 'assets/hero_globe_dark.png' : 'assets/hero_globe_bright.png';
   }
 
+  const cardCmd = document.getElementById('card-img-command');
+  if (cardCmd) {
+    cardCmd.src = theme === 'dark' ? 'assets/card_header_command_dark.png' : 'assets/card_header_command_bright.png';
+  }
+
+  const cardMaitri = document.getElementById('card-img-maitri');
+  if (cardMaitri) {
+    cardMaitri.src = theme === 'dark' ? 'assets/card_header_maitri_dark.png' : 'assets/card_header_maitri_bright.png';
+  }
+
+  const cardBharati = document.getElementById('card-img-bharati');
+  if (cardBharati) {
+    cardBharati.src = theme === 'dark' ? 'assets/card_header_bharati_dark.png' : 'assets/card_header_bharati_bright.png';
+  }
+
+  const mottoBg = document.getElementById('motto-bg-img');
+  if (mottoBg) {
+    mottoBg.src = theme === 'dark' ? 'assets/motto_bg_dark.png' : 'assets/motto_bg_bright.png';
+  }
+
+  // Station and Command page backgrounds
   const stationBg = document.getElementById('station-main-bg');
   if (stationBg) {
     if (STATE.selectedStation === 'maitri') {

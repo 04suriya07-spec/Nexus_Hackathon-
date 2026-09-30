@@ -418,116 +418,64 @@ body {
    PAGE VIEW 1: PORTAL HOME / GATEWAY (IMAGE 1 BRIGHT & DARK)
    ============================================================ */
 
+/* ============================================================
+   PAGE VIEW 1: PORTAL HOME / GATEWAY (MATCHING REFERENCE IMAGE 1)
+   ============================================================ */
+
 .home-hero-section {
   position: relative;
-  padding: 40px 24px 20px;
-  max-width: 1480px;
+  width: 100%;
+  max-width: 1540px;
   margin: 0 auto;
-}
-
-.home-hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  align-items: center;
   min-height: 420px;
-}
-
-.hero-left-content {
-  display: flex;
-  flex-direction: column;
-  z-index: 2;
-}
-
-.hero-eyebrow {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.hero-headline {
-  font-size: 46px;
-  font-weight: 900;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 16px;
-}
-
-.hero-headline span.highlight {
-  color: var(--accent-blue);
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-tagline-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.tagline-accent-line {
-  width: 38px;
-  height: 4px;
-  background: var(--accent-orange);
-  border-radius: 9999px;
-}
-
-.tagline-text {
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-}
-
-/* Hero Right: Antarctica & Satellite Interactive Globe View */
-.hero-visual-container {
-  position: relative;
-  width: 100%;
-  height: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-globe-canvas-wrap {
-  width: 100%;
-  height: 100%;
-  border-radius: 24px;
+  padding: 16px 32px 10px;
   overflow: hidden;
-  position: relative;
-  border: 1px solid var(--border-medium);
-  box-shadow: var(--card-shadow);
-  background: var(--hero-globe-grad);
 }
 
-.hero-globe-canvas-wrap img.hero-bg-img {
+/* Panoramic Earth & Satellite Orbital Backdrop */
+.hero-panorama-wrap {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 58%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.hero-globe-panorama {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: right center;
   display: block;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.8) 10%, black 22%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.8) 10%, black 22%);
 }
 
-/* Floating Station Status Card on Hero */
+/* Floating Station Status Card (Top Right over globe) */
 .floating-station-status-card {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 30px;
+  right: 32px;
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-medium);
-  border-radius: 14px;
-  padding: 14px 18px;
-  box-shadow: var(--card-shadow-hover);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 28px rgba(11, 37, 69, 0.12);
   min-width: 250px;
-  z-index: 5;
+  z-index: 10;
+  transition: all 0.25s ease;
+}
+
+.floating-station-status-card:hover {
+  box-shadow: 0 10px 30px rgba(0, 119, 230, 0.18);
+  border-color: var(--accent-blue);
 }
 
 .fssc-header {
@@ -539,30 +487,55 @@ body {
   letter-spacing: 0.08em;
   color: var(--text-muted);
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.fssc-chevron {
+  font-size: 15px;
+  line-height: 1;
+  color: var(--text-muted);
 }
 
 .fssc-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+  margin-bottom: 4px;
 }
-.fssc-row:last-child { margin-bottom: 0; }
 
-.fssc-ring {
-  width: 10px;
-  height: 10px;
+.fssc-row:last-child {
+  margin-bottom: 0;
+}
+
+.fssc-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.fssc-dot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  border: 2px solid;
   flex-shrink: 0;
 }
-.fssc-ring.orange { border-color: var(--accent-orange); background: rgba(255, 122, 0, 0.2); }
-.fssc-ring.cyan { border-color: var(--accent-cyan); background: rgba(0, 212, 255, 0.2); }
+
+.fssc-dot.orange-dot {
+  background: var(--accent-orange);
+  box-shadow: 0 0 8px rgba(255, 122, 0, 0.6);
+}
+
+.fssc-dot.cyan-dot {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 180, 255, 0.6);
+}
 
 .fssc-info {
   display: flex;
   flex-direction: column;
+  line-height: 1.25;
 }
 
 .fssc-name {
@@ -577,21 +550,79 @@ body {
   font-weight: 600;
 }
 
-/* Section: Select Access Portal */
+/* Hero Left Content */
+.hero-left-content {
+  position: relative;
+  z-index: 5;
+  max-width: 600px;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.hero-headline {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.14;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+}
+
+.hero-headline span.highlight {
+  color: var(--accent-blue);
+  font-weight: 900;
+}
+
+.hero-tagline-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tagline-accent-line {
+  width: 34px;
+  height: 3.5px;
+  background: var(--accent-orange);
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.tagline-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   SECTION: SELECT ACCESS PORTAL (3 CARDS + MOTTO COLUMN)
+   ============================================================ */
+
 .portal-selection-section {
-  max-width: 1480px;
-  margin: 20px auto 40px;
-  padding: 0 24px;
+  max-width: 1540px;
+  margin: 12px auto 35px;
+  padding: 0 32px;
 }
 
 .portal-section-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .ps-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   color: var(--text-primary);
 }
 
@@ -601,17 +632,18 @@ body {
   margin-top: 4px;
 }
 
-/* 3 Cards + 1 Quote Grid */
+/* 3 Cards + 1 Motto Column */
 .portal-cards-layout {
   display: grid;
-  grid-template-columns: repeat(3, 1fr) 280px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 250px;
   gap: 20px;
+  align-items: stretch;
 }
 
 .access-portal-card {
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--card-shadow);
   display: flex;
@@ -635,7 +667,7 @@ body {
 .card-img-header {
   position: relative;
   width: 100%;
-  height: 150px;
+  height: 133px;
   overflow: hidden;
   background: var(--bg-tertiary);
 }
@@ -644,105 +676,66 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.4s ease;
 }
 
 .access-portal-card:hover .card-img-header img {
-  transform: scale(1.05);
-}
-
-.secure-access-pill {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.secure-access-pill.orange-pill {
-  background: rgba(255, 122, 0, 0.85);
-  border-color: rgba(255, 122, 0, 0.4);
-}
-
-.secure-access-pill.cyan-pill {
-  background: rgba(0, 119, 230, 0.85);
-  border-color: rgba(0, 119, 230, 0.4);
-}
-
-.card-center-icon-badge {
-  position: absolute;
-  bottom: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: 3px solid var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 3;
+  transform: scale(1.04);
 }
 
 .card-body-content {
-  padding: 30px 20px 20px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   flex: 1;
+  justify-content: space-between;
 }
 
 .ap-card-title {
-  font-size: 17px;
+  font-size: 17.5px;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.01em;
+  margin-bottom: 3px;
 }
 
 .ap-card-desc {
   font-size: 12.5px;
-  color: var(--text-secondary);
-  margin: 6px 0 18px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.35;
 }
 
 .ap-features-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-around;
   width: 100%;
   padding-top: 14px;
   border-top: 1px solid var(--border-light);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .ap-feature-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  text-align: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
+  line-height: 1.25;
 }
 
 .ap-feature-item svg {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   color: var(--accent-blue);
+  stroke-width: 2;
 }
 
 .card-command .ap-feature-item svg {
@@ -751,8 +744,8 @@ body {
 
 .ap-sign-in-btn {
   width: 100%;
-  padding: 11px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
   border: none;
   font-family: inherit;
   font-size: 13.5px;
@@ -762,81 +755,106 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(0, 119, 230, 0.3);
 }
 
 .btn-gradient-orange {
-  background: linear-gradient(135deg, #ff7a00, #ff9f1c);
+  background: linear-gradient(90deg, #ff7a00, #ff9f1c);
   box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
 }
 .btn-gradient-orange:hover {
-  background: linear-gradient(135deg, #e66b00, #ff8c00);
+  background: linear-gradient(90deg, #e66b00, #ff8c00);
   transform: translateY(-1px);
 }
 
 .btn-gradient-blue {
-  background: linear-gradient(135deg, #0077e6, #00b4d8);
+  background: linear-gradient(90deg, #0077e6, #00b4d8);
   box-shadow: 0 4px 14px rgba(0, 119, 230, 0.35);
 }
 .btn-gradient-blue:hover {
-  background: linear-gradient(135deg, #0060ba, #0096c7);
+  background: linear-gradient(90deg, #0060ba, #0096c7);
   transform: translateY(-1px);
 }
 
-/* Right Motto Card */
-.portal-motto-card {
-  background: var(--bg-card-subtle);
-  border: 1px solid var(--border-medium);
-  border-radius: 18px;
-  padding: 24px;
+/* Right Motto Column over subtle mountain horizon */
+.portal-motto-column {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  box-shadow: var(--card-shadow);
+  padding: 24px 18px;
+  background: transparent;
 }
 
-.motto-bar {
-  width: 32px;
-  height: 4px;
+.motto-backdrop-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.motto-backdrop-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  display: block;
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+}
+
+.motto-text-content {
+  position: relative;
+  z-index: 2;
+}
+
+.motto-accent-bar {
+  width: 3.5px;
+  height: 22px;
   background: var(--accent-orange);
-  border-radius: 9999px;
-  margin-bottom: 16px;
+  border-radius: 2px;
+  margin-bottom: 12px;
 }
 
 .motto-title {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: var(--text-primary);
   text-transform: uppercase;
-  line-height: 1.4;
+  line-height: 1.45;
   margin-bottom: 14px;
 }
 
 .motto-quote {
-  font-size: 13px;
+  font-size: 12.5px;
   font-style: italic;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-/* Bottom Environmental Data Ticker Bar */
+/* ============================================================
+   BOTTOM ENVIRONMENTAL DATA TICKER BAR
+   ============================================================ */
+
 .bottom-telemetry-ticker {
   background: var(--bg-card);
   border-top: 1px solid var(--border-medium);
-  padding: 12px 24px;
+  padding: 10px 32px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .ticker-content-row {
-  max-width: 1480px;
+  max-width: 1540px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   overflow-x: auto;
 }
 
@@ -850,12 +868,16 @@ body {
   color: var(--accent-blue);
   text-transform: uppercase;
   white-space: nowrap;
+  padding-right: 16px;
+  border-right: 1px solid var(--border-medium);
 }
 
 .ticker-items-group {
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: space-between;
+  gap: 20px;
+  flex: 1;
   white-space: nowrap;
 }
 
@@ -875,11 +897,12 @@ body {
 .ticker-item-meta {
   display: flex;
   flex-direction: column;
+  line-height: 1.25;
 }
 
 .ti-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -887,6 +910,54 @@ body {
 .ti-label {
   font-size: 10px;
   color: var(--text-muted);
+}
+
+.dot-green {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
+.ti-status-lead {
+  font-size: 10.5px;
+  color: var(--text-primary);
+}
+
+.ti-coords-head {
+  font-size: 10.5px;
+  color: var(--text-primary);
+}
+
+.ticker-item-motto-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding-left: 16px;
+  border-left: 1px solid var(--border-medium);
+  color: var(--text-muted);
+}
+
+.ti-end-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+.ti-end-title {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.ti-end-sub {
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 /* ============================================================
