@@ -42,9 +42,7 @@ function toggleTheme() {
   } else if (STATE.currentView === 'command') {
     drawAdminMap();
   }
-}
-
-function updateThemeIcon(theme) {
+}function updateThemeIcon(theme) {
   const btn = document.getElementById('theme-toggle-btn');
   if (!btn) return;
   if (theme === 'dark') {
@@ -70,6 +68,74 @@ function updateThemeIcon(theme) {
       <span class="btn-text-label">Dark</span>
     `;
   }
+}
+
+function setTheme(theme) {
+  STATE.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('polaris_theme', theme);
+  updateThemeIcon(theme);
+
+  // Update Page 1 Theme-Specific Visual Assets
+  const heroBg = document.getElementById('hero-dynamic-bg');
+  if (heroBg) {
+    heroBg.src = theme === 'dark' ? 'assets/hero_globe_dark.png' : 'assets/hero_globe_bright.png';
+  }
+
+  const cardCmd = document.getElementById('card-img-command');
+  if (cardCmd) {
+    cardCmd.src = theme === 'dark' ? 'assets/card_header_command_dark.png' : 'assets/card_header_command_bright.png';
+  }
+
+  const cardMaitri = document.getElementById('card-img-maitri');
+  if (cardMaitri) {
+    cardMaitri.src = theme === 'dark' ? 'assets/card_header_maitri_dark.png' : 'assets/card_header_maitri_bright.png';
+  }
+
+  const cardBharati = document.getElementById('card-img-bharati');
+  if (cardBharati) {
+    cardBharati.src = theme === 'dark' ? 'assets/card_header_bharati_dark.png' : 'assets/card_header_bharati_bright.png';
+  }
+
+  const mottoBg = document.getElementById('motto-bg-img');
+  if (mottoBg) {
+    mottoBg.src = theme === 'dark' ? 'assets/motto_bg_dark.png' : 'assets/motto_bg_bright.png';
+  }
+
+  // Station and Command page backgrounds
+  const maitriThumb = document.getElementById('spc-thumb-maitri');
+  if (maitriThumb) {
+    maitriThumb.src = theme === 'dark' ? 'assets/station_maitri_thumb_dark.png' : 'assets/station_maitri_thumb_bright.png';
+  }
+
+  const bharatiThumb = document.getElementById('spc-thumb-bharati');
+  if (bharatiThumb) {
+    bharatiThumb.src = theme === 'dark' ? 'assets/station_bharati_thumb_dark.png' : 'assets/station_bharati_thumb_bright.png';
+  }
+
+  const stationBg = document.getElementById('station-main-bg');
+  if (stationBg) {
+    stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+  }
+
+  // Camera strip cards
+  for (let i = 1; i <= 4; i++) {
+    const camImg = document.getElementById(`cam-img-${i}`);
+    if (camImg) {
+      camImg.src = theme === 'dark' ? `assets/cam${i}_card_dark.png` : `assets/cam${i}_card_bright.png`;
+    }
+  }
+
+  // Right-hand widget camera preview
+  const widgetCam = document.getElementById('widget-cam-thumb');
+  if (widgetCam) {
+    widgetCam.src = theme === 'dark' ? 'assets/widget_cam_preview_dark.png' : 'assets/widget_cam_preview_bright.png';
+  }
+
+  // Redraw canvases
+  renderSensorTrendsChart(STATE.currentTrendMetric);
+  drawAdminMap();
+}
 }
 
 // ============================================================
@@ -131,6 +197,10 @@ function selectStation(station) {
     if (titleEl) titleEl.textContent = 'Maitri Research Station';
     if (coordsEl) coordsEl.textContent = "70°45'58\"S, 11°44'09\"E • Schirmacher Oasis";
     if (subEl) subEl.textContent = 'Living Complex & Laboratory Module 3D Spatial Grid';
+    const stationBgM = document.getElementById('station-main-bg');
+    if (stationBgM) {
+      stationBgM.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    }
     updateStationSensorValues({
       temp: '-18.4 °C',
       wind: '42 km/h',
@@ -143,6 +213,10 @@ function selectStation(station) {
     if (titleEl) titleEl.textContent = 'Bharati Research Station';
     if (coordsEl) coordsEl.textContent = "69°24'28\"S, 76°11'14\"E • Larsemann Hills";
     if (subEl) subEl.textContent = 'Energy-Efficient Container Architecture 3D Model';
+    const stationBgB = document.getElementById('station-main-bg');
+    if (stationBgB) {
+      stationBgB.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    }
     updateStationSensorValues({
       temp: '-14.8 °C',
       wind: '28 km/h',
@@ -197,15 +271,8 @@ function renderSensorTrendsChart(metric) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-
-  const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  ctx.scale(dpr, dpr);
-
-  const W = rect.width;
-  const H = rect.height;
+  const W = canvas.width = canvas.offsetWidth || 260;
+  const H = canvas.height = canvas.offsetHeight || 48;
 
   ctx.clearRect(0, 0, W, H);
 
