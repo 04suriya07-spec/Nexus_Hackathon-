@@ -103,11 +103,11 @@ function setTheme(theme) {
     stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
   }
 
-  // Camera strip thumbnails
+  // Camera strip cards
   for (let i = 1; i <= 4; i++) {
     const camImg = document.getElementById(`cam-img-${i}`);
     if (camImg) {
-      camImg.src = theme === 'dark' ? `assets/cam${i}_thumb_dark.png` : `assets/cam${i}_thumb_bright.png`;
+      camImg.src = theme === 'dark' ? `assets/cam${i}_card_dark.png` : `assets/cam${i}_card_bright.png`;
     }
   }
 
