@@ -1,151 +1,1063 @@
-/*
+/* ============================================================
+   POLARIS ΓÇö Indian Antarctic Remote Operations Portal
+   National Centre for Polar & Ocean Research (NCPOR)
+   Application Logic ΓÇö Dual Theme Engine, View Switcher & Simulation
+   ============================================================ */
 
-// ============================================================
-// LIVE ANTARCTIC RESEARCH CAMERAS & ENVIRONMENTAL TELEMETRY
-// ============================================================
-
-const LIVE_CAMERAS = [
-  { id: "arrivalHeights", name: "Arrival Heights" },
-  { id: "boreSite", name: "Observation Hill" },
-  { id: "aimsCam", name: "Royal Society Range" },
-  { id: "palmer", name: "Palmer Station" }
-];
-
-const LIVE_CAMERA_IMAGE_BASE = "https://www.usap.gov/videoclipsandmaps/SouthPoleWebcam/";
-const LIVE_CAMERA_API = "/api/webcam-feed";
-const liveCameraOrder = LIVE_CAMERAS.map(camera => camera.id);
-const liveCameraSources = new Map();
-
-function renderLiveCameras(animate = false) {
-  const mainImage = document.getElementById("lm-main-cam-img");
-  const mainName = document.getElementById("lm-main-cam-name");
-  const mainLocation = document.getElementById("lm-main-cam-loc");
-  const thumbnailGrid = document.getElementById("lm-thumb-grid");
-  if (!mainImage || !mainName || !thumbnailGrid) return;
-
-  const selectedCamera = LIVE_CAMERAS.find(camera => camera.id === liveCameraOrder[0]);
-  mainImage.dataset.liveCamera = selectedCamera.id;
-  mainImage.alt = `${selectedCamera.name} live camera`;
-  mainName.textContent = selectedCamera.name;
-  if (mainLocation) {
-    mainLocation.textContent = selectedCamera.id === "palmer"
-      ? "Palmer Station — Anvers Island, Antarctica • USAP"
-      : "McMurdo Station — Antarctica • USAP";
+// Application State
+const STATE = {
+  theme: localStorage.getItem('polaris_theme') || 'bright',
+  currentView: 'home',
+  selectedStation: 'maitri',
+  currentTrendMetric: 'power',
+  adminMapMode: '2d',
+  animationTimer: null,
+  mapAnimTime: 0,
+  
+  // Real-time telemetry values
+  maitri: {
+    temp: -12.4,
+    windKt: 18,
+    humidity: 78,
+    power: 420,
+    powerMax: 510,
+    powerPct: 82,
+    water: 76,
+    fuel: 68,
+    crew: 24,
+    crewTotal: 25,
+    health: 94
+  },
+  bharati: {
+    temp: -8.6,
+    windKt: 12,
+    humidity: 72,
+    power: 380,
+    powerMax: 440,
+    powerPct: 88,
+    water: 79,
+    fuel: 81,
+    crew: 20,
+    crewTotal: 24,
+    health: 91
   }
-  mainImage.src = liveCameraSources.get(selectedCamera.id) || "";
+};
 
-  const thumbnailButtons = liveCameraOrder.slice(1).map(cameraId => {
-    const camera = LIVE_CAMERAS.find(item => item.id === cameraId);
-    const button = document.createElement("button");
-    button.className = "lm-camera-thumb";
-    button.type = "button";
-    button.setAttribute("aria-label", `Show ${camera.name} as the large camera`);
-    button.addEventListener("click", () => swapLiveCamera(camera.id));
+// ============================================================
+// THEME SWITCHING ENGINE (BRIGHT <-> DARK)
+// ============================================================
 
-    const image = document.createElement("img");
-    image.className = "lm-camera-thumb-image";
-    image.dataset.liveCamera = camera.id;
-    image.alt = `${camera.name} live camera`;
-    image.src = liveCameraSources.get(camera.id) || "";
+function initTheme() {
+  setTheme(STATE.theme);
+}
 
-    const name = document.createElement("span");
-    name.className = "lm-camera-thumb-name";
-    name.textContent = camera.name;
+function toggleTheme() {
+  const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'bright' : 'dark';
+  setTheme(newTheme);
+}
 
-    button.append(image, name);
-    return button;
+function setTheme(theme) {
+  STATE.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('polaris_theme', theme);
+
+  // Update Page 1 Theme-Specific Visual Assets
+  const heroBg = document.getElementById('hero-dynamic-bg');
+  if (heroBg) {
+    heroBg.src = theme === 'dark' ? 'assets/hero_globe_dark.png' : 'assets/hero_globe_bright.png';
+  }
+
+  const cardCmd = document.getElementById('card-img-command');
+  if (cardCmd) {
+    cardCmd.src = theme === 'dark' ? 'assets/card_header_command_dark.png' : 'assets/card_header_command_bright.png';
+  }
+
+  const cardMaitri = document.getElementById('card-img-maitri');
+  if (cardMaitri) {
+    cardMaitri.src = theme === 'dark' ? 'assets/card_header_maitri_dark.png' : 'assets/card_header_maitri_bright.png';
+  }
+
+  const cardBharati = document.getElementById('card-img-bharati');
+  if (cardBharati) {
+    cardBharati.src = theme === 'dark' ? 'assets/card_header_bharati_dark.png' : 'assets/card_header_bharati_bright.png';
+  }
+
+  const mottoBg = document.getElementById('motto-bg-img');
+  if (mottoBg) {
+    mottoBg.src = theme === 'dark' ? 'assets/motto_bg_dark.png' : 'assets/motto_bg_bright.png';
+  }
+
+  // Station and Command page backgrounds
+  const maitriThumb = document.getElementById('spc-thumb-maitri');
+  if (maitriThumb) {
+    maitriThumb.src = theme === 'dark' ? 'assets/station_maitri_thumb_dark.png' : 'assets/station_maitri_thumb_bright.png';
+  }
+
+  const bharatiThumb = document.getElementById('spc-thumb-bharati');
+  if (bharatiThumb) {
+    bharatiThumb.src = theme === 'dark' ? 'assets/station_bharati_thumb_dark.png' : 'assets/station_bharati_thumb_bright.png';
+  }
+
+  const stationBg = document.getElementById('station-main-bg');
+  if (stationBg) {
+    const isBharati = STATE.selectedStation === 'bharati' || (typeof window !== 'undefined' && window.location.pathname.includes('bharati'));
+    if (isBharati) {
+      stationBg.src = theme === 'dark' ? 'assets/station_bharati_panorama_dark.png' : 'assets/station_bharati_panorama_bright.png';
+    } else {
+      stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    }
+  }
+
+  // Camera strip cards
+  for (let i = 1; i <= 4; i++) {
+    const camImg = document.getElementById(`cam-img-${i}`);
+    if (camImg) {
+      camImg.src = theme === 'dark' ? `assets/cam${i}_card_dark.png` : `assets/cam${i}_card_bright.png`;
+    }
+  }
+
+  // Right-hand widget camera preview
+  const widgetCam = document.getElementById('widget-cam-thumb');
+  if (widgetCam) {
+    widgetCam.src = theme === 'dark' ? 'assets/widget_cam_preview_dark.png' : 'assets/widget_cam_preview_bright.png';
+  }
+
+  // Redraw canvases
+  renderSensorTrendsChart(STATE.currentTrendMetric);
+  drawAdminMap();
+}
+
+// ============================================================
+// PAGE VIEW ROUTING (HOME / STATIONS / COMMAND)
+// ============================================================
+
+function switchView(viewName, station = null) {
+  STATE.currentView = viewName;
+
+  // Update navbar active states
+  ['home', 'stations', 'command'].forEach(v => {
+    const navBtn = document.getElementById(`nav-btn-${v}`);
+    if (navBtn) {
+      navBtn.classList.toggle('active', v === viewName);
+    }
+    const viewSection = document.getElementById(`view-${v}`);
+    if (viewSection) {
+      viewSection.classList.toggle('active', v === viewName);
+    }
   });
 
-  thumbnailGrid.replaceChildren(...thumbnailButtons);
-  if (animate) {
-    const mainWrapper = document.getElementById("lm-main-cam-wrapper");
-    if (mainWrapper) {
-      mainWrapper.classList.remove("camera-swap-in");
-      void mainWrapper.offsetWidth;
-      mainWrapper.classList.add("camera-swap-in");
+  // If specific station passed
+  if (station) {
+    selectStation(station);
+  }
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Trigger relevant canvas redraws after view becomes visible
+  setTimeout(() => {
+    if (viewName === 'stations') {
+      renderSensorTrendsChart(STATE.currentTrendMetric);
+    } else if (viewName === 'command') {
+      drawAdminMap();
+    }
+  }, 50);
+}
+
+// ============================================================
+// STATION SWITCHER (MAITRI VS BHARATI)
+// ============================================================
+
+function selectStation(station) {
+  STATE.selectedStation = station;
+
+  const maitriBtn = document.getElementById('spc-maitri');
+  const bharatiBtn = document.getElementById('spc-bharati');
+  if (maitriBtn) maitriBtn.classList.toggle('active', station === 'maitri');
+  if (bharatiBtn) bharatiBtn.classList.toggle('active', station === 'bharati');
+
+  const titleEl = document.getElementById('ops-station-name-heading');
+  const coordsEl = document.getElementById('ops-station-coords-label');
+  const stationBg = document.getElementById('station-main-bg');
+
+  if (station === 'maitri') {
+    if (titleEl) titleEl.textContent = 'Maitri Research Station';
+    if (coordsEl) coordsEl.textContent = "70┬░45'S, 11┬░44'E ΓÇó EAST ANTARCTICA";
+    if (stationBg) {
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    }
+  } else {
+    if (titleEl) titleEl.textContent = 'Bharati Research Station';
+    if (coordsEl) coordsEl.textContent = "69┬░24'S, 76┬░11'E ΓÇó LARSEMANN HILLS ΓÇó EAST ANTARCTICA";
+    if (stationBg) {
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_bharati_panorama_dark.png' : 'assets/station_bharati_panorama_bright.png';
     }
   }
 }
 
-function swapLiveCamera(cameraId) {
-  const selectedIndex = liveCameraOrder.indexOf(cameraId);
-  if (selectedIndex < 1) return;
+// ============================================================
+// SENSOR TRENDS 24H CANVAS CHART
+// ============================================================
 
-  [liveCameraOrder[0], liveCameraOrder[selectedIndex]] = [liveCameraOrder[selectedIndex], liveCameraOrder[0]];
-  renderLiveCameras(true);
+const TREND_DATA = {
+  power: [410, 415, 412, 420, 422, 418, 425, 420, 415, 422, 420, 418],
+  temp: [-14, -13.5, -13, -12.4, -12.0, -11.8, -12.2, -12.4, -12.8, -13.2, -13.6, -14],
+  wind: [14, 15, 17, 18, 20, 22, 19, 18, 17, 16, 17, 18],
+  fuel: [105, 104.8, 104.5, 104.2, 103.9, 103.5, 103.1, 102.8, 102.5, 102.2, 102.0, 102.0]
+};
+
+function switchSensorTrend(metric, btn) {
+  STATE.currentTrendMetric = metric;
+  document.querySelectorAll('.st-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderSensorTrendsChart(metric);
 }
 
-async function refreshLiveCamera(camera) {
-  const query = new URLSearchParams({ camera: camera.id });
+function renderSensorTrendsChart(metric = 'power') {
+  const canvas = document.getElementById('sensor-trend-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth || 260;
+  const H = canvas.height = canvas.offsetHeight || 48;
 
-  try {
-    const response = await fetch(`${LIVE_CAMERA_API}?${query}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Webcam request failed: ${response.status}`);
+  ctx.clearRect(0, 0, W, H);
 
-    const [imageFile] = (await response.text()).trim().split(",");
-    if (!imageFile) throw new Error("Webcam response did not contain an image filename");
+  const values = TREND_DATA[metric] || TREND_DATA.power;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  
+  const minVal = Math.min(...values) * 0.95;
+  const maxVal = Math.max(...values) * 1.05;
+  const range = maxVal - minVal || 1;
+  const stepX = (W - 20) / (values.length - 1);
 
-    const imageUrl = new URL(imageFile.trim(), LIVE_CAMERA_IMAGE_BASE).href;
-    liveCameraSources.set(camera.id, imageUrl);
-    document.querySelectorAll(`[data-live-camera="${camera.id}"]`).forEach(image => {
-      if (image.src !== imageUrl) image.src = imageUrl;
-    });
-  } catch (error) {
-    console.warn(`Unable to refresh ${camera.name}:`, error);
+  // Subtle grid lines
+  ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(11, 46, 89, 0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 3; i++) {
+    const y = H * (i / 4);
+    ctx.beginPath();
+    ctx.moveTo(10, y);
+    ctx.lineTo(W - 10, y);
+    ctx.stroke();
+  }
+
+  // Curve gradient fill
+  const strokeColor = metric === 'fuel' ? '#ff7a00' : isDark ? '#00d4ff' : '#0077e6';
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, isDark ? 'rgba(0, 212, 255, 0.35)' : 'rgba(0, 119, 230, 0.25)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const x = 10 + i * stepX;
+    const y = H - 15 - ((v - minVal) / range) * (H - 30);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(10 + (values.length - 1) * stepX, H);
+  ctx.lineTo(10, H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Draw smooth line
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const x = 10 + i * stepX;
+    const y = H - 15 - ((v - minVal) / range) * (H - 30);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // End point pulse dot
+  const lastX = 10 + (values.length - 1) * stepX;
+  const lastY = H - 15 - ((values[values.length - 1] - minVal) / range) * (H - 30);
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = strokeColor;
+  ctx.shadowColor = strokeColor;
+  ctx.shadowBlur = 8;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+// ============================================================
+// CONTINENTAL ANTARCTICA MAP (COMMAND CONTROL VIEW)
+// ============================================================
+
+function setAdminMapMode(mode, btn) {
+  STATE.adminMapMode = mode;
+  document.querySelectorAll('.map-view-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  drawAdminMap();
+}
+
+function drawAdminMap() {
+  const canvas = document.getElementById('admin-canvas-map');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth || 500;
+  const H = canvas.height = canvas.offsetHeight || 380;
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background tint
+  ctx.fillStyle = isDark ? '#061528' : '#0d2847';
+  ctx.fillRect(0, 0, W, H);
+
+  // Latitude circles
+  ctx.strokeStyle = isDark ? 'rgba(0, 212, 255, 0.08)' : 'rgba(255, 255, 255, 0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 5; i++) {
+    ctx.beginPath();
+    ctx.arc(W * 0.5, H * 0.54, i * 40, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Antarctica Continent Outline (Simplified Stylized Polar Contour)
+  ctx.beginPath();
+  const pts = [
+    [0.26 * W, 0.78 * H], [0.18 * W, 0.62 * H], [0.20 * W, 0.44 * H],
+    [0.28 * W, 0.35 * H], [0.38 * W, 0.28 * H], [0.46 * W, 0.22 * H],
+    [0.55 * W, 0.24 * H], [0.65 * W, 0.28 * H], [0.74 * W, 0.36 * H],
+    [0.82 * W, 0.48 * H], [0.80 * W, 0.64 * H], [0.72 * W, 0.78 * H],
+    [0.58 * W, 0.86 * H], [0.44 * W, 0.88 * H], [0.34 * W, 0.85 * H]
+  ];
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) {
+    ctx.lineTo(pts[i][0], pts[i][1]);
+  }
+  ctx.closePath();
+
+  // Ice shelf fill
+  const iceGrad = ctx.createRadialGradient(W*0.5, H*0.5, 20, W*0.5, H*0.5, W*0.4);
+  if (isDark) {
+    iceGrad.addColorStop(0, 'rgba(100, 180, 255, 0.25)');
+    iceGrad.addColorStop(1, 'rgba(20, 80, 150, 0.12)');
+  } else {
+    iceGrad.addColorStop(0, 'rgba(180, 220, 255, 0.35)');
+    iceGrad.addColorStop(1, 'rgba(60, 130, 210, 0.18)');
+  }
+  ctx.fillStyle = iceGrad;
+  ctx.fill();
+
+  ctx.strokeStyle = isDark ? 'rgba(0, 212, 255, 0.5)' : 'rgba(255, 255, 255, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Stations Positions
+  const maitriX = W * 0.38;
+  const maitriY = H * 0.42;
+  const bharatiX = W * 0.68;
+  const bharatiY = H * 0.52;
+  const satX = W * 0.52;
+  const satY = H * 0.18;
+
+  // Pulsing Satellite & Data Arcs
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = 'rgba(0, 212, 255, 0.4)';
+  ctx.lineWidth = 1.5;
+
+  // Arc Sat -> Maitri
+  ctx.beginPath();
+  ctx.moveTo(satX, satY);
+  ctx.quadraticCurveTo(W * 0.42, H * 0.28, maitriX, maitriY);
+  ctx.stroke();
+
+  // Arc Sat -> Bharati
+  ctx.beginPath();
+  ctx.moveTo(satX, satY);
+  ctx.quadraticCurveTo(W * 0.62, H * 0.32, bharatiX, bharatiY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // GSAT-17 Satellite Icon
+  ctx.beginPath();
+  ctx.arc(satX, satY, 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#00d4ff';
+  ctx.shadowColor = '#00d4ff';
+  ctx.shadowBlur = 12;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '10px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('GSAT-17 (ISRO)', satX + 10, satY + 4);
+
+  // Maitri Beacon (Orange)
+  ctx.beginPath();
+  ctx.arc(maitriX, maitriY, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff7a00';
+  ctx.shadowColor = '#ff7a00';
+  ctx.shadowBlur = 10;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '11px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('Maitri', maitriX - 16, maitriY + 20);
+
+  // Bharati Beacon (Cyan)
+  ctx.beginPath();
+  ctx.arc(bharatiX, bharatiY, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#00d4ff';
+  ctx.shadowColor = '#00d4ff';
+  ctx.shadowBlur = 10;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '11px Plus Jakarta Sans, sans-serif';
+  ctx.fillText('Bharati', bharatiX - 18, bharatiY + 20);
+
+  // Central Title
+  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.6)';
+  ctx.font = '11px Plus Jakarta Sans, sans-serif';
+  ctx.letterSpacing = '0.1em';
+  ctx.fillText('A N T A R C T I C A', W * 0.40, H * 0.62);
+}
+
+// ============================================================
+// HOTSPOT MODAL / DIAGNOSTIC INSPECTOR
+// ============================================================
+
+function openHotspotInfo(title, description) {
+  alert(`[NCPOR Subsystem Diagnostic]\n\n≡ƒôì ${title}\n${description}\n\nStatus: Online & Streaming (2s refresh)`);
+}
+
+// ============================================================
+// ADMIN RIGHT TABS SWITCHER
+// ============================================================
+
+function switchAdminRightTab(tab, btn) {
+  document.querySelectorAll('.admin-tab-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const content = document.getElementById('admin-right-content');
+  if (!content) return;
+
+  if (tab === 'alerts') {
+    content.innerHTML = `
+      <div class="alert-row-item">
+        <span class="alert-badge-tag high">HIGH</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Wind speed high at Bharati</span>
+          <span class="atb-sub">14:18 ΓÇó 42 km/h (Threshold 40 km/h)</span>
+        </div>
+      </div>
+      <div class="alert-row-item">
+        <span class="alert-badge-tag medium">MEDIUM</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Generator 2 bearing check</span>
+          <span class="atb-sub">11:05 ΓÇó Maitri Research Station</span>
+        </div>
+      </div>
+      <div class="alert-row-item">
+        <span class="alert-badge-tag info">INFO</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Sea ice shift telemetry</span>
+          <span class="atb-sub">09:26 ΓÇó Near Bharati (AI Analysis)</span>
+        </div>
+      </div>
+    `;
+  } else if (tab === 'insights') {
+    content.innerHTML = `
+      <div class="alert-row-item">
+        <span class="alert-badge-tag info">AI INSIGHT</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Weather window optimal</span>
+          <span class="atb-sub">Next 48h suitable for field helicopter survey</span>
+        </div>
+      </div>
+      <div class="alert-row-item">
+        <span class="alert-badge-tag info">AI INSIGHT</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Sea ice drift pattern shift</span>
+          <span class="atb-sub">Model predicts 12% faster drift near bay</span>
+        </div>
+      </div>
+      <div class="alert-row-item">
+        <span class="alert-badge-tag info">AI INSIGHT</span>
+        <div class="alert-text-body">
+          <span class="atb-title">Thermal efficiency peak</span>
+          <span class="atb-sub">Living module heat recovery operating at 91%</span>
+        </div>
+      </div>
+    `;
+  } else {
+    content.innerHTML = `
+      <div class="alert-row-item" style="border-left: 3px solid var(--accent-green)">
+        <div class="alert-text-body">
+          <span class="atb-title">Emergency Response Team</span>
+          <span class="atb-sub">All station safety squads on Standby Tier 1</span>
+        </div>
+      </div>
+      <div class="alert-row-item" style="border-left: 3px solid var(--accent-green)">
+        <div class="alert-text-body">
+          <span class="atb-title">Medical Bay Readiness</span>
+          <span class="atb-sub">Oxygen &amp; Hyperbaric systems nominal</span>
+        </div>
+      </div>
+    `;
   }
 }
 
-function refreshAllLiveCameras() {
-  LIVE_CAMERAS.forEach(camera => refreshLiveCamera(camera));
+// ============================================================
+// PROTOTYPE MODAL ENGINE & OPERATIONAL TAB HANDLERS
+// ============================================================
+
+function showPrototypeModal(title, htmlBody) {
+  let modal = document.getElementById('global-prototype-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'global-prototype-modal';
+    modal.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      padding: 20px; box-sizing: border-box;
+    `;
+    modal.onclick = (e) => { if (e.target === modal) closePrototypeModal(); };
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div style="background:var(--bg-card); border:1px solid var(--border-medium); border-radius:12px; width:100%; max-width:620px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 40px rgba(0,0,0,0.3); overflow:hidden;" onclick="event.stopPropagation()">
+      <div style="padding:16px 22px; border-bottom:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; background:var(--bg-card-subtle);">
+        <h3 style="margin:0; font-size:16px; color:var(--text-primary); font-weight:800;">${title}</h3>
+        <button onclick="closePrototypeModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div style="padding:22px; overflow-y:auto; font-size:13.5px; color:var(--text-secondary); line-height:1.6;">
+        ${htmlBody}
+      </div>
+      <div style="padding:12px 22px; border-top:1px solid var(--border-light); display:flex; justify-content:flex-end; gap:10px; background:var(--bg-card-subtle);">
+        <button onclick="closePrototypeModal()" style="background:var(--accent-blue); color:#fff; border:none; padding:8px 18px; border-radius:6px; font-weight:700; font-size:12.5px; cursor:pointer;">Acknowledge &bull; Close</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
 }
 
-function selectLiveStation(station) {
-  const stations = {
-    maitri: {
-      name: "Maitri Research Station",
-      coordinates: "70°45'S, 11°44'E • EAST ANTARCTICA"
-    },
-    bharati: {
-      name: "Bharati Research Station",
-      coordinates: "69°24'S, 76°11'E • EAST ANTARCTICA"
-    }
-  };
-  const selectedStation = stations[station];
-  if (!selectedStation) return;
-
-  document.getElementById("lm-tab-maitri")?.classList.toggle("active", station === "maitri");
-  document.getElementById("lm-tab-bharati")?.classList.toggle("active", station === "bharati");
-  const stationName = document.getElementById("lm-sic-name");
-  const stationCoordinates = document.getElementById("lm-sic-coords");
-  const telemetryStation = document.getElementById("lm-env-station-heading");
-  if (stationName) stationName.textContent = selectedStation.name;
-  if (stationCoordinates) stationCoordinates.textContent = selectedStation.coordinates;
-  if (telemetryStation) telemetryStation.textContent = selectedStation.name;
+function closePrototypeModal() {
+  const modal = document.getElementById('global-prototype-modal');
+  if (modal) modal.style.display = 'none';
 }
 
-function fetchLiveEnvironmentalData(force = false) {
+function openHotspotInfo(title, description) {
+  showPrototypeModal(`≡ƒôì ${title} &bull; Subsystem Telemetry`, `
+    <div style="background:var(--bg-secondary); border-left:3px solid var(--accent-blue); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:14px;">
+      <strong style="color:var(--text-primary); display:block; font-size:14px; margin-bottom:4px;">${title}</strong>
+      <span>${description}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12.5px; margin-bottom:12px;">
+      <div style="background:var(--bg-card-subtle); border:1px solid var(--border-light); padding:10px; border-radius:6px;">
+        <span style="color:var(--text-muted); display:block;">Telemetry Uplink</span>
+        <strong style="color:var(--accent-green);">&#x25CF; Online (100 Hz Stream)</strong>
+      </div>
+      <div style="background:var(--bg-card-subtle); border:1px solid var(--border-light); padding:10px; border-radius:6px;">
+        <span style="color:var(--text-muted); display:block;">Health Rating</span>
+        <strong style="color:var(--accent-blue);">99.4% Nominal</strong>
+      </div>
+    </div>
+    <p style="font-size:12px; color:var(--text-muted); margin:0;">Automated telemetry calibrated under Ministry of Earth Sciences (MoES) protocol standards.</p>
+  `);
+}
+
+function setOpsTab(tabName, btn) {
+  document.querySelectorAll('.ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (tabName === 'overview') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (tabName === 'cameras') {
+    const el = document.querySelector('.live-camera-strip-card');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (tabName === 'machines') {
+    showPrototypeModal('ΓÜÖ∩╕Å Machine Health & Power Diagnostics', `
+      <p>Real-time telemetry from station mechanical plants and diesel-electric microgrid:</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0;">
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>DG Unit #1:</strong> 210 kW Load &bull; 82┬░C Jacket Water</span>
+          <span style="color:var(--accent-green); font-weight:700;">NORMAL</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>DG Unit #2:</strong> 210 kW Load &bull; Vibration 3.4 mm/s</span>
+          <span style="color:var(--accent-orange); font-weight:700;">CAUTION &lt; 3.5</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>Pipeline Trace Heating:</strong> Circuit #2 active (+4.2┬░C)</span>
+          <span style="color:var(--accent-green); font-weight:700;">HEATING</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>Battery Bank (48V / 2400 Ah):</strong> Float Charge 54.2V</span>
+          <span style="color:var(--accent-green); font-weight:700;">98.4%</span>
+        </div>
+      </div>
+    `);
+  } else if (tabName === 'environment') {
+    window.location.href = 'livedata.html';
+  } else if (tabName === 'research') {
+    showPrototypeModal('≡ƒö¼ Research Ops & Active Scientific Experiments', `
+      <p>National Polar Data Repository active observatories streaming live datasets:</p>
+      <ul style="padding-left:18px; line-height:1.8;">
+        <li><strong>Geomagnetic Observatory:</strong> 3-axis fluxgate magnetometer (IIG Mumbai) &bull; Streaming 1-sec variometer records</li>
+        <li><strong>Atmospheric &amp; Ozone Soundings:</strong> Dobson spectrophotometer &amp; ozonesonde balloon sorties nominal</li>
+        <li><strong>Meteorological Radiation:</strong> Net radiometer, pyranometer, and boundary layer sonic anemometer</li>
+        <li><strong>Seismology:</strong> Broadband 3-component digital seismometer (NGRI Hyderabad)</li>
+      </ul>
+      <a href="resources.html" style="color:var(--accent-blue); font-weight:700; text-decoration:none;">Download Calibrated Callsets in Resources &rarr;</a>
+    `);
+  } else if (tabName === 'supplies') {
+    showPrototypeModal('≡ƒôª Supplies, Consumables & Logistics Projection', `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">Fuel Endurance</span>
+          <h4 style="margin:4px 0; font-size:18px; color:var(--accent-blue);">58 Days Reserve</h4>
+          <span style="font-size:12px;">Pre-conditioned Jet A-1</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">Potable Water Stock</span>
+          <h4 style="margin:4px 0; font-size:18px; color:var(--accent-green);">38.0 m┬│ Available</h4>
+          <span style="font-size:12px;">Daily burn: 1.8 m┬│/day</span>
+        </div>
+      </div>
+      <p style="font-size:13px;">Next resupply scheduled via Antarctic chartered icebreaker <em>MV Vasiliy Golovnin</em> during 45th Indian Antarctic Expedition.</p>
+    `);
+  } else if (tabName === 'crew') {
+    showPrototypeModal('≡ƒæÑ Winter-Over Expedition Crew Roster', `
+      <p>Personnel stationed on continent for 365-day polar isolation mission:</p>
+      <div style="display:flex; flex-direction:column; gap:8px; margin:14px 0;">
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Dr. Arvind Saxena</strong> &bull; Station Commander &amp; Glaciologist</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Dr. Priya Nambiar</strong> &bull; Expedition Medical Officer (AIIMS)</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Er. Rajesh Verma</strong> &bull; Chief Mechanical &amp; Power Engineer</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Suresh Kumar</strong> &bull; SATCOM &amp; Telemetry Specialist (ISRO)</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+      </div>
+      <span style="font-size:12px; color:var(--text-muted);">Total: 24 active personnel &bull; 0 in sick bay &bull; Quarantine protocol active.</span>
+    `);
+  } else if (tabName === 'reports') {
+    downloadStationSITREP();
+  }
+}
+
+function setAdminTab(tabName, btn) {
+  document.querySelectorAll('.admin-layout-grid .ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (tabName === 'overview') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (tabName === 'stations') {
+    showPrototypeModal('🛰️ Polar Research Stations Operations', `
+      <p style="font-size:13.5px; line-height:1.5; color:var(--text-secondary);">Select an active Antarctic station gateway to open the live operations digital twin console:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;">
+        <div onclick="window.location.href='maitri.html'" style="cursor:pointer; background:var(--bg-secondary); border:1px solid var(--border-medium); border-radius:10px; padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.borderColor='var(--accent-orange)'" onmouseout="this.style.borderColor='var(--border-medium)'">
+          <img src="assets/real_maitri_live.jpg" alt="Maitri" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:10px;" />
+          <strong style="color:var(--accent-orange); display:block; font-size:15px; margin-bottom:4px;">Maitri Research Station</strong>
+          <span style="font-size:12px; color:var(--text-secondary); display:block;">Schirmacher Oasis &bull; 70°45'S, 11°44'E</span>
+          <button class="res-action-btn" style="margin-top:10px; width:100%; justify-content:center; background:var(--accent-orange)">Enter Maitri Console &rarr;</button>
+        </div>
+        <div onclick="window.location.href='bharati.html'" style="cursor:pointer; background:var(--bg-secondary); border:1px solid var(--border-medium); border-radius:10px; padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.borderColor='var(--accent-blue)'" onmouseout="this.style.borderColor='var(--border-medium)'">
+          <img src="assets/real_bharati_live.jpg" alt="Bharati" style="width:100%; height:110px; object-fit:cover; border-radius:6px; margin-bottom:10px;" />
+          <strong style="color:var(--accent-blue); display:block; font-size:15px; margin-bottom:4px;">Bharati Research Station</strong>
+          <span style="font-size:12px; color:var(--text-secondary); display:block;">Larsemann Hills &bull; 69°24'S, 76°11'E</span>
+          <button class="res-action-btn" style="margin-top:10px; width:100%; justify-content:center; background:var(--accent-blue)">Enter Bharati Console &rarr;</button>
+        </div>
+      </div>
+    `);
+  } else if (tabName === 'cameras') {
+    showPrototypeModal('📹 Unified Antarctic Surveillance Downlink', `
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">Real-time optical feed downlink across Maitri and Bharati observation sectors:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="background:#02070f; border-radius:8px; overflow:hidden; border:1px solid var(--border-medium); padding:8px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:700; color:#00ff88;">MAITRI BASE CAM-01</span>
+            <span style="font-size:11px; color:#ff7a00;">LIVE</span>
+          </div>
+          <img src="assets/real_maitri_live.jpg" alt="Maitri Cam" style="width:100%; height:130px; object-fit:cover; border-radius:4px;" />
+          <div style="font-size:11px; color:#cfdbe8; margin-top:6px;">Schirmacher Oasis &bull; 1080p Optical Stream</div>
+          <button class="res-action-btn" onclick="window.location.href='maitri.html#maitri-cameras-hub'" style="width:100%; margin-top:6px; justify-content:center; font-size:11px;">Open Maitri PTZ Hub &rarr;</button>
+        </div>
+        <div style="background:#02070f; border-radius:8px; overflow:hidden; border:1px solid var(--border-medium); padding:8px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:700; color:#00ff88;">BHARATI DECK CAM-01</span>
+            <span style="font-size:11px; color:#00b4d8;">LIVE</span>
+          </div>
+          <img src="assets/real_bharati_live.jpg" alt="Bharati Cam" style="width:100%; height:130px; object-fit:cover; border-radius:4px;" />
+          <div style="font-size:11px; color:#cfdbe8; margin-top:6px;">Larsemann Hills Coastal Shelf &bull; 1080p Stream</div>
+          <button class="res-action-btn" onclick="window.location.href='bharati.html#bharati-cameras-hub'" style="width:100%; margin-top:6px; justify-content:center; font-size:11px;">Open Bharati PTZ Hub &rarr;</button>
+        </div>
+      </div>
+    `);
+  } else if (tabName === 'crew') {
+    showPrototypeModal('👥 Pan-Antarctic Expedition Crew Manifest', `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px;">
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong>Maitri Station Roster</strong>
+            <span class="online-chip" style="font-size:10px;"><span class="dot-green"></span> 24 / 25 Active</span>
+          </div>
+          <div style="font-size:12px; line-height:1.6; color:var(--text-secondary);">
+            &bull; Station Leader: Dr. Arvind Saxena<br/>
+            &bull; Medical Officer: Dr. Priya Nambiar (AIIMS)<br/>
+            &bull; Technical &amp; Power: 6 Engineers<br/>
+            &bull; Scientific Observers: 16 Researchers<br/>
+            &bull; Medical Status: <strong>100% Fit for Duty</strong>
+          </div>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong>Bharati Station Roster</strong>
+            <span class="online-chip" style="font-size:10px;"><span class="dot-green"></span> 20 / 24 Active</span>
+          </div>
+          <div style="font-size:12px; line-height:1.6; color:var(--text-secondary);">
+            &bull; Station Leader: Dr. Sunita Deshmukh<br/>
+            &bull; Medical Officer: Dr. K. Ramanathan<br/>
+            &bull; Cogeneration &amp; RO: 5 Specialists<br/>
+            &bull; ISRO Ground Link: 4 Tracking Engineers<br/>
+            &bull; Medical Status: <strong>100% Fit for Duty</strong>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); text-align:center;">Total Expeditioner Deployment: 44 Active Scientists &amp; Engineers across both stations.</div>
+    `);
+  } else if (tabName === 'machines') {
+    showPrototypeModal('⚙️ Pan-Antarctic Microgrid & Critical Machinery', `
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:var(--bg-secondary); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>Maitri DG Microgrid:</strong> 420 kW / 510 kW (82% load) &bull; Kirloskar Sets 1 &amp; 2
+          </div>
+          <span class="badge-pill pill-green">NOMINAL</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>Bharati Scania CHP Units:</strong> 380 kW / 440 kW (88% load) &bull; Exhaust heat recovery active
+          </div>
+          <span class="badge-pill pill-green">RUNNING</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>Bharati SWRO Desalination:</strong> 10.2 m³/day permeate &bull; 240 µS/cm conductivity
+          </div>
+          <span class="badge-pill pill-green">OPTIMAL</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px 16px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>Maitri Lake Priyadarshini Trace Heating:</strong> Pipeline temperature +4.2°C &bull; Circuit A
+          </div>
+          <span class="badge-pill pill-green">NOMINAL</span>
+        </div>
+      </div>
+    `);
+  } else if (tabName === 'supplies') {
+    showPrototypeModal('📦 Antarctic Logistics & Fuel Reserves Projection', `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div style="background:var(--bg-secondary); padding:14px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Maitri Fuel &amp; Water</span>
+          <div style="font-size:18px; font-weight:800; color:var(--accent-orange); margin:6px 0;">102 kl HSD (68%)</div>
+          <div style="font-size:12px; color:var(--text-secondary);">Water: 38 m³ &bull; Winter Endurance: 58 Days</div>
+        </div>
+        <div style="background:var(--bg-secondary); padding:14px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Bharati Fuel &amp; Water</span>
+          <div style="font-size:18px; font-weight:800; color:var(--accent-blue); margin:6px 0;">140 kl Jet A-1 (81%)</div>
+          <div style="font-size:12px; color:var(--text-secondary);">Water: 62 m³ &bull; Winter Endurance: 74 Days</div>
+        </div>
+      </div>
+      <p style="font-size:12.5px; color:var(--text-secondary);">Next polar resupply voyage scheduled with charter vessel <em>MV Vasiliy Golovnin</em> from Cape Town in Nov 2026.</p>
+    `);
+  } else if (tabName === 'research') {
+    showPrototypeModal('🔬 Scientific Observatories & Sensor Matrix', `
+      <div style="font-size:13px; line-height:1.6; color:var(--text-secondary);">
+        Active real-time telemetry streams from 14 Antarctic research laboratories:
+        <ul style="padding-left:18px; margin-top:8px;">
+          <li><strong>Maitri Geomagnetic Observatory:</strong> Fluxgate magnetometers streaming 1-sec vector data to IIG Mumbai</li>
+          <li><strong>Bharati Ionospheric &amp; Aurora Radar:</strong> Dual HF radar tracking ionospheric convection velocity</li>
+          <li><strong>Surface Ozone &amp; Greenhouse Gases:</strong> Trace gas analyzers measuring atmospheric CO₂/CH₄ levels</li>
+          <li><strong>ISRO IMGEOS Ground Station:</strong> High-bandwidth X/S-band remote sensing satellite data acquisition</li>
+        </ul>
+      </div>
+      <button class="res-action-btn" onclick="window.location.href='resources.html'" style="margin-top:12px;">Browse Research Datasets &amp; SOPs &rarr;</button>
+    `);
+  } else if (tabName === 'alerts') {
+    switchAdminRightTab('alerts');
+  } else if (tabName === 'comms') {
+    showPrototypeModal('📡 ISRO / GSAT Satellite Comms Telemetry', `
+      <div style="background:var(--bg-secondary); padding:14px; border-radius:8px; font-family:'JetBrains Mono'; font-size:12.5px; line-height:1.7;">
+        <div>UPLINK CARRIER: GSAT-17 C-band 4.8 GHz</div>
+        <div>DOWNLINK CARRIER: 3.6 GHz Nominal (ISRO IMGEOS)</div>
+        <div>BIT ERROR RATE: &lt; 1.2 x 10^-9 (99.99% Clean)</div>
+        <div>LATENCY (ROUND TRIP): 620 ms Geo Orbit</div>
+        <div>AUTOMATED TRACKING SERVO: Locked (Az: 142.4°, El: 31.8°)</div>
+        <div>BHARATI ISRO X-BAND RECEIVER: 20.0 Mbps nominal</div>
+      </div>
+    `);
+  }
+}
+
+function downloadStationSITREP() {
+  const content = `================================================================================
+NATIONAL CENTRE FOR POLAR & OCEAN RESEARCH (NCPOR)
+MINISTRY OF EARTH SCIENCES, GOVERNMENT OF INDIA
+DAILY ANTARCTIC OPERATIONS SITUATION REPORT (SITREP)
+================================================================================
+Date/Time UTC : ${new Date().toISOString()}
+Reporting Post : Antarctic Remote Operations Center (Goa)
+
+1. STATION STATUS SUMMARY:
+--------------------------------------------------------------------------------
+- Maitri Research Station (70┬░45'S, 11┬░44'E)  : ONLINE - All Subsystems Nominal
+- Bharati Research Station (69┬░24'S, 76┬░11'E) : ONLINE - All Subsystems Nominal
+
+2. METEOROLOGICAL TELEMETRY:
+--------------------------------------------------------------------------------
+- Maitri  : Temp -12.4┬░C | Wind 18.0 kt SE | Pressure 984.2 hPa
+- Bharati : Temp -8.6┬░C  | Wind 12.0 kt SE | Pressure 988.4 hPa
+
+3. MICROGRID & ENERGY INVENTORY:
+--------------------------------------------------------------------------------
+- Maitri Primary Load   : 420 kW / 510 kW (82% base load)
+- Bharati Cogeneration  : 380 kW / 440 kW (88% base load)
+- Total HSD Fuel Stock  : 242 kl combined (68 days operational autonomy)
+
+4. EXPEDITION PERSONNEL:
+--------------------------------------------------------------------------------
+- Total Crew Stationed  : 44 Personnel (24 Maitri, 20 Bharati)
+- Medical Readiness     : 100% Fit, Nil Inpatients
+
+5. SATELLITE COMMS LINK:
+--------------------------------------------------------------------------------
+- Carrier Status        : ISRO GSAT-17 Transponder Synchronized (12.4 Mbps / 20.0 Mbps)
+
+Authorized Signature:
+Mission Operations Controller, NCPOR
+================================================================================
+`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `NCPOR_ANTARCTIC_SITREP_${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ============================================================
+// REALTIME CLOCK & PERIODIC TELEMETRY UPDATES
+// ============================================================
+
+function updateClock() {
+  const clockEl = document.getElementById('realtime-clock');
+  if (!clockEl) return;
   const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false }) + ' IST';
-  const updatedEl = document.getElementById('lm-val-updated');
-  if (updatedEl) updatedEl.textContent = timeStr;
+  
+  // Format IST time
+  const options = { 
+    timeZone: 'Asia/Kolkata', 
+    weekday: 'short', 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit', 
+    hour12: false 
+  };
+  const str = now.toLocaleString('en-IN', options).replace(/,/g, '');
+  clockEl.textContent = `${str} IST`;
+}
 
-  const solarTimeEl = document.getElementById('lm-station-local-time');
-  if (solarTimeEl) {
-    const utcHours = now.getUTCHours();
-    const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
-    solarTimeEl.textContent = `Station Solar Time: ${String(utcHours).padStart(2, '0')}:${utcMinutes} UTC`;
+// Window resize handler
+window.addEventListener('resize', () => {
+  if (STATE.currentView === 'stations') {
+    renderSensorTrendsChart(STATE.currentTrendMetric);
+  } else if (STATE.currentView === 'command') {
+    drawAdminMap();
+  }
+});
+
+// Initialization
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  updateClock();
+  setInterval(updateClock, 1000);
+  initClerkAuth();
+  checkAuthRoutingOnLoad();
+  
+  // Initial canvas draw
+  setTimeout(() => {
+    drawAdminMap();
+    renderSensorTrendsChart(STATE.currentTrendMetric);
+  }, 100);
+});
+
+// Check if user arrived via redirect with view/station params
+function checkAuthRoutingOnLoad() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetView = urlParams.get('view');
+  const targetStation = urlParams.get('station');
+  const isAuthParam = urlParams.get('auth');
+
+  if (isAuthParam) {
+    if (!sessionStorage.getItem('polaris_auth_user') && !localStorage.getItem('polaris_auth_user')) {
+      const mockAuth = {
+        fullName: 'Expeditions Officer',
+        role: 'Verified Expedition Personnel',
+        authenticatedAt: new Date().toISOString()
+      };
+      try {
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify(mockAuth));
+        localStorage.setItem('polaris_auth_user', JSON.stringify(mockAuth));
+      } catch (e) {}
+    }
   }
 
-  if (force) {
-    const tempEl = document.getElementById('lm-val-temp');
-    if (tempEl) {
-      const base = -12.4;
-      const variation = (Math.random() * 0.6 - 0.3).toFixed(1);
-      tempEl.textContent = (base + parseFloat(variation)).toFixed(1);
-    }
-    const windEl = document.getElementById('lm-val-windspeed');
-    if (windEl) {
-      windEl.textContent = Math.round(16 + Math.random() * 6);
-    }
+  updateAuthUI();
+
+  if (targetView && targetView !== 'home') {
+    setTimeout(() => {
+      switchView(targetView, targetStation);
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (e) {}
+    }, 150);
   }
 }
+
+// ============================================================
+// CLERK AUTHENTICATION INTEGRATION & PORTAL SIGN-IN HANDLER
+// ============================================================
+
+function getAuthenticatedUser() {
+  const sessionUser = sessionStorage.getItem('polaris_auth_user');
+  if (sessionUser) {
+    try { return JSON.parse(sessionUser); } catch (e) {}
+  }
+  const localUser = localStorage.getItem('polaris_auth_user');
+  if (localUser) {
+    try { return JSON.parse(localUser); } catch (e) {}
+  }
+  if (typeof Clerk !== 'undefined' && Clerk.user) {
+    return {
+      fullName: Clerk.user.fullName || Clerk.user.firstName || 'Expedition Officer',
+      email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : '',
+      role: 'Clerk Verified User',
+      id: Clerk.user.id
+    };
+  }
+  return null;
+}
+
+function updateAuthUI() {
+  const user = getAuthenticatedUser();
+  const btnCommand = document.getElementById('btn-signin-command');
+  const btnMaitri = document.getElementById('btn-signin-maitri');
+  const btnBharati = document.getElementById('btn-signin-bharati');
+  const statusIndicators = document.querySelectorAll('.system-status-indicator, #auth-status-container');
+
+  if (user) {
+    if (btnCommand) btnCommand.innerHTML = 'Enter Command &rarr;';
+    if (btnMaitri) btnMaitri.innerHTML = 'Access Maitri &rarr;';
+    if (btnBharati) btnBharati.innerHTML = 'Access Bharati &rarr;';
+
+    const shortRole = user.role || 'Authorized Personnel';
+    const displayName = user.fullName || 'Expeditions Officer';
+
+    statusIndicators.forEach(el => {
+      el.innerHTML = `
+        <div class="user-auth-badge" style="display:inline-flex; align-items:center; gap:8px; background:rgba(0,168,84,0.14); border:1px solid rgba(0,168,84,0.35); padding:4px 10px; border-radius:6px; font-size:12px; color:var(--accent-green); font-weight:700;">
+          <span class="pulse-dot-green"></span>
+          <span>👤 ${displayName} <span style="opacity:0.8; font-size:11px; font-weight:500;">(${shortRole})</span></span>
+          <button onclick="signOutUser()" style="background:rgba(230,57,70,0.18); border:1px solid rgba(230,57,70,0.35); color:var(--accent-red); padding:2px 7px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:700; margin-left:4px;" title="Sign out of Antarctic Portal">Sign Out</button>
+        </div>
+      `;
+    });
+  } else {
+    if (btnCommand) btnCommand.innerHTML = 'Sign In &rarr;';
+    if (btnMaitri) btnMaitri.innerHTML = 'Sign In &rarr;';
+    if (btnBharati) btnBharati.innerHTML = 'Sign In &rarr;';
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    statusIndicators.forEach(el => {
+      el.innerHTML = `
+        <a href="signin.html?target=${encodeURIComponent(currentPage)}" class="user-signin-link-btn" style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,119,230,0.12); border:1px solid var(--accent-blue); padding:5px 12px; border-radius:6px; font-size:12px; color:var(--accent-blue); font-weight:700; text-decoration:none; transition:all 0.15s ease;" title="Sign In to Access Polar Operations">
+          <span class="pulse-dot-green"></span>
+          <span>🔐 Officer Sign In</span>
+        </a>
+      `;
+    });
+  }
+}
+
+function handlePortalSignIn(targetView, station = null) {
+  const user = getAuthenticatedUser();
+
+  if (user) {
+    if (typeof switchView === 'function') {
+      switchView(targetView, station);
+    } else {
+      if (targetView.includes('maitri')) window.location.href = 'maitri.html';
+      else if (targetView.includes('bharati')) window.location.href = 'bharati.html';
+      else if (targetView.includes('command')) window.location.href = 'command.html';
+      else window.location.href = 'index.html';
+    }
+  } else {
+    const redirectInfo = { view: targetView, station: station };
+    try {
+      sessionStorage.setItem('polaris_auth_redirect', JSON.stringify(redirectInfo));
+      localStorage.setItem('polaris_auth_redirect', JSON.stringify(redirectInfo));
+    } catch (e) {}
+
+    let dest = 'signin.html?target=' + encodeURIComponent(targetView);
+    if (station) {
+      dest += '&station=' + encodeURIComponent(station);
+    }
+    window.location.href = dest;
+  }
+}
+
+function signOutUser() {
+  if (confirm('Sign out from Antarctic Operations Portal?')) {
+    try {
+      sessionStorage.removeItem('polaris_auth_user');
+      localStorage.removeItem('polaris_auth_user');
+      sessionStorage.removeItem('polaris_auth_redirect');
+      localStorage.removeItem('polaris_auth_redirect');
+    } catch (e) {}
+
+    if (typeof Clerk !== 'undefined' && typeof Clerk.signOut === 'function') {
+      try { Clerk.signOut(); } catch (e) {}
+    }
+    updateAuthUI();
+  }
+}
+
+// Auto-run on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    updateAuthUI();
+  });
+} else {
+  initTheme();
+  updateAuthUI();
+}
+
+
+

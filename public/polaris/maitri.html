@@ -31,10 +31,6 @@
       <nav class="main-nav">
         <button class="nav-link-btn" onclick="window.location.href='index.html'">Home</button>
         <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
-        <button class="nav-link-btn active" onclick="window.location.href='maitri.html'">Maitri</button>
-        <button class="nav-link-btn" onclick="window.location.href='bharati.html'">Bharati</button>
-        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
-        <button class="nav-link-btn" onclick="window.location.href='livedata.html'">Live Data</button>
         <button class="nav-link-btn" onclick="window.location.href='resources.html'">Resources</button>
         <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
       </nav>
@@ -184,46 +180,96 @@
             </div>
           </div>
 
-          <!-- Live Camera Feeds Row -->
-          <div class="live-camera-strip-card">
-            <div class="lcs-header">
-              <div class="lcs-title-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                <span><strong>Live Camera Feeds</strong> &nbsp;&bull;&nbsp; <span class="dot-green"></span> <span class="text-green">4 / 4 Online</span></span>
+          <!-- Live Camera Operations Hub for Maitri -->
+          <div class="cam-player-card" id="maitri-cameras-hub" style="background:var(--bg-card); border:1px solid var(--border-medium); border-radius:12px; padding:18px; box-shadow:var(--card-shadow); margin-top:8px;">
+            <div class="cam-player-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:34px; height:34px; border-radius:8px; background:rgba(255,122,0,0.12); display:flex; align-items:center; justify-content:center; color:var(--accent-orange);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--accent-orange);">MAITRI OPTICAL DOWNLINK &bull; 1080P POLAR STREAM</div>
+                  <div style="font-size:15px; font-weight:800; color:var(--text-primary);" id="maitri-cam-title">CAM-01: Maitri Research Station Main Base &bull; Schirmacher Oasis</div>
+                </div>
               </div>
-              <div class="lcs-actions">
-                <a href="livedata.html" class="kpi-view-all">View All Sensors &rarr;</a>
-                <div class="cam-arrows">
-                  <button class="cam-arrow-btn" onclick="alert('Camera feed previous')">&lsaquo;</button>
-                  <button class="cam-arrow-btn" onclick="alert('Camera feed next')">&rsaquo;</button>
+
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="online-chip" style="background:rgba(230,57,70,0.12); color:var(--accent-red); font-size:11.5px;">
+                  <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-red); display:inline-block; margin-right:3px;"></span> LIVE
+                </span>
+
+                <!-- Vision Modes -->
+                <div style="display:flex; background:var(--bg-secondary); border-radius:6px; padding:2px; border:1px solid var(--border-medium);">
+                  <button class="cat-btn" id="m-vis-optical" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:var(--accent-blue); color:#fff;" onclick="setMaitriVision('optical')">Optical</button>
+                  <button class="cat-btn" id="m-vis-night" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:transparent; color:var(--text-secondary);" onclick="setMaitriVision('night')">Night</button>
+                  <button class="cat-btn" id="m-vis-thermal" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:transparent; color:var(--text-secondary);" onclick="setMaitriVision('thermal')">FLIR</button>
+                </div>
+
+                <!-- PTZ Zoom & Pan Controls -->
+                <div style="display:flex; gap:3px; align-items:center;">
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustMaitriPTZ('zoomIn')" title="Zoom In">Z+</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustMaitriPTZ('zoomOut')" title="Zoom Out">Z&minus;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustMaitriPTZ('panLeft')" title="Pan Left">&larr;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustMaitriPTZ('panRight')" title="Pan Right">&rarr;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustMaitriPTZ('reset')" title="Reset View">1x</button>
+                </div>
+
+                <button class="res-action-btn" onclick="captureMaitriSnapshot()" style="padding:5px 10px; font-size:11px;">Snapshot &#x1F4F7;</button>
+              </div>
+            </div>
+
+            <!-- Main Viewport with HUD -->
+            <div class="cam-video-viewport" style="position:relative; width:100%; height:320px; background:#02070f; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-medium);">
+              <img id="maitri-main-cam-display" class="cam-main-img" src="assets/real_maitri_live.jpg" alt="Maitri Research Station Main Base Camera" onerror="this.src='assets/cam2_card_bright.png'" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.25s ease, transform 0.25s ease;" />
+              <div class="cam-scanline-laser"></div>
+              
+              <div class="cam-hud-overlay">
+                <div class="hud-top">
+                  <div class="hud-cam-title">
+                    <span id="m-hud-cam-name">Maitri Base &bull; Schirmacher Oasis</span>
+                  </div>
+                  <div class="hud-meta-badge">
+                    <span id="m-hud-fps">29.9 FPS</span> &bull; <span id="m-hud-lat">618 ms</span> &bull; <span id="m-hud-zoom">1.0x</span>
+                  </div>
+                </div>
+
+                <div class="hud-bottom">
+                  <div>
+                    <div style="font-family:'JetBrains Mono'; font-weight:700; color:#00ff88; font-size:12px;" id="m-hud-clock">--:--:-- UTC</div>
+                    <div style="font-size:10.5px; color:#cfdbe8;" id="m-hud-coords">70°45'57"S, 11°44'09"E &bull; Elevation 117m</div>
+                  </div>
+                  <div style="font-family:'JetBrains Mono'; font-size:11px; color:#ffffff; background:rgba(0,0,0,0.6); padding:3px 7px; border-radius:4px;">
+                    Carrier: GSAT-17 C-Band &bull; SNR: 14.8 dB
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="cam-grid-4">
-              <div class="cam-box" onclick="alert('Opening Maitri External Station Pan HD Stream')">
-                <img id="cam-img-1" src="assets/cam1_card_bright.png" alt="Station Pan" />
-                <span class="cam-tag-badge">EXT-01</span>
-                <span class="cam-desc-label">Maitri &bull; External Station Pan</span>
-              </div>
+            <!-- 4-Channel Thumbnail Switcher -->
+            <div class="cam-channels-bar" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:10px;">
+              <button class="cam-ch-btn active" id="m-ch-0" onclick="switchMaitriCam(0)">
+                <img class="cam-ch-thumb" src="assets/real_maitri_live.jpg" alt="Maitri Base" />
+                <div class="cam-ch-name">CAM-01: Maitri Base</div>
+                <div class="cam-ch-sub">Main Complex &bull; Radome</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening Priyadarshini Lake Intake Pump Stream')">
-                <img id="cam-img-2" src="assets/cam2_card_bright.png" alt="Priyadarshini Lake" />
-                <span class="cam-tag-badge">WTR-02</span>
-                <span class="cam-desc-label">Priyadarshini Lake Intake</span>
-              </div>
+              <button class="cam-ch-btn" id="m-ch-1" onclick="switchMaitriCam(1)">
+                <img class="cam-ch-thumb" src="assets/cam3_card_bright.png" alt="Lake Priyadarshini" />
+                <div class="cam-ch-name">CAM-02: Priyadarshini</div>
+                <div class="cam-ch-sub">Fresh Water Intake</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening Generator Microgrid Room Stream')">
-                <img id="cam-img-3" src="assets/cam3_card_bright.png" alt="Generator Room" />
-                <span class="cam-tag-badge">PWR-03</span>
-                <span class="cam-desc-label">DG Microgrid Room</span>
-              </div>
+              <button class="cam-ch-btn" id="m-ch-2" onclick="switchMaitriCam(2)">
+                <img class="cam-ch-thumb" src="assets/cam2_card_bright.png" alt="East Ridge" />
+                <div class="cam-ch-name">CAM-03: East Ridge</div>
+                <div class="cam-ch-sub">Microgrid Generator Yard</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening Helipad & Logistics Yard Stream')">
-                <img id="cam-img-4" src="assets/cam4_card_bright.png" alt="Helipad Area" />
-                <span class="cam-tag-badge">AIR-04</span>
-                <span class="cam-desc-label">Helipad &amp; Cargo Staging</span>
-              </div>
+              <button class="cam-ch-btn" id="m-ch-3" onclick="switchMaitriCam(3)">
+                <img class="cam-ch-thumb" src="assets/cam1_card_bright.png" alt="Polar Yard" />
+                <div class="cam-ch-name">CAM-04: Logistics Yard</div>
+                <div class="cam-ch-sub">Habitation &amp; Cargo Track</div>
+              </button>
             </div>
           </div>
 
@@ -397,9 +443,286 @@
 
   <script src="app.js"></script>
   <script>
-    // Make sure Maitri assets are loaded
+    let currentMaitriCamIdx = 0;
+    let maitriPTZ = { zoom: 1.0, panX: 0, panY: 0, vision: 'optical' };
+
+    const MAITRI_CAMS = [
+      {
+        name: "CAM-01: Maitri Base",
+        title: "CAM-01: Maitri Research Station Main Base &bull; Schirmacher Oasis",
+        loc: "Maitri Base &bull; Schirmacher Oasis",
+        coords: "70°45'57\"S, 11°44'09\"E &bull; Elevation 117m",
+        src: "assets/real_maitri_live.jpg",
+        fallback: "assets/cam2_card_bright.png"
+      },
+      {
+        name: "CAM-02: Priyadarshini",
+        title: "CAM-02: Priyadarshini Fresh Water Intake &bull; Pipeline Trace Circuit",
+        loc: "Lake Priyadarshini &bull; Pump House",
+        coords: "70°45'42\"S, 11°43'50\"E &bull; Depth 6m",
+        src: "assets/cam3_card_bright.png",
+        fallback: "assets/cam3_card_bright.png"
+      },
+      {
+        name: "CAM-03: East Ridge",
+        title: "CAM-03: Maitri East Ridge &bull; Microgrid Generator Yard",
+        loc: "East Ridge &bull; Queen Maud Land",
+        coords: "70°45'50\"S, 11°44'25\"E &bull; Elevation 130m",
+        src: "assets/cam2_card_bright.png",
+        fallback: "assets/cam2_card_bright.png"
+      },
+      {
+        name: "CAM-04: Logistics Yard",
+        title: "CAM-04: Habitation Module &bull; Polar Vehicle Staging Yard",
+        loc: "Polar Logistics Staging Area",
+        coords: "70°45'55\"S, 11°44'02\"E &bull; Cargo Deck",
+        src: "assets/cam1_card_bright.png",
+        fallback: "assets/cam1_card_bright.png"
+      }
+    ];
+
+    function applyMaitriPTZ() {
+      const img = document.getElementById('maitri-main-cam-display');
+      if (!img) return;
+      img.style.transform = `scale(${maitriPTZ.zoom}) translate(${maitriPTZ.panX}px, ${maitriPTZ.panY}px)`;
+      const zEl = document.getElementById('m-hud-zoom');
+      if (zEl) zEl.textContent = `${maitriPTZ.zoom.toFixed(1)}x`;
+    }
+
+    function adjustMaitriPTZ(act) {
+      if (act === 'zoomIn') {
+        maitriPTZ.zoom = Math.min(2.5, parseFloat((maitriPTZ.zoom + 0.2).toFixed(1)));
+      } else if (act === 'zoomOut') {
+        maitriPTZ.zoom = Math.max(1.0, parseFloat((maitriPTZ.zoom - 0.2).toFixed(1)));
+        if (maitriPTZ.zoom === 1.0) {
+          maitriPTZ.panX = 0;
+          maitriPTZ.panY = 0;
+        }
+      } else if (act === 'panLeft') {
+        maitriPTZ.panX = Math.max(-60, maitriPTZ.panX - 15);
+      } else if (act === 'panRight') {
+        maitriPTZ.panX = Math.min(60, maitriPTZ.panX + 15);
+      } else if (act === 'reset') {
+        maitriPTZ.zoom = 1.0;
+        maitriPTZ.panX = 0;
+        maitriPTZ.panY = 0;
+      }
+      applyMaitriPTZ();
+    }
+
+    function setMaitriVision(mode) {
+      maitriPTZ.vision = mode;
+      const img = document.getElementById('maitri-main-cam-display');
+      if (!img) return;
+
+      img.classList.remove('vision-night', 'vision-thermal');
+      if (mode === 'night') img.classList.add('vision-night');
+      if (mode === 'thermal') img.classList.add('vision-thermal');
+
+      const btnOpt = document.getElementById('m-vis-optical');
+      const btnNight = document.getElementById('m-vis-night');
+      const btnTherm = document.getElementById('m-vis-thermal');
+
+      const updateBtn = (btn, active) => {
+        if (!btn) return;
+        btn.style.background = active ? 'var(--accent-blue)' : 'transparent';
+        btn.style.color = active ? '#ffffff' : 'var(--text-secondary)';
+      };
+
+      updateBtn(btnOpt, mode === 'optical');
+      updateBtn(btnNight, mode === 'night');
+      updateBtn(btnTherm, mode === 'thermal');
+    }
+
+    function switchMaitriCam(idx) {
+      currentMaitriCamIdx = idx;
+      document.querySelectorAll('#maitri-cameras-hub .cam-ch-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+
+      const cam = MAITRI_CAMS[idx];
+      const img = document.getElementById('maitri-main-cam-display');
+      if (!img) return;
+
+      img.style.opacity = '0.5';
+      img.onerror = () => {
+        img.src = cam.fallback || 'assets/cam2_card_bright.png';
+        img.style.opacity = '1';
+      };
+      img.onload = () => { img.style.opacity = '1'; };
+      img.src = cam.src;
+
+      document.getElementById('maitri-cam-title').innerHTML = cam.title;
+      document.getElementById('m-hud-cam-name').innerHTML = cam.loc;
+      document.getElementById('m-hud-coords').innerHTML = cam.coords;
+
+      applyMaitriPTZ();
+    }
+
+    function captureMaitriSnapshot() {
+      const cam = MAITRI_CAMS[currentMaitriCamIdx];
+      const img = document.getElementById('maitri-main-cam-display');
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = `maitri_surveillance_${Date.now()}.jpg`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Left Sidebar Operation Tab Controller
+    function setOpsTab(tabName, btn) {
+      document.querySelectorAll('.ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (tabName === 'overview') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tabName === 'cameras') {
+        const hub = document.getElementById('maitri-cameras-hub');
+        if (hub) {
+          hub.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          hub.style.boxShadow = '0 0 20px rgba(255, 122, 0, 0.45)';
+          hub.style.borderColor = 'var(--accent-orange)';
+          setTimeout(() => {
+            hub.style.boxShadow = 'var(--card-shadow)';
+            hub.style.borderColor = 'var(--border-medium)';
+          }, 1500);
+        }
+      } else if (tabName === 'machines') {
+        showPrototypeModal('⚙️ Maitri Microgrid & Machine Diagnostics', `
+          <div style="font-size:13px; color:var(--text-secondary); margin-bottom:12px">Continuous telemetry from Kirloskar diesel generator sets and heating circuits:</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>DG Unit #1 (255 kW):</strong> Active 210 kW load &bull; 82°C Jacket water</div>
+              <span class="badge-pill pill-green">RUNNING</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>DG Unit #2 (255 kW):</strong> Active 210 kW &bull; Crankcase vibration 3.4 mm/s</div>
+              <span class="badge-pill pill-orange">CAUTION &lt; 3.5</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Lake Trace Heating:</strong> Circuit #2 active &bull; +4.2°C trace temp</div>
+              <span class="badge-pill pill-green">NOMINAL</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Battery Bank (48V / 2400 Ah):</strong> Float 54.2V &bull; 98.4% capacity</div>
+              <span class="badge-pill pill-green">STANDBY</span>
+            </div>
+          </div>
+        `);
+      } else if (tabName === 'environment') {
+        showPrototypeModal('🌡️ Maitri AWS Environmental Sensors', `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:14px 0;">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Ambient Temperature</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--accent-blue)">-12.4°C</h3>
+              <span style="font-size:11.5px; color:var(--text-secondary)">Wind Chill: -24.8°C</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Sonic Wind Velocity</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--accent-orange)">18.0 kt</h3>
+              <span style="font-size:11.5px; color:var(--text-secondary)">Gusts: 23.2 kt &bull; SE 142°</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Surface Barometer</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--text-primary)">984.2 hPa</h3>
+              <span style="font-size:11.5px; color:var(--accent-green)">&bull; Rising Slowly</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Geomagnetic Total (F)</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--text-primary)">48,212 nT</h3>
+              <span style="font-size:11.5px; color:var(--accent-blue)">IIG Variometer Lock</span>
+            </div>
+          </div>
+        `);
+      } else if (tabName === 'research') {
+        showPrototypeModal('🔬 Active Scientific Research Observatories', `
+          <p style="font-size:13px; line-height:1.5;">Observatory status at Schirmacher Oasis research hub:</p>
+          <ul style="padding-left:18px; line-height:1.8; font-size:13px;">
+            <li><strong>Geomagnetic Observatory:</strong> Fluxgate 3-axis variometer streaming 1-sec digital magnetic fields (IIG Mumbai)</li>
+            <li><strong>Atmospheric &amp; Ozone Soundings:</strong> Brewer &amp; Dobson spectrophotometer monitoring polar stratospheric ozone</li>
+            <li><strong>Boundary Layer Meteorology:</strong> 28m instrumented meteorological tower with sonic 3D anemometers</li>
+            <li><strong>Solid Earth Geophysics:</strong> Broadband 3-component digital seismometer (NGRI Hyderabad)</li>
+          </ul>
+          <div style="margin-top:14px;"><a href="resources.html" style="font-weight:700; color:var(--accent-blue); text-decoration:none;">Access SOPs and Data Callsets in Resources &rarr;</a></div>
+        `);
+      } else if (tabName === 'supplies') {
+        showPrototypeModal('📦 Supplies & Logistics Projection', `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">HSD Fuel Reserve</span>
+              <h3 style="margin:4px 0; font-size:20px; color:var(--accent-orange)">102 kl (68%)</h3>
+              <span style="font-size:12px; color:var(--text-secondary)">58 Days Winter Endurance</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Priyadarshini Potable Water</span>
+              <h3 style="margin:4px 0; font-size:20px; color:var(--accent-blue)">38.0 m³ (76%)</h3>
+              <span style="font-size:12px; color:var(--text-secondary)">Daily consumption: 1.8 m³/day</span>
+            </div>
+          </div>
+          <p style="font-size:12.5px; color:var(--text-secondary)">Annual resupply scheduled via Antarctic chartered icebreaker <em>MV Vasiliy Golovnin</em> during 45th Indian Antarctic Expedition.</p>
+        `);
+      } else if (tabName === 'crew') {
+        showPrototypeModal('👥 Maitri Winter-Over Crew Manifest', `
+          <div style="display:flex; flex-direction:column; gap:8px; margin:12px 0;">
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Dr. Arvind Saxena</strong> &bull; Station Commander &amp; Glaciologist</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Dr. Priya Nambiar</strong> &bull; Expedition Medical Officer (AIIMS)</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Er. Rajesh Verma</strong> &bull; Chief Mechanical &amp; Power Engineer</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Suresh Kumar</strong> &bull; SATCOM &amp; Telemetry Specialist (ISRO)</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted)">Station Roster: 24 active personnel &bull; 0 medical quarters &bull; Quarantine protocol active.</div>
+        `);
+      } else if (tabName === 'reports') {
+        downloadStationSITREP('Maitri');
+      }
+    }
+
+    // Dynamic Sensor Telemetry Fluctuation Engine
+    let maitriData = { power: 420.4, water: 76.0, fuel: 68.0, wind: 18.0 };
+
+    function syncMaitriSensors() {
+      maitriData.power = parseFloat((420 + (Math.random() * 2.0 - 1.0)).toFixed(1));
+      maitriData.wind = parseFloat(Math.max(8, (18 + (Math.random() * 1.4 - 0.7))).toFixed(1));
+
+      const pEl = document.getElementById('km-val-power');
+      if (pEl) pEl.textContent = `${maitriData.power} kW`;
+
+      const wEl = document.getElementById('km-val-wind');
+      if (wEl) wEl.textContent = `${maitriData.wind} kt`;
+
+      const pBar = document.getElementById('km-bar-power');
+      if (pBar) pBar.style.width = `${((maitriData.power / 510) * 100).toFixed(1)}%`;
+
+      const wBar = document.getElementById('km-bar-wind');
+      if (wBar) wBar.style.width = `${Math.min(100, (maitriData.wind / 45) * 100).toFixed(1)}%`;
+
+      // Update HUD Clock
+      const nowUtc = new Date().toISOString().substring(11, 19) + ' UTC';
+      const clk = document.getElementById('m-hud-clock');
+      if (clk) clk.textContent = nowUtc;
+
+      const fps = document.getElementById('m-hud-fps');
+      if (fps) fps.textContent = `${(29.8 + Math.random() * 0.4).toFixed(1)} FPS`;
+    }
+
+    setInterval(syncMaitriSensors, 1500);
+
     window.addEventListener('load', () => {
-      selectStation('maitri');
+      switchMaitriCam(0);
+      syncMaitriSensors();
     });
   </script>
 </body>

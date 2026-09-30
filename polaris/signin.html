@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In — POLARIS Antarctic Remote Operations Portal</title>
+  <title>Personnel Sign In — POLARIS Antarctic Remote Operations Portal</title>
   <meta name="description" content="Authorized Personnel Sign-In for Indian Antarctic Research Stations Maitri & Bharati Operations Portal. NCPOR, Ministry of Earth Sciences." />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -14,7 +14,6 @@
       background: var(--bg-primary);
       color: var(--text-primary);
       position: relative;
-      overflow-x: hidden;
     }
 
     .auth-main-container {
@@ -22,9 +21,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
-      position: relative;
-      z-index: 2;
+      padding: 30px 20px;
     }
 
     .auth-card {
@@ -32,98 +29,184 @@
       width: 100%;
       background: var(--bg-card);
       border: 1px solid var(--border-medium);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px -10px rgba(11, 37, 69, 0.15);
-      padding: 44px 38px;
+      border-radius: 18px;
+      box-shadow: var(--card-shadow-hover);
+      padding: 36px 32px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
       box-sizing: border-box;
     }
 
+    .auth-emblem-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .auth-emblem-badge img {
+      height: 38px;
+      width: auto;
+    }
+
     .auth-heading {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 800;
-      line-height: 1.25;
       color: var(--text-primary);
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+      text-align: center;
     }
 
     .auth-subtext {
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.5;
       color: var(--text-secondary);
-      margin-bottom: 24px;
-      max-width: 440px;
+      margin: 0 0 20px;
+      text-align: center;
     }
 
-    .auth-divider {
-      width: 100%;
-      height: 1px;
-      background: var(--border-light);
-      margin-bottom: 24px;
-    }
-
-    #clerk-sign-in {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .clerk-loader {
+    .role-quick-cards {
       display: flex;
       flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .role-btn {
+      display: flex;
       align-items: center;
-      gap: 14px;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+
+    .role-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-blue);
+      transform: translateY(-1px);
+    }
+
+    .role-info-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .role-info-sub {
+      font-size: 11.5px;
       color: var(--text-muted);
+    }
+
+    .role-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .tag-cmd { background: rgba(255, 122, 0, 0.15); color: #ff7a00; }
+    .tag-eng { background: rgba(0, 119, 230, 0.15); color: #0077e6; }
+    .tag-dir { background: rgba(0, 168, 84, 0.15); color: #00a854; }
+
+    .auth-divider-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 16px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .auth-divider-text::before, .auth-divider-text::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       font-size: 13px;
+      box-sizing: border-box;
+      outline: none;
     }
 
-    .clerk-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border-light);
-      border-top-color: var(--accent-blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .form-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(0, 119, 230, 0.2);
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .btn-submit-auth {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-blue), #00b4d8);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0, 119, 230, 0.3);
+      transition: all 0.15s ease;
     }
 
-    @media (max-width: 600px) {
-      .auth-card {
-        padding: 32px 20px;
-      }
-      .auth-heading {
-        font-size: 22px;
-      }
+    .btn-submit-auth:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .auth-success-banner {
+      display: none;
+      background: rgba(0, 168, 84, 0.12);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
     }
   </style>
-
-  <!-- Clerk JS CDN Script -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-    type="text/javascript">
-  </script>
 </head>
 <body class="auth-page-wrapper">
 
-  <!-- ============================================================
-       TOP GOVERNMENT & NCPOR NAVBAR
-       ============================================================ -->
+  <!-- TOP GOVERNMENT NAVBAR -->
   <header class="site-header">
     <div class="header-container">
-      
-      <!-- Brand & Emblem -->
       <a href="index.html" class="brand-wrapper" style="text-decoration:none">
         <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
         <div class="brand-text">
@@ -132,11 +215,10 @@
         </div>
       </a>
 
-      <!-- Right: Status, India Flag, Time & Theme Switcher -->
       <div class="header-right">
         <div class="system-status-indicator">
           <span class="pulse-dot-green"></span>
-          <span>Authentication Gateway</span>
+          <span>Authentication Portal</span>
         </div>
 
         <div class="gov-india-badge">
@@ -152,7 +234,6 @@
           </div>
         </div>
 
-        <!-- THEME TOGGLE: BRIGHT <-> DARK -->
         <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleAuthTheme()" title="Switch Theme">
           <span class="switch-icon sun-icon">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -160,61 +241,89 @@
           <span class="switch-icon moon-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </span>
+          <span class="switch-thumb"></span>
         </button>
       </div>
-
     </div>
   </header>
 
-  <!-- ============================================================
-       CENTRAL SIGN-IN INTERFACE (CENTERED CARD)
-       ============================================================ -->
+  <!-- CENTRAL AUTHENTICATION CARD -->
   <main class="auth-main-container">
     <div class="auth-card">
       
-      <!-- Center Briefing Header -->
-      <h1 class="auth-heading">Indian Antarctic Operations Portal</h1>
-      <p class="auth-subtext">
-        Authenticate to access unified telemetry, digital twin telemetry streams, and incident command networks for India's polar research stations.
-      </p>
-
-      <div class="auth-divider"></div>
-
-      <!-- Clerk / Personnel Authentication -->
-      <div id="clerk-sign-in" style="width:100%;display:flex;justify-content:center;">
-        <div class="clerk-loader" id="clerk-loading-state">
-          <div class="clerk-spinner"></div>
-          <span>Connecting to Clerk Secure Authentication...</span>
-        </div>
+      <div class="auth-emblem-badge">
+        <img src="assets/emblem.png" alt="Emblem" />
       </div>
 
-      <!-- Direct Personnel Sign-In Form (Fallback & Local Access) -->
-      <div id="credentials-sign-in-form" style="display:none;width:100%;text-align:left;">
-        <div style="font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text-primary);text-align:center;">Personnel Sign-In</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:20px;text-align:center;">National Centre for Polar &amp; Ocean Research</div>
+      <h1 class="auth-heading">Authorized Personnel Sign In</h1>
+      <p class="auth-subtext">
+        Access real-time telemetry, digital twins, and mission control for India's Antarctic Research Stations Maitri &amp; Bharati.
+      </p>
 
-        <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="auth-success-banner" id="auth-success-banner">
+        &#x2714; Authenticated Successfully! Redirecting to station portal...
+      </div>
+
+      <!-- Quick 1-Click Role Login for Hackathon Demo -->
+      <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">
+        Quick Select Role (Demo Authorization)
+      </div>
+
+      <div class="role-quick-cards">
+        <button class="role-btn" type="button" onclick="quickSignIn('Dr. Arvind Saxena', 'Station Commander', 'commander@maitri.ncpor.res.in', 'maitri')">
           <div>
-            <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Official Email</label>
-            <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
+            <div class="role-info-title">Dr. Arvind Saxena</div>
+            <div class="role-info-sub">Station Commander &bull; Maitri (Oasis)</div>
           </div>
+          <span class="role-tag tag-cmd">Level-4 Command</span>
+        </button>
 
+        <button class="role-btn" type="button" onclick="quickSignIn('Er. Rajesh Verma', 'Chief Power Engineer', 'rajesh.v@bharati.ncpor.res.in', 'bharati')">
           <div>
-            <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Security Key / Passcode</label>
-            <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
+            <div class="role-info-title">Er. Rajesh Verma</div>
+            <div class="role-info-sub">Chief Power &amp; Mechanical Engineer &bull; Bharati</div>
           </div>
+          <span class="role-tag tag-eng">Level-3 Engineering</span>
+        </button>
 
-          <button type="submit" style="margin-top:8px;width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,119,230,0.3);transition:all 0.2s ease;">
-            Authenticate &amp; Enter Portal &rarr;
-          </button>
-        </form>
+        <button class="role-btn" type="button" onclick="quickSignIn('Dr. M. S. Rawat', 'Mission Director', 'director@ncpor.gov.in', 'command')">
+          <div>
+            <div class="role-info-title">Dr. M. S. Rawat</div>
+            <div class="role-info-sub">Mission Operations Director &bull; NCPOR Goa</div>
+          </div>
+          <span class="role-tag tag-dir">Level-5 Director</span>
+        </button>
+      </div>
+
+      <div class="auth-divider-text">Or Sign In with Official Email</div>
+
+      <!-- Credentials Form -->
+      <form onsubmit="handleCredentialsSignIn(event)">
+        <div class="form-group">
+          <label class="form-label">Official NCPOR / MoES Email</label>
+          <input type="email" id="input-email" required class="form-input" value="officer.44@ncpor.res.in" placeholder="name@ncpor.res.in" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Security Passcode / Token</label>
+          <input type="password" id="input-password" required class="form-input" value="NCPOR-SEC-2026" />
+        </div>
+
+        <button type="submit" class="btn-submit-auth">
+          Authenticate &amp; Enter Portal &rarr;
+        </button>
+      </form>
+
+      <div style="text-align:center; margin-top:16px;">
+        <a href="index.html" style="font-size:12.5px; color:var(--accent-blue); text-decoration:none; font-weight:600;">
+          &larr; Return to Public Overview
+        </a>
       </div>
 
     </div>
   </main>
 
   <script>
-    // Theme Management
     function initAuthTheme() {
       const saved = localStorage.getItem('polaris_theme') || 'bright';
       document.documentElement.setAttribute('data-theme', saved);
@@ -229,114 +338,55 @@
 
     initAuthTheme();
 
-    function getTargetRedirectUrl() {
+    function getTargetRedirect(defaultStation) {
       const urlParams = new URLSearchParams(window.location.search);
-      let view = urlParams.get('view');
-      let station = urlParams.get('station');
+      const target = urlParams.get('target') || urlParams.get('view') || defaultStation || 'command';
 
-      if (!view) {
-        const saved = sessionStorage.getItem('polaris_auth_redirect') || localStorage.getItem('polaris_auth_redirect');
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            view = parsed.view;
-            station = parsed.station;
-          } catch (e) {}
-        }
-      }
+      if (target.includes('maitri')) return 'maitri.html';
+      if (target.includes('bharati')) return 'bharati.html';
+      if (target.includes('command')) return 'command.html';
+      if (target.includes('livedata')) return 'livedata.html';
+      if (target.includes('resources')) return 'resources.html';
+      if (target.includes('about')) return 'about.html';
+      return 'index.html';
+    }
 
-      view = view || 'home';
-      let dest = `index.html?view=${encodeURIComponent(view)}&auth=1`;
-      if (station) {
-        dest += `&station=${encodeURIComponent(station)}`;
-      }
-      return dest;
+    function completeSignIn(uData, defaultStation) {
+      localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+      sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+
+      const banner = document.getElementById('auth-success-banner');
+      banner.style.display = 'block';
+      banner.textContent = `✔ Welcome, ${uData.fullName} (${uData.role}). Access granted!`;
+
+      setTimeout(() => {
+        window.location.href = getTargetRedirect(defaultStation);
+      }, 600);
+    }
+
+    function quickSignIn(name, role, email, station) {
+      const uData = {
+        fullName: name,
+        role: role,
+        email: email,
+        station: station,
+        authenticatedAt: new Date().toISOString()
+      };
+      completeSignIn(uData, station);
     }
 
     function handleCredentialsSignIn(e) {
       e.preventDefault();
       const email = document.getElementById('input-email').value;
       const uData = {
-        fullName: 'Dr. M. S. Rawat',
-        role: 'Expeditions Officer',
+        fullName: 'Expeditions Officer',
+        role: 'Authorized Expedition Personnel',
         email: email,
+        station: 'command',
         authenticatedAt: new Date().toISOString()
       };
-      try {
-        sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-        localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-      } catch (e) {}
-      window.location.href = getTargetRedirectUrl();
+      completeSignIn(uData, 'command');
     }
-
-    // Initialize Page & Clerk
-    window.addEventListener('load', async () => {
-      // If running directly from filesystem (file:// protocol) or offline, Clerk iframe is restricted by browsers
-      const isFileProtocol = window.location.protocol === 'file:';
-      const showFallbackForm = () => {
-        const loader = document.getElementById('clerk-loading-state');
-        if (loader) loader.style.display = 'none';
-        const credForm = document.getElementById('credentials-sign-in-form');
-        if (credForm) credForm.style.display = 'block';
-      };
-
-      if (isFileProtocol) {
-        // Immediately present the direct interactive personnel sign-in form
-        showFallbackForm();
-        return;
-      }
-
-      // Otherwise load Clerk SDK for web environments
-      const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
-      const timer = setTimeout(showFallbackForm, 2500);
-
-      try {
-        let retries = 0;
-        while (typeof Clerk === 'undefined' && retries < 15) {
-          await new Promise(r => setTimeout(r, 150));
-          retries++;
-        }
-
-        if (typeof Clerk !== 'undefined') {
-          await Clerk.load({
-            publishableKey: clerkKey,
-            appearance: {
-              variables: {
-                colorPrimary: '#0077e6',
-                fontFamily: 'Plus Jakarta Sans, sans-serif'
-              }
-            }
-          });
-
-          clearTimeout(timer);
-          const loader = document.getElementById('clerk-loading-state');
-          if (loader) loader.style.display = 'none';
-
-          if (Clerk.user) {
-            const uData = {
-              fullName: Clerk.user.fullName || Clerk.user.firstName || 'Expedition Scientist',
-              email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : 'authorized@ncpor.res.in',
-              role: 'Authenticated Officer',
-              id: Clerk.user.id
-            };
-            sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-            localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-            window.location.href = getTargetRedirectUrl();
-          } else {
-            const container = document.getElementById('clerk-sign-in');
-            Clerk.mountSignIn(container, {
-              afterSignInUrl: getTargetRedirectUrl(),
-              afterSignUpUrl: getTargetRedirectUrl()
-            });
-          }
-        } else {
-          showFallbackForm();
-        }
-      } catch (err) {
-        console.warn('Clerk initialization fallback triggered:', err);
-        showFallbackForm();
-      }
-    });
   </script>
 </body>
 </html>

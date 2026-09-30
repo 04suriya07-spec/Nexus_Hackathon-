@@ -1102,8 +1102,8 @@ body {
 /* Station Ops Layout: Left Sidebar + Central Stage + 2x3 Right Panel */
 .ops-grid-container {
   display: grid;
-  grid-template-columns: 145px minmax(0, 1fr) 390px;
-  gap: 10px;
+  grid-template-columns: 195px minmax(0, 1fr) 380px;
+  gap: 14px;
   align-items: start;
   width: 100%;
   box-sizing: border-box;
@@ -1111,30 +1111,32 @@ body {
 
 /* Left Vertical Navigation */
 .ops-left-sidebar {
-  background: var(--bg-sidebar);
+  background: var(--bg-card);
   border: 1px solid var(--border-medium);
-  border-radius: 10px;
-  padding: 5px 3px;
+  border-radius: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   box-shadow: var(--card-shadow);
   height: fit-content;
-  width: 145px;
-  min-width: 145px;
+  width: 195px;
+  min-width: 195px;
   box-sizing: border-box;
+  position: sticky;
+  top: 75px;
 }
 
 .sidebar-nav-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 8px;
-  border-radius: 6px;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   font-family: inherit;
-  font-size: 10.5px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
@@ -1144,20 +1146,23 @@ body {
 }
 
 .sidebar-nav-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 
 .sidebar-nav-btn:hover {
   background: var(--bg-card-hover);
   color: var(--text-primary);
+  border-color: var(--border-light);
+  transform: translateX(2px);
 }
 
 .sidebar-nav-btn.active {
   background: var(--accent-blue);
   color: #ffffff;
-  box-shadow: 0 3px 8px rgba(0, 119, 230, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 119, 230, 0.35);
+  border-color: var(--accent-blue);
 }
 
 .sidebar-nav-btn.active svg {

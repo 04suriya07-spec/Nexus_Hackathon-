@@ -31,10 +31,6 @@
       <nav class="main-nav">
         <button class="nav-link-btn" onclick="window.location.href='index.html'">Home</button>
         <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
-        <button class="nav-link-btn" onclick="window.location.href='maitri.html'">Maitri</button>
-        <button class="nav-link-btn active" onclick="window.location.href='bharati.html'">Bharati</button>
-        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
-        <button class="nav-link-btn" onclick="window.location.href='livedata.html'">Live Data</button>
         <button class="nav-link-btn" onclick="window.location.href='resources.html'">Resources</button>
         <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
       </nav>
@@ -149,7 +145,7 @@
           </button>
         </aside>
 
-        <!-- Central Stage: Digital Twin + Cameras + Metrics -->
+        <!-- Central Stage: Digital Twin + Live Cameras + Key Metrics -->
         <div class="ops-center-stage">
           
           <!-- Digital Twin Viewport -->
@@ -163,9 +159,9 @@
               
               <div class="dt-view-selectors">
                 <button class="view-mode-pill active">3D View</button>
-                <button class="view-mode-pill" onclick="alert('Switching to Topographic Map Layer')">Map View</button>
-                <button class="view-mode-pill" onclick="alert('Switching to Architectural Site Blueprint')">Site Plan</button>
-                <button class="view-mode-pill btn-icon-square" onclick="alert('Toggle Fullscreen 3D Viewport')" title="Fullscreen">&#x26F6;</button>
+                <button class="view-mode-pill" onclick="showPrototypeModal('🗺️ Bharati Topographic Map Layer', '<p>Interactive high-resolution Antarctic coastal topography, Larsemann Hills nunataks, and sea ice bathymetry.</p>')">Map View</button>
+                <button class="view-mode-pill" onclick="showPrototypeModal('📐 Bharati Architectural Blueprint', '<p>3-storey modular aerodynamic container structure designed by Bofinger Partner &amp; Kaulquappe with thermal envelope.</p>')">Site Plan</button>
+                <button class="view-mode-pill btn-icon-square" onclick="showPrototypeModal('⛶ 3D Viewport Fullscreen', '<p>3D WebGL Digital Twin rendered with continuous real-time sensor node overlays.</p>')" title="Fullscreen">&#x26F6;</button>
               </div>
             </div>
 
@@ -182,46 +178,96 @@
             </div>
           </div>
 
-          <!-- Live Camera Feeds Row -->
-          <div class="live-camera-strip-card">
-            <div class="lcs-header">
-              <div class="lcs-title-wrap">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                <span><strong>Live Camera Feeds &bull; Bharati</strong> &nbsp;&bull;&nbsp; <span class="dot-green"></span> <span class="text-green">4 / 4 Online</span></span>
+          <!-- Live Camera Operations Hub for Bharati -->
+          <div class="cam-player-card" id="bharati-cameras-hub" style="background:var(--bg-card); border:1px solid var(--border-medium); border-radius:12px; padding:18px; box-shadow:var(--card-shadow); margin-top:8px;">
+            <div class="cam-player-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:34px; height:34px; border-radius:8px; background:rgba(0,180,216,0.15); display:flex; align-items:center; justify-content:center; color:var(--accent-blue);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--accent-blue);">BHARATI OPTICAL DOWNLINK &bull; 1080P POLAR STREAM</div>
+                  <div style="font-size:15px; font-weight:800; color:var(--text-primary);" id="bharati-cam-title">CAM-01: Bharati Coastal Sea Ice Deck &bull; Larsemann Hills</div>
+                </div>
               </div>
-              <div class="lcs-actions">
-                <a href="livedata.html" class="kpi-view-all">View All Sensors &rarr;</a>
-                <div class="cam-arrows">
-                  <button class="cam-arrow-btn" onclick="alert('Camera feed previous')">&lsaquo;</button>
-                  <button class="cam-arrow-btn" onclick="alert('Camera feed next')">&rsaquo;</button>
+
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="online-chip" style="background:rgba(230,57,70,0.12); color:var(--accent-red); font-size:11.5px;">
+                  <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-red); display:inline-block; margin-right:3px;"></span> LIVE
+                </span>
+
+                <!-- Vision Modes -->
+                <div style="display:flex; background:var(--bg-secondary); border-radius:6px; padding:2px; border:1px solid var(--border-medium);">
+                  <button class="cat-btn" id="b-vis-optical" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:var(--accent-blue); color:#fff;" onclick="setBharatiVision('optical')">Optical</button>
+                  <button class="cat-btn" id="b-vis-night" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:transparent; color:var(--text-secondary);" onclick="setBharatiVision('night')">Night</button>
+                  <button class="cat-btn" id="b-vis-thermal" style="border:none; padding:4px 8px; font-size:11px; border-radius:4px; font-weight:700; background:transparent; color:var(--text-secondary);" onclick="setBharatiVision('thermal')">FLIR</button>
+                </div>
+
+                <!-- PTZ Zoom & Pan Controls -->
+                <div style="display:flex; gap:3px; align-items:center;">
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustBharatiPTZ('zoomIn')" title="Zoom In">Z+</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustBharatiPTZ('zoomOut')" title="Zoom Out">Z&minus;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustBharatiPTZ('panLeft')" title="Pan Left">&larr;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustBharatiPTZ('panRight')" title="Pan Right">&rarr;</button>
+                  <button class="cat-btn" style="padding:4px 7px; font-size:11px;" onclick="adjustBharatiPTZ('reset')" title="Reset View">1x</button>
+                </div>
+
+                <button class="res-action-btn" onclick="captureBharatiSnapshot()" style="padding:5px 10px; font-size:11px;">Snapshot &#x1F4F7;</button>
+              </div>
+            </div>
+
+            <!-- Main Viewport with HUD -->
+            <div class="cam-video-viewport" style="position:relative; width:100%; height:320px; background:#02070f; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-medium);">
+              <img id="bharati-main-cam-display" class="cam-main-img" src="assets/real_bharati_live.jpg" alt="Bharati Research Station Coastal Camera" onerror="this.src='assets/cam1_card_bright.png'" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.25s ease, transform 0.25s ease;" />
+              <div class="cam-scanline-laser"></div>
+              
+              <div class="cam-hud-overlay">
+                <div class="hud-top">
+                  <div class="hud-cam-title">
+                    <span id="b-hud-cam-name">Bharati Coastal Deck &bull; Larsemann Hills</span>
+                  </div>
+                  <div class="hud-meta-badge">
+                    <span id="b-hud-fps">29.9 FPS</span> &bull; <span id="b-hud-lat">512 ms</span> &bull; <span id="b-hud-zoom">1.0x</span>
+                  </div>
+                </div>
+
+                <div class="hud-bottom">
+                  <div>
+                    <div style="font-family:'JetBrains Mono'; font-weight:700; color:#00ff88; font-size:12px;" id="b-hud-clock">--:--:-- UTC</div>
+                    <div style="font-size:10.5px; color:#cfdbe8;" id="b-hud-coords">69°24'29"S, 76°11'14"E &bull; Elevation 35m</div>
+                  </div>
+                  <div style="font-family:'JetBrains Mono'; font-size:11px; color:#ffffff; background:rgba(0,0,0,0.6); padding:3px 7px; border-radius:4px;">
+                    Carrier: ISRO IMGEOS X-Band &bull; SNR: 18.2 dB
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="cam-grid-4">
-              <div class="cam-box" onclick="alert('Opening Bharati Coastal Sea Ice Camera Stream')">
-                <img id="cam-img-1" src="assets/cam1_card_bright.png" alt="Coastal Ice Shelf" />
-                <span class="cam-tag-badge">BHA-01</span>
-                <span class="cam-desc-label">Larsemann Hills Coastal Ice</span>
-              </div>
+            <!-- 4-Channel Thumbnail Switcher -->
+            <div class="cam-channels-bar" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:10px;">
+              <button class="cam-ch-btn active" id="b-ch-0" onclick="switchBharatiCam(0)">
+                <img class="cam-ch-thumb" src="assets/real_bharati_live.jpg" alt="Bharati Coastal Ice" />
+                <div class="cam-ch-name">CAM-01: Coastal Ice</div>
+                <div class="cam-ch-sub">Prydz Bay &bull; Fast Ice</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening ISRO Satellite Ground Station Stream')">
-                <img id="cam-img-2" src="assets/cam2_card_bright.png" alt="Satellite Radome" />
-                <span class="cam-tag-badge">BHA-02</span>
-                <span class="cam-desc-label">Satellite Tracking Radome</span>
-              </div>
+              <button class="cam-ch-btn" id="b-ch-1" onclick="switchBharatiCam(1)">
+                <img class="cam-ch-thumb" src="assets/real_bharati_aerial.jpg" alt="Bharati Aerodynamic Complex" />
+                <div class="cam-ch-name">CAM-02: Aerial Complex</div>
+                <div class="cam-ch-sub">Aerodynamic Stilt Shell</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening Scania CHP Cogeneration Generator Stream')">
-                <img id="cam-img-3" src="assets/cam3_card_bright.png" alt="Scania Power" />
-                <span class="cam-tag-badge">BHA-03</span>
-                <span class="cam-desc-label">Scania CHP Power Deck</span>
-              </div>
+              <button class="cam-ch-btn" id="b-ch-2" onclick="switchBharatiCam(2)">
+                <img class="cam-ch-thumb" src="assets/cam2_card_bright.png" alt="Satellite Radome" />
+                <div class="cam-ch-name">CAM-03: ISRO Radome</div>
+                <div class="cam-ch-sub">IMGEOS Ground Station</div>
+              </button>
 
-              <div class="cam-box" onclick="alert('Opening Helipad & Cargo Bay Stream')">
-                <img id="cam-img-4" src="assets/cam4_card_bright.png" alt="Helipad Bay" />
-                <span class="cam-tag-badge">BHA-04</span>
-                <span class="cam-desc-label">Helipad &amp; Cargo Staging</span>
-              </div>
+              <button class="cam-ch-btn" id="b-ch-3" onclick="switchBharatiCam(3)">
+                <img class="cam-ch-thumb" src="assets/cam4_card_bright.png" alt="Helipad Bay" />
+                <div class="cam-ch-name">CAM-04: Helipad Bay</div>
+                <div class="cam-ch-sub">Flight Deck &bull; Fuel Farm</div>
+              </button>
             </div>
           </div>
 
@@ -232,7 +278,7 @@
                 <span class="hero-eyebrow">DIAGNOSTICS &amp; SUBSYSTEM TELEMETRY</span>
                 <h3 class="kmb-title">Key Station Metrics &bull; Bharati</h3>
               </div>
-              <span class="kmc-sub">Synced 10s ago via ISRO IMGEOS Ground Link</span>
+              <span class="kmc-sub">Synced 8s ago via ISRO IMGEOS Ground Link</span>
             </div>
 
             <div class="metrics-grid-6">
@@ -261,7 +307,7 @@
                 <span class="kmc-title">Satellite Downlink</span>
                 <span class="kmc-value text-green">20.0 Mbps</span>
                 <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 98%;"></div></div>
-                <span class="kmc-sub">Latency 520ms &bull; ISRO IMGEOS</span>
+                <span class="kmc-sub">Latency 512ms &bull; ISRO IMGEOS</span>
               </div>
 
               <div class="kmetric-card">
@@ -395,9 +441,287 @@
 
   <script src="app.js"></script>
   <script>
-    // Make sure Bharati assets are loaded
+    // Bharati Camera and Tab Controller
+    let currentBharatiCamIdx = 0;
+    let bharatiPTZ = { zoom: 1.0, panX: 0, panY: 0, vision: 'optical' };
+
+    const BHARATI_CAMS = [
+      {
+        name: "CAM-01: Coastal Ice",
+        title: "CAM-01: Bharati Coastal Sea Ice Deck &bull; Larsemann Hills",
+        loc: "Bharati Coastal Deck &bull; Larsemann Hills",
+        coords: "69°24'29\"S, 76°11'14\"E &bull; Elevation 35m",
+        src: "assets/real_bharati_live.jpg",
+        fallback: "assets/cam1_card_bright.png"
+      },
+      {
+        name: "CAM-02: Aerial Complex",
+        title: "CAM-02: Bharati Aerodynamic Stilt Complex &bull; North Aspect",
+        loc: "Main Station Complex &bull; Stilt Foundation",
+        coords: "69°24'28\"S, 76°11'15\"E &bull; Elevation 42m",
+        src: "assets/real_bharati_aerial.jpg",
+        fallback: "assets/cam3_card_bright.png"
+      },
+      {
+        name: "CAM-03: ISRO Radome",
+        title: "CAM-03: ISRO IMGEOS Satellite Tracking Radome Deck",
+        loc: "Satellite Radome &bull; High Ridge",
+        coords: "69°24'35\"S, 76°11'28\"E &bull; Elevation 58m",
+        src: "assets/cam2_card_bright.png",
+        fallback: "assets/cam2_card_bright.png"
+      },
+      {
+        name: "CAM-04: Helipad Bay",
+        title: "CAM-04: Polar Helipad &amp; Cargo Staging Bay",
+        loc: "Helipad Apron &bull; Fuel Farm Approach",
+        coords: "69°24'25\"S, 76°11'05\"E &bull; Elevation 28m",
+        src: "assets/cam4_card_bright.png",
+        fallback: "assets/cam4_card_bright.png"
+      }
+    ];
+
+    function applyBharatiPTZ() {
+      const img = document.getElementById('bharati-main-cam-display');
+      if (!img) return;
+      img.style.transform = `scale(${bharatiPTZ.zoom}) translate(${bharatiPTZ.panX}px, ${bharatiPTZ.panY}px)`;
+      const zEl = document.getElementById('b-hud-zoom');
+      if (zEl) zEl.textContent = `${bharatiPTZ.zoom.toFixed(1)}x`;
+    }
+
+    function adjustBharatiPTZ(act) {
+      if (act === 'zoomIn') {
+        bharatiPTZ.zoom = Math.min(2.5, parseFloat((bharatiPTZ.zoom + 0.2).toFixed(1)));
+      } else if (act === 'zoomOut') {
+        bharatiPTZ.zoom = Math.max(1.0, parseFloat((bharatiPTZ.zoom - 0.2).toFixed(1)));
+        if (bharatiPTZ.zoom === 1.0) {
+          bharatiPTZ.panX = 0;
+          bharatiPTZ.panY = 0;
+        }
+      } else if (act === 'panLeft') {
+        bharatiPTZ.panX = Math.max(-60, bharatiPTZ.panX - 15);
+      } else if (act === 'panRight') {
+        bharatiPTZ.panX = Math.min(60, bharatiPTZ.panX + 15);
+      } else if (act === 'reset') {
+        bharatiPTZ.zoom = 1.0;
+        bharatiPTZ.panX = 0;
+        bharatiPTZ.panY = 0;
+      }
+      applyBharatiPTZ();
+    }
+
+    function setBharatiVision(mode) {
+      bharatiPTZ.vision = mode;
+      const img = document.getElementById('bharati-main-cam-display');
+      if (!img) return;
+
+      img.classList.remove('vision-night', 'vision-thermal');
+      if (mode === 'night') img.classList.add('vision-night');
+      if (mode === 'thermal') img.classList.add('vision-thermal');
+
+      const btnOpt = document.getElementById('b-vis-optical');
+      const btnNight = document.getElementById('b-vis-night');
+      const btnTherm = document.getElementById('b-vis-thermal');
+
+      const updateBtn = (btn, active) => {
+        if (!btn) return;
+        btn.style.background = active ? 'var(--accent-blue)' : 'transparent';
+        btn.style.color = active ? '#ffffff' : 'var(--text-secondary)';
+      };
+
+      updateBtn(btnOpt, mode === 'optical');
+      updateBtn(btnNight, mode === 'night');
+      updateBtn(btnTherm, mode === 'thermal');
+    }
+
+    function switchBharatiCam(idx) {
+      currentBharatiCamIdx = idx;
+      document.querySelectorAll('#bharati-cameras-hub .cam-ch-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+
+      const cam = BHARATI_CAMS[idx];
+      const img = document.getElementById('bharati-main-cam-display');
+      if (!img) return;
+
+      img.style.opacity = '0.5';
+      img.onerror = () => {
+        img.src = cam.fallback || 'assets/cam1_card_bright.png';
+        img.style.opacity = '1';
+      };
+      img.onload = () => { img.style.opacity = '1'; };
+      img.src = cam.src;
+
+      document.getElementById('bharati-cam-title').innerHTML = cam.title;
+      document.getElementById('b-hud-cam-name').innerHTML = cam.loc;
+      document.getElementById('b-hud-coords').innerHTML = cam.coords;
+
+      applyBharatiPTZ();
+    }
+
+    function captureBharatiSnapshot() {
+      const cam = BHARATI_CAMS[currentBharatiCamIdx];
+      const img = document.getElementById('bharati-main-cam-display');
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = `bharati_surveillance_${Date.now()}.jpg`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Left Sidebar Operation Tab Controller for Bharati
+    function setOpsTab(tabName, btn) {
+      document.querySelectorAll('.ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (tabName === 'overview') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (tabName === 'cameras') {
+        const hub = document.getElementById('bharati-cameras-hub');
+        if (hub) {
+          hub.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          hub.style.boxShadow = '0 0 20px rgba(0, 180, 216, 0.45)';
+          hub.style.borderColor = 'var(--accent-blue)';
+          setTimeout(() => {
+            hub.style.boxShadow = 'var(--card-shadow)';
+            hub.style.borderColor = 'var(--border-medium)';
+          }, 1500);
+        }
+      } else if (tabName === 'machines') {
+        showPrototypeModal('⚙️ Bharati Cogeneration & Desalination Diagnostics', `
+          <div style="font-size:13px; color:var(--text-secondary); margin-bottom:12px">Continuous telemetry from Scania diesel gensets, heat exchangers, and seawater reverse osmosis:</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Scania CHP Unit #1 (220 kW):</strong> Active 190 kW &bull; Exhaust heat recovery 92 kW thermal</div>
+              <span class="badge-pill pill-green">RUNNING</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Scania CHP Unit #3 (220 kW):</strong> Active 190 kW &bull; Crankcase vibration 2.1 mm/s</div>
+              <span class="badge-pill pill-green">NOMINAL</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Seawater RO Desalination:</strong> High-pressure pump 62 bar &bull; Permeate 10.2 m³/day</div>
+              <span class="badge-pill pill-green">OPTIMAL</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Lithium Battery Bank (400V):</strong> 99.1% State-of-Charge &bull; Inverter synchronized</div>
+              <span class="badge-pill pill-green">STANDBY</span>
+            </div>
+          </div>
+        `);
+      } else if (tabName === 'environment') {
+        showPrototypeModal('🌡️ Bharati Coastal AWS Environmental Sensors', `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:14px 0;">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Ambient Temperature</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--accent-blue)">-9.8°C</h3>
+              <span style="font-size:11.5px; color:var(--text-secondary)">Wind Chill: -17.2°C</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Coastal Wind Velocity</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--accent-cyan)">12.0 kt</h3>
+              <span style="font-size:11.5px; color:var(--text-secondary)">Gusts: 16.4 kt &bull; SE 130°</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Surface Barometer</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--text-primary)">992.4 hPa</h3>
+              <span style="font-size:11.5px; color:var(--accent-green)">&bull; Steady</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Solar Radiation / UV</span>
+              <h3 style="margin:4px 0; font-size:22px; color:var(--accent-orange)">412 W/m²</h3>
+              <span style="font-size:11.5px; color:var(--accent-blue)">UV Index: 2.1 (Low)</span>
+            </div>
+          </div>
+        `);
+      } else if (tabName === 'research') {
+        showPrototypeModal('🔬 Bharati Scientific Laboratories & ISRO Link', `
+          <p style="font-size:13px; line-height:1.5;">Real-time scientific investigations and satellite tracking operations at Bharati:</p>
+          <ul style="padding-left:18px; line-height:1.8; font-size:13px;">
+            <li><strong>ISRO IMGEOS Ground Station:</strong> Tracking polar-orbiting remote sensing satellites (Cartosat, Oceansat, RISAT)</li>
+            <li><strong>Southern Ocean Oceanography:</strong> Physical &amp; chemical profiling of Prydz Bay and coastal waters</li>
+            <li><strong>Ionospheric Convection Radar:</strong> High-frequency radar monitoring polar geomagnetic storm dynamics</li>
+            <li><strong>Atmospheric Aerosols &amp; Black Carbon:</strong> Aethalometer and multi-wavelength radiometer measurements</li>
+          </ul>
+          <div style="margin-top:14px;"><a href="resources.html" style="font-weight:700; color:var(--accent-blue); text-decoration:none;">Access Bharati Research SOPs in Resources &rarr;</a></div>
+        `);
+      } else if (tabName === 'supplies') {
+        showPrototypeModal('📦 Bharati Supplies & Logistics Projection', `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Jet A-1 Fuel Farm</span>
+              <h3 style="margin:4px 0; font-size:20px; color:var(--accent-blue)">140 kl (81%)</h3>
+              <span style="font-size:12px; color:var(--text-secondary)">74 Days Winter Endurance</span>
+            </div>
+            <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+              <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted)">Potable Water (SWRO)</span>
+              <h3 style="margin:4px 0; font-size:20px; color:var(--accent-green)">62.0 m³ (79%)</h3>
+              <span style="font-size:12px; color:var(--text-secondary)">Daily production: 10.2 m³/day</span>
+            </div>
+          </div>
+          <p style="font-size:12.5px; color:var(--text-secondary)">Larsemann Hills coast sea ice allows chartered cargo ship access during the December-February austral summer window.</p>
+        `);
+      } else if (tabName === 'crew') {
+        showPrototypeModal('👥 Bharati Winter-Over Crew Manifest', `
+          <div style="display:flex; flex-direction:column; gap:8px; margin:12px 0;">
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Dr. Sunita Deshmukh</strong> &bull; Station Leader &amp; Atmospheric Physicist</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Dr. K. Ramanathan</strong> &bull; Station Medical Officer</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>Er. Vikram Malhotra</strong> &bull; CHP Microgrid Lead Engineer</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px; font-size:13px;">
+              <span><strong>R. Swaminathan</strong> &bull; ISRO IMGEOS Ground Station Engineer</span>
+              <span style="color:var(--accent-green); font-weight:700">FIT</span>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted)">Station Roster: 20 active personnel &bull; All life support environmental systems nominal.</div>
+        `);
+      } else if (tabName === 'reports') {
+        downloadStationSITREP('Bharati');
+      }
+    }
+
+    // Dynamic Sensor Telemetry Fluctuation Engine for Bharati
+    let bharatiData = { power: 380.0, water: 62.0, fuel: 81.0, wind: 12.0 };
+
+    function syncBharatiSensors() {
+      bharatiData.power = parseFloat((380 + (Math.random() * 1.8 - 0.9)).toFixed(1));
+      bharatiData.wind = parseFloat(Math.max(6, (12 + (Math.random() * 1.2 - 0.6))).toFixed(1));
+
+      const pEl = document.getElementById('km-val-power');
+      if (pEl) pEl.textContent = `${bharatiData.power} kW`;
+
+      const wEl = document.getElementById('km-val-wind');
+      if (wEl) wEl.textContent = `${bharatiData.wind} kt`;
+
+      const pBar = document.getElementById('km-bar-power');
+      if (pBar) pBar.style.width = `${((bharatiData.power / 440) * 100).toFixed(1)}%`;
+
+      const wBar = document.getElementById('km-bar-wind');
+      if (wBar) wBar.style.width = `${Math.min(100, (bharatiData.wind / 40) * 100).toFixed(1)}%`;
+
+      // Update HUD Clock
+      const nowUtc = new Date().toISOString().substring(11, 19) + ' UTC';
+      const clk = document.getElementById('b-hud-clock');
+      if (clk) clk.textContent = nowUtc;
+
+      const fps = document.getElementById('b-hud-fps');
+      if (fps) fps.textContent = `${(29.8 + Math.random() * 0.4).toFixed(1)} FPS`;
+    }
+
+    setInterval(syncBharatiSensors, 1500);
+
     window.addEventListener('load', () => {
-      selectStation('bharati');
+      switchBharatiCam(0);
+      syncBharatiSensors();
     });
   </script>
 </body>
