@@ -223,6 +223,40 @@
       </div>
     </div>
 
+    <!-- Live Antarctic Optical Stream Player -->
+    <div style="background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:18px 24px; margin-bottom:24px; box-shadow:var(--card-shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:36px; height:36px; border-radius:8px; background:rgba(230,57,70,0.12); display:flex; align-items:center; justify-content:center; color:var(--accent-red);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+          </div>
+          <div>
+            <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--accent-red);">LIVE OPTICAL FEED &bull; POLAR RELAY</div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-primary);">South Pole &amp; Continental Antarctic Station Stream</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:12px; color:var(--text-muted);">Uplink: GSAT-17 / Public Relay</span>
+          <span class="online-chip" style="background:rgba(230,57,70,0.12); color:var(--accent-red);"><span style="width:6px; height:6px; border-radius:50%; background:var(--accent-red); display:inline-block; margin-right:4px;"></span> LIVE FEED</span>
+        </div>
+      </div>
+
+      <div style="position:relative; width:100%; border-radius:8px; overflow:hidden; background:#000; aspect-ratio:16/9; max-height:480px;">
+        <iframe
+          src="https://portofcams.com/embed/south-pole-station/"
+          style="border:0; width:100%; height:100%; display:block;"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+          title="Antarctic live camera stream">
+        </iframe>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted); margin-top:10px;">
+        <span>Stream source: <strong>Port of Cams / Polar Research Public Feed</strong></span>
+        <span>Telemetry synchronized with Maitri &amp; Bharati surface sensors below &darr;</span>
+      </div>
+    </div>
+
     <!-- 4 Primary Live Telemetry Gauges -->
     <div class="gauges-grid-4">
       <div class="gauge-card">

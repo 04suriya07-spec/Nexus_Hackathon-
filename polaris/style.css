@@ -1358,6 +1358,36 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  opacity: 0.9;
+}
+
+.cam-live-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: var(--accent-red);
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  animation: pulseLive 1.5s infinite;
+}
+
+@keyframes pulseLive {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.cam-meta-footer {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
 /* Bottom Metrics & Sensor Trends Bar */
@@ -2285,6 +2315,1035 @@ body {
     display: none;
   }
   .admin-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   PAGE VIEW 4: LIVE ANTARCTIC MONITORING STYLES
+   ============================================================ */
+
+.live-monitoring-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 28px 60px;
+}
+
+/* Header & Breadcrumb */
+.lm-top-header-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lm-breadcrumb-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lm-main-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+.lm-subtitle-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.lm-strip-sep {
+  opacity: 0.4;
+}
+
+.lm-strip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(230, 57, 70, 0.1);
+  color: var(--accent-red);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.lm-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.lm-back-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  transform: translateX(-2px);
+}
+
+/* Station Selection Tabs */
+.lm-station-tabs-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.lm-station-tab {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  box-shadow: var(--card-shadow);
+  text-align: left;
+  font-family: inherit;
+}
+
+.lm-station-tab:hover {
+  border-color: var(--border-medium);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.lm-station-tab.active#lm-tab-maitri {
+  border-color: var(--maitri-accent);
+  box-shadow: 0 4px 24px -2px rgba(255, 122, 0, 0.2);
+}
+
+.lm-station-tab.active#lm-tab-bharati {
+  border-color: var(--bharati-accent);
+  box-shadow: 0 4px 24px -2px rgba(0, 119, 230, 0.2);
+}
+
+.lm-tab-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: transparent;
+  transition: background 0.25s ease;
+}
+
+#lm-tab-maitri.active .lm-tab-indicator {
+  background: var(--maitri-accent);
+}
+
+#lm-tab-bharati.active .lm-tab-indicator {
+  background: var(--bharati-accent);
+}
+
+.lm-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lm-tab-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.lm-tab-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.lm-tab-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.lm-tab-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+}
+
+.lm-station-tab.active .lm-tab-badge.maitri {
+  background: rgba(255, 122, 0, 0.12);
+  border-color: rgba(255, 122, 0, 0.4);
+  color: var(--maitri-accent);
+}
+
+.lm-station-tab.active .lm-tab-badge.bharati {
+  background: rgba(0, 119, 230, 0.12);
+  border-color: rgba(0, 119, 230, 0.4);
+  color: var(--bharati-accent);
+}
+
+/* Central Stage Container */
+.lm-central-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lm-main-cam-wrapper {
+  width: 76%;
+  align-self: center;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: #07111b;
+  box-shadow: var(--card-shadow);
+}
+
+.lm-main-cam-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #07111b;
+}
+
+.lm-main-cam-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.25s ease;
+}
+
+.lm-cam-loading-overlay {
+  display: none;
+}
+
+.lm-main-cam-overlay {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.82));
+}
+
+.lm-mco-left,
+.lm-mco-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lm-mco-meta {
+  display: block;
+}
+
+.lm-mco-cam-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.lm-mco-cam-loc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.lm-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.lm-camera-thumb {
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: #07111b;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lm-camera-thumb:hover,
+.lm-camera-thumb:focus-visible {
+  z-index: 1;
+  transform: translateY(-3px);
+  border-color: var(--accent-blue);
+  box-shadow: var(--card-shadow);
+  outline: none;
+}
+
+.lm-camera-thumb-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #07111b;
+}
+
+.lm-camera-thumb-name {
+  display: block;
+  padding: 9px 12px;
+  overflow: hidden;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.82);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lm-main-cam-wrapper.camera-swap-in {
+  animation: cameraSwapIn 0.32s ease both;
+}
+
+@keyframes cameraSwapIn {
+  from { opacity: 0.65; transform: translateY(8px) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .lm-main-cam-wrapper {
+    width: 100%;
+  }
+
+  .lm-thumb-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lm-thumb-grid {
+    grid-template-columns: repeat(3, minmax(132px, 1fr));
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .lm-camera-thumb-name {
+    padding: 8px;
+    font-size: 11px;
+  }
+}
+
+/* Video Player Wrapper */
+.lm-player-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.lm-player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  background: var(--bg-card-subtle);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.lm-station-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lm-station-marker-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 119, 230, 0.1);
+  color: var(--accent-blue);
+  border: 1px solid rgba(0, 119, 230, 0.2);
+}
+
+.lm-station-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.lm-station-location {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.lm-stream-status-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lm-telemetry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.lm-live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #ffffff;
+  background: #e63946;
+  padding: 5px 12px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 12px rgba(230, 57, 70, 0.4);
+}
+
+/* Video Canvas Screen (16:9 responsive) */
+.lm-video-canvas-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 680px;
+  min-height: 420px;
+  background: #020710;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lm-video-screen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Loading Overlay */
+.lm-video-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 7, 16, 0.88);
+  backdrop-filter: blur(4px);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #fff;
+}
+
+.lm-spinner-ring {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(0, 180, 255, 0.2);
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.lm-loading-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #00d4ff;
+}
+
+.lm-loading-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Professional Government Standby Screen */
+.lm-video-unavailable-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 45%, #0a1e38 0%, #040d1a 60%, #02060d 100%);
+  color: #f0f6fc;
+  z-index: 4;
+}
+
+.lm-unavailable-polar-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 180, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 180, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.lm-unavailable-content {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lm-radar-sweep-icon {
+  width: 76px;
+  height: 76px;
+  color: #00d4ff;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 16px rgba(0, 212, 255, 0.4));
+}
+
+.lm-radar-svg {
+  width: 100%;
+  height: 100%;
+  animation: radarRotate 6s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.lm-unavail-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #ff9933;
+  background: rgba(255, 153, 51, 0.12);
+  border: 1px solid rgba(255, 153, 51, 0.35);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.lm-unavail-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+
+.lm-unavail-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a3bad2;
+  margin-bottom: 18px;
+}
+
+.lm-unavail-tech-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 180, 255, 0.15);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.lm-utd-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+}
+
+.lm-utd-key {
+  color: #6482a6;
+  font-weight: 600;
+}
+
+.lm-utd-val {
+  color: #e6f0fa;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.lm-utd-val.code {
+  color: #00d4ff;
+  font-weight: 700;
+}
+
+.lm-unavail-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #8da9c4;
+}
+
+.lm-unavail-notice code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+/* Video Player Custom Controls */
+.lm-player-controls-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: linear-gradient(180deg, rgba(2, 6, 13, 0) 0%, rgba(2, 6, 13, 0.85) 40%, rgba(2, 6, 13, 0.98) 100%);
+  color: #ffffff;
+}
+
+.lm-ctrl-left, .lm-ctrl-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lm-ctrl-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lm-ctrl-btn:hover {
+  background: rgba(0, 180, 255, 0.3);
+  border-color: #00d4ff;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.lm-live-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(230, 57, 70, 0.25);
+  border: 1px solid rgba(230, 57, 70, 0.6);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.lm-res-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Environmental Telemetry Panel */
+.lm-env-panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: var(--card-shadow);
+}
+
+.lm-env-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lm-eph-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lm-eph-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(0, 168, 84, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(0, 168, 84, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lm-eph-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.lm-eph-subtitle {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.lm-eph-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lm-source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 119, 230, 0.08);
+  border: 1px solid rgba(0, 119, 230, 0.25);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+}
+
+.lm-sb-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.lm-sb-name {
+  color: var(--accent-blue);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.lm-refresh-data-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lm-refresh-data-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* 6-Card Metrics Grid */
+.lm-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.lm-metric-card {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.lm-metric-card:hover {
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
+}
+
+.lm-mc-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lm-mc-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lm-mc-icon.temp { background: rgba(0, 119, 230, 0.1); color: var(--accent-blue); }
+.lm-mc-icon.humidity { background: rgba(0, 180, 216, 0.1); color: var(--accent-cyan); }
+.lm-mc-icon.wind { background: rgba(255, 122, 0, 0.1); color: var(--accent-orange); }
+.lm-mc-icon.compass { background: rgba(114, 9, 183, 0.1); color: var(--accent-purple); }
+.lm-mc-icon.pressure { background: rgba(0, 168, 84, 0.1); color: var(--accent-green); }
+.lm-mc-icon.clock { background: rgba(100, 130, 166, 0.1); color: var(--text-muted); }
+
+.lm-mc-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lm-mc-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.lm-mc-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.lm-mc-val.text-time {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--accent-blue);
+}
+
+.lm-mc-unit {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.lm-mc-sub {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Environmental Footer Strip */
+.lm-env-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lm-efb-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lm-data-badge.nominal {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--accent-green);
+  background: rgba(0, 168, 84, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.lm-efb-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   LIVE ANTARCTIC CAMERA — iframe labels & attribution bar
+   ============================================================ */
+
+/* "LIVE ANTARCTIC CAMERA" eyebrow label above station name */
+.lm-cam-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e63946;
+  margin-bottom: 2px;
+}
+
+/* Camera Source Attribution Bar (below video) */
+.lm-camera-source-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--bg-card-subtle);
+  border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+
+.lm-css-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.lm-css-right {
+  flex-shrink: 0;
+}
+
+.lm-source-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.lm-source-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.lm-source-text strong {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.lm-source-sep {
+  color: var(--border-medium);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.lm-source-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Fullscreen button inside attribution bar */
+.lm-cam-fs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lm-cam-fs-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* Responsiveness for Live Monitoring */
+@media (max-width: 1200px) {
+  .lm-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .lm-station-tabs-bar {
+    grid-template-columns: 1fr;
+  }
+  .lm-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .lm-video-canvas-container {
+    min-height: 280px;
+  }
+  .lm-unavail-tech-details {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .lm-metrics-grid {
     grid-template-columns: 1fr;
   }
 }
