@@ -41,12 +41,12 @@
 
     /* Left: Mission Security Briefing Side */
     .auth-briefing-panel {
-      padding: 44px;
+      padding: 56px 48px;
       background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
       border-right: 1px solid var(--border-light);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       position: relative;
     }
 
@@ -88,76 +88,30 @@
     }
 
     .auth-heading {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       line-height: 1.25;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       letter-spacing: -0.02em;
     }
 
     .auth-subtext {
-      font-size: 13.5px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.65;
       color: var(--text-secondary);
-      margin-bottom: 28px;
+      margin-bottom: 0;
     }
 
-    .mission-telemetry-highlights {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .mth-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 12px;
-    }
-
-    .mth-station {
-      font-weight: 700;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mth-coords {
-      font-family: var(--font-mono, monospace);
-      color: var(--text-muted);
-      font-size: 11px;
-    }
-
-    .mth-status {
-      font-family: var(--font-mono, monospace);
-      font-weight: 700;
-      color: var(--accent-green);
-    }
-
-    .auth-legal-notice {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      border-top: 1px solid var(--border-light);
-      padding-top: 16px;
-    }
-
-    /* Right: Clerk Sign-In Mount Side */
+    /* Right: Clerk / Authentication Mount Side */
     .auth-clerk-panel {
-      padding: 44px 36px;
+      padding: 56px 44px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       background: var(--bg-card);
-      min-height: 480px;
+      min-height: 420px;
       position: relative;
     }
 
@@ -190,46 +144,17 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Offline Evaluator Demo Bypass Box */
-    .offline-demo-box {
-      margin-top: 20px;
-      width: 100%;
-      border-top: 1px dashed var(--border-medium);
-      padding-top: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .demo-bypass-btn {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-accent);
-      color: var(--accent-blue);
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .demo-bypass-btn:hover {
-      background: var(--accent-blue);
-      color: #ffffff;
-    }
-
     @media (max-width: 860px) {
       .auth-bento-grid {
         grid-template-columns: 1fr;
       }
       .auth-briefing-panel {
-        display: none;
+        padding: 36px 28px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+      }
+      .auth-clerk-panel {
+        padding: 36px 28px;
       }
     }
   </style>
@@ -309,60 +234,22 @@
       
       <!-- Left: Mission Briefing -->
       <div class="auth-briefing-panel">
-        <div>
-          <div class="auth-badge-row">
-            <span class="security-level-pill">
-              <span class="security-pulse"></span>
-              SECURE ACCESS • RESTRICTED
-            </span>
-          </div>
-
-          <h1 class="auth-heading">Indian Antarctic Operations Portal</h1>
-          <p class="auth-subtext">
-            Authenticate to access unified telemetry, digital twin telemetry streams, and incident command networks for India's polar research stations.
-          </p>
-
-          <div class="mission-telemetry-highlights">
-            <div class="mth-item">
-              <div class="mth-station">
-                <span style="color:var(--maitri-accent)">●</span> Maitri Research Station
-              </div>
-              <span class="mth-coords">70°45'S, 11°44'E</span>
-              <span class="mth-status">ONLINE 94%</span>
-            </div>
-
-            <div class="mth-item">
-              <div class="mth-station">
-                <span style="color:var(--bharati-accent)">●</span> Bharati Research Station
-              </div>
-              <span class="mth-coords">69°24'S, 76°11'E</span>
-              <span class="mth-status">ONLINE 91%</span>
-            </div>
-
-            <div class="mth-item">
-              <div class="mth-station">
-                <span style="color:var(--accent-purple)">●</span> GSAT-17 Polar Uplink
-              </div>
-              <span class="mth-coords">Ku-Band High Speed</span>
-              <span class="mth-status">ENCRYPTED</span>
-            </div>
-          </div>
+        <div class="auth-badge-row">
+          <span class="security-level-pill">
+            <span class="security-pulse"></span>
+            SECURE ACCESS • RESTRICTED
+          </span>
         </div>
 
-        <div class="auth-legal-notice">
-          <strong>Official System Notice:</strong> This terminal connects to Ministry of Earth Sciences operations infrastructure. Unauthorized access attempts are monitored and recorded under the Information Technology Act.
-        </div>
+        <h1 class="auth-heading">Indian Antarctic Operations Portal</h1>
+        <p class="auth-subtext">
+          Authenticate to access unified telemetry, digital twin telemetry streams, and incident command networks for India's polar research stations.
+        </p>
       </div>
 
-      <!-- Right: Clerk Sign-In Component Container -->
+      <!-- Right: Clerk / Personnel Authentication Mount Side -->
       <div class="auth-clerk-panel">
         
-        <!-- Target Destination Indicator -->
-        <div class="auth-destination-banner" id="auth-destination-banner" style="margin-bottom:16px;padding:8px 14px;border-radius:10px;background:var(--bg-secondary);border:1px solid var(--border-medium);font-size:12px;display:flex;align-items:center;gap:8px;width:100%;max-width:380px;box-sizing:border-box;">
-          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-blue);flex-shrink:0;"></span>
-          <span style="color:var(--text-secondary)">Target: <strong id="target-portal-label" style="color:var(--text-primary)">Antarctic Remote Operations</strong></span>
-        </div>
-
         <!-- Clerk Mount Node -->
         <div id="clerk-sign-in" style="width:100%;display:flex;justify-content:center;">
           <div class="clerk-loader" id="clerk-loading-state">
@@ -371,49 +258,26 @@
           </div>
         </div>
 
-        <!-- Direct Ministry / Officer Credentials Form (Fallback & Local Access) -->
-        <div id="credentials-sign-in-form" style="display:none;width:100%;max-width:380px;">
-          <div style="font-size:16px;font-weight:800;margin-bottom:4px;color:var(--text-primary);">Personnel Sign-In</div>
-          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:16px;">National Centre for Polar &amp; Ocean Research</div>
+        <!-- Direct Personnel Sign-In Form (Fallback & Local Access) -->
+        <div id="credentials-sign-in-form" style="display:none;width:100%;max-width:360px;">
+          <div style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-primary);">Personnel Sign-In</div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:20px;">National Centre for Polar &amp; Ocean Research</div>
 
-          <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:12px;">
+          <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:16px;">
             <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Official Email</label>
-              <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;" />
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Official Email</label>
+              <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
             </div>
 
             <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Security Key / Passcode</label>
-              <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;" />
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Security Key / Passcode</label>
+              <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
             </div>
 
-            <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Personnel Role</label>
-              <select id="input-role" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;">
-                <option value="Expeditions Officer">Expeditions Officer (Command HQ)</option>
-                <option value="Station Lead Scientist">Station Lead Scientist (Bharati)</option>
-                <option value="Chief Operations Engineer">Chief Operations Engineer (Maitri)</option>
-              </select>
-            </div>
-
-            <button type="submit" style="margin-top:6px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <button type="submit" style="margin-top:8px;width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,119,230,0.3);">
               Authenticate &amp; Enter Portal &rarr;
             </button>
           </form>
-        </div>
-
-        <!-- Fallback Quick-Demo Sign-In Option for Evaluators -->
-        <div class="offline-demo-box">
-          <button class="demo-bypass-btn" onclick="demoBypassAuth('Commander (NCPOR HQ)')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Quick Evaluator Sign-In &bull; Expeditions Commander
-          </button>
-          <span style="font-size:10.5px;color:var(--text-muted);text-align:center">
-            Instant evaluator access for hackathon judges &bull; Bypasses external network check
-          </span>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">
-            Clerk Key: <code style="font-size:9.5px;color:var(--accent-blue)">pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA</code>
-          </div>
         </div>
 
       </div>
@@ -464,27 +328,10 @@
     function handleCredentialsSignIn(e) {
       e.preventDefault();
       const email = document.getElementById('input-email').value;
-      const role = document.getElementById('input-role').value;
-      const uData = {
-        fullName: role === 'Station Lead Scientist' ? 'Dr. Priya Sharma' : 'Dr. M. S. Rawat',
-        role: role,
-        email: email,
-        authenticatedAt: new Date().toISOString()
-      };
-      try {
-        sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-        localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
-      } catch (e) {}
-      window.location.href = getTargetRedirectUrl();
-    }
-
-    // Evaluator Fast Bypass
-    function demoBypassAuth(role = 'Expeditions Commander') {
       const uData = {
         fullName: 'Dr. M. S. Rawat',
-        role: role,
-        email: 'commander.antartica@ncpor.gov.in',
-        station: 'NCPOR Goa & Bharati',
+        role: 'Expeditions Officer',
+        email: email,
         authenticatedAt: new Date().toISOString()
       };
       try {
@@ -496,23 +343,6 @@
 
     // Initialize Page & Clerk
     window.addEventListener('load', async () => {
-      // 1. Update Destination Label
-      const urlParams = new URLSearchParams(window.location.search);
-      const view = urlParams.get('view');
-      const station = urlParams.get('station');
-      const targetLabel = document.getElementById('target-portal-label');
-      if (targetLabel) {
-        if (view === 'command') {
-          targetLabel.textContent = 'Command Control Admin';
-        } else if (station === 'bharati') {
-          targetLabel.textContent = 'Bharati Research Station (Digital Twin)';
-        } else if (station === 'maitri') {
-          targetLabel.textContent = 'Maitri Research Station';
-        } else {
-          targetLabel.textContent = 'Antarctic Remote Operations Portal';
-        }
-      }
-
       // If running directly from filesystem (file:// protocol) or offline, Clerk iframe is restricted by browsers
       const isFileProtocol = window.location.protocol === 'file:';
       const showFallbackForm = () => {
@@ -528,7 +358,7 @@
         return;
       }
 
-      // 2. Otherwise load Clerk SDK for web environments
+      // Otherwise load Clerk SDK for web environments
       const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
       const timer = setTimeout(showFallbackForm, 2500);
 
