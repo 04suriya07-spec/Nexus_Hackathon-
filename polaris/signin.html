@@ -27,92 +27,44 @@
       z-index: 2;
     }
 
-    .auth-bento-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      max-width: 1040px;
+    .auth-card {
+      max-width: 520px;
       width: 100%;
       background: var(--bg-card);
       border: 1px solid var(--border-medium);
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 20px 50px -10px rgba(11, 37, 69, 0.15);
-    }
-
-    /* Left: Mission Security Briefing Side */
-    .auth-briefing-panel {
-      padding: 56px 48px;
-      background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-      border-right: 1px solid var(--border-light);
+      padding: 44px 38px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      position: relative;
-    }
-
-    .auth-badge-row {
-      display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .security-level-pill {
-      font-family: var(--font-mono, monospace);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent-orange);
-      background: rgba(255, 122, 0, 0.12);
-      border: 1px solid var(--border-orange);
-      padding: 4px 10px;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 0.05em;
-    }
-
-    .security-pulse {
-      width: 7px;
-      height: 7px;
-      background: var(--accent-orange);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--accent-orange);
-      animation: secPulse 1.8s infinite;
-    }
-
-    @keyframes secPulse {
-      0% { transform: scale(0.9); opacity: 0.6; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.6; }
+      text-align: center;
+      box-sizing: border-box;
     }
 
     .auth-heading {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       line-height: 1.25;
       color: var(--text-primary);
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       letter-spacing: -0.02em;
     }
 
     .auth-subtext {
-      font-size: 14px;
-      line-height: 1.65;
+      font-size: 13.5px;
+      line-height: 1.6;
       color: var(--text-secondary);
-      margin-bottom: 0;
+      margin-bottom: 24px;
+      max-width: 440px;
     }
 
-    /* Right: Clerk / Authentication Mount Side */
-    .auth-clerk-panel {
-      padding: 56px 44px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-card);
-      min-height: 420px;
-      position: relative;
+    .auth-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border-light);
+      margin-bottom: 24px;
     }
 
     #clerk-sign-in {
@@ -144,17 +96,12 @@
       to { transform: rotate(360deg); }
     }
 
-    @media (max-width: 860px) {
-      .auth-bento-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 600px) {
+      .auth-card {
+        padding: 32px 20px;
       }
-      .auth-briefing-panel {
-        padding: 36px 28px;
-        border-right: none;
-        border-bottom: 1px solid var(--border-light);
-      }
-      .auth-clerk-panel {
-        padding: 36px 28px;
+      .auth-heading {
+        font-size: 22px;
       }
     }
   </style>
@@ -227,59 +174,47 @@
   </header>
 
   <!-- ============================================================
-       CENTRAL SIGN-IN BENTO INTERFACE
+       CENTRAL SIGN-IN INTERFACE (CENTERED CARD)
        ============================================================ -->
   <main class="auth-main-container">
-    <div class="auth-bento-grid">
+    <div class="auth-card">
       
-      <!-- Left: Mission Briefing -->
-      <div class="auth-briefing-panel">
-        <div class="auth-badge-row">
-          <span class="security-level-pill">
-            <span class="security-pulse"></span>
-            SECURE ACCESS • RESTRICTED
-          </span>
-        </div>
+      <!-- Center Briefing Header -->
+      <h1 class="auth-heading">Indian Antarctic Operations Portal</h1>
+      <p class="auth-subtext">
+        Authenticate to access unified telemetry, digital twin telemetry streams, and incident command networks for India's polar research stations.
+      </p>
 
-        <h1 class="auth-heading">Indian Antarctic Operations Portal</h1>
-        <p class="auth-subtext">
-          Authenticate to access unified telemetry, digital twin telemetry streams, and incident command networks for India's polar research stations.
-        </p>
+      <div class="auth-divider"></div>
+
+      <!-- Clerk / Personnel Authentication -->
+      <div id="clerk-sign-in" style="width:100%;display:flex;justify-content:center;">
+        <div class="clerk-loader" id="clerk-loading-state">
+          <div class="clerk-spinner"></div>
+          <span>Connecting to Clerk Secure Authentication...</span>
+        </div>
       </div>
 
-      <!-- Right: Clerk / Personnel Authentication Mount Side -->
-      <div class="auth-clerk-panel">
-        
-        <!-- Clerk Mount Node -->
-        <div id="clerk-sign-in" style="width:100%;display:flex;justify-content:center;">
-          <div class="clerk-loader" id="clerk-loading-state">
-            <div class="clerk-spinner"></div>
-            <span>Connecting to Clerk Secure Authentication...</span>
+      <!-- Direct Personnel Sign-In Form (Fallback & Local Access) -->
+      <div id="credentials-sign-in-form" style="display:none;width:100%;text-align:left;">
+        <div style="font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text-primary);text-align:center;">Personnel Sign-In</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:20px;text-align:center;">National Centre for Polar &amp; Ocean Research</div>
+
+        <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Official Email</label>
+            <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
           </div>
-        </div>
 
-        <!-- Direct Personnel Sign-In Form (Fallback & Local Access) -->
-        <div id="credentials-sign-in-form" style="display:none;width:100%;max-width:360px;">
-          <div style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-primary);">Personnel Sign-In</div>
-          <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:20px;">National Centre for Polar &amp; Ocean Research</div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Security Key / Passcode</label>
+            <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
+          </div>
 
-          <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:16px;">
-            <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Official Email</label>
-              <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
-            </div>
-
-            <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">Security Key / Passcode</label>
-              <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13.5px;box-sizing:border-box;" />
-            </div>
-
-            <button type="submit" style="margin-top:8px;width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,119,230,0.3);">
-              Authenticate &amp; Enter Portal &rarr;
-            </button>
-          </form>
-        </div>
-
+          <button type="submit" style="margin-top:8px;width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(0,119,230,0.3);transition:all 0.2s ease;">
+            Authenticate &amp; Enter Portal &rarr;
+          </button>
+        </form>
       </div>
 
     </div>
