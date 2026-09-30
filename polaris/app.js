@@ -212,8 +212,8 @@ function renderSensorTrendsChart(metric = 'power') {
   const canvas = document.getElementById('sensor-trend-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 340;
-  const H = canvas.height = 90;
+  const W = canvas.width = canvas.offsetWidth || 260;
+  const H = canvas.height = canvas.offsetHeight || 48;
 
   ctx.clearRect(0, 0, W, H);
 
