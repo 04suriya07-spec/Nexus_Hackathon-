@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POLARIS — Indian Antarctic Remote Operations Portal</title>
+  <meta name="description" content="POLARIS is India's unified remote operations portal for managing Antarctic research stations Maitri and Bharati, featuring live telemetry, digital twins, AI-assisted monitoring, and offline-first autonomous operations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="topnav" id="topnav">
+    <div class="topnav-left">
+      <div class="logo-mark" id="nav-logo">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="18,2 34,28 2,28" fill="none" stroke="#00d4ff" stroke-width="2.5"/>
+          <polygon points="18,8 30,26 6,26" fill="#00d4ff" opacity="0.15"/>
+          <circle cx="18" cy="18" r="3" fill="#00d4ff"/>
+          <line x1="18" y1="2" x2="18" y2="28" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">POLARIS</span>
+        <span class="logo-sub">Antarctic Operations Portal</span>
+      </div>
+    </div>
+    <div class="topnav-center">
+      <button class="nav-btn active" id="nav-overview" onclick="navigate('overview')"><span class="nav-icon">&#x1F310;</span> Overview</button>
+      <button class="nav-btn" id="nav-command" onclick="navigate('command')"><span class="nav-icon">&#x26A1;</span> Command Control</button>
+      <button class="nav-btn" id="nav-maitri" onclick="navigate('maitri')"><span class="nav-icon">&#x1F3D4;&#xFE0F;</span> Maitri</button>
+      <button class="nav-btn" id="nav-bharati" onclick="navigate('bharati')"><span class="nav-icon">&#x2744;&#xFE0F;</span> Bharati</button>
+    </div>
+    <div class="topnav-right">
+      <div class="mission-status-pill" id="mission-pill">
+        <span class="pulse-dot green"></span>
+        <span id="mission-text">MISSION ACTIVE</span>
+      </div>
+      <div class="satcom-widget" id="satcom-widget" onclick="demoScenario('satcom')" title="Click to simulate SATCOM outage">
+        <span class="satcom-icon">&#x1F4E1;</span>
+        <span id="satcom-status-text">SATCOM LIVE</span>
+      </div>
+      <button class="demo-btn" id="demo-toggle-btn" onclick="toggleDemoPanel()" title="Demo Mode (Ctrl+D)">&#x1F3AC; Demo</button>
+      <div class="time-display" id="time-display">--:--:-- UTC</div>
+    </div>
+  </nav>
+
+  <div class="satcom-banner hidden" id="satcom-banner">
+    <span class="banner-icon">&#x26A0;&#xFE0F;</span>
+    <span><strong>SATCOM LOST</strong> &mdash; LOCAL AUTONOMOUS MODE ACTIVE &nbsp;|&nbsp; Local monitoring: RUNNING &nbsp;|&nbsp; Cloud AI: UNAVAILABLE &nbsp;|&nbsp; Queued: <span id="queued-mb">0</span> MB &nbsp;|&nbsp; Last sync: <span id="last-sync">00:00:00</span> ago</span>
+    <button class="restore-btn" onclick="restoreSatcom()">RESTORE SATCOM</button>
+  </div>
+
+  <div class="demo-panel hidden" id="demo-panel">
+    <div class="demo-panel-header"><span>&#x1F3AC; DEMO MODE CONTROL PANEL</span><button onclick="toggleDemoPanel()">&#x2715;</button></div>
+    <div class="demo-scenarios">
+      <button onclick="demoScenario('normal')" class="scenario-btn s-green">&#x2705; Normal Operations</button>
+      <button onclick="demoScenario('generator')" class="scenario-btn s-yellow">&#x26A0;&#xFE0F; Generator Degradation</button>
+      <button onclick="demoScenario('blizzard')" class="scenario-btn s-orange">&#x1F328;&#xFE0F; Blizzard Risk</button>
+      <button onclick="demoScenario('satcom')" class="scenario-btn s-red">&#x1F4E1; SATCOM Outage</button>
+      <button onclick="demoScenario('critical')" class="scenario-btn s-red">&#x1F6A8; Multi-System Critical</button>
+      <button onclick="demoScenario('recover')" class="scenario-btn s-blue">&#x1F504; Recovery Sequence</button>
+    </div>
+    <div class="demo-script">
+      <div class="demo-script-title">2-MIN DEMO FLOW</div>
+      <ol>
+        <li onclick="navigate('overview')">Overview &rarr; Show both stations on Antarctic map</li>
+        <li onclick="navigate('command')">Command Control &rarr; Mission status comparison</li>
+        <li onclick="demoThenNavigate('generator','bharati')">Bharati &rarr; Generator 02 degradation</li>
+        <li onclick="triggerAira('generator')">Ask AIRA why the warning occurred</li>
+        <li onclick="demoScenario('blizzard')">Trigger blizzard &rarr; Field team warning</li>
+        <li onclick="demoScenario('satcom')">SATCOM outage &rarr; Local Autonomous Mode</li>
+        <li onclick="restoreSatcom()">Restore SATCOM &rarr; Watch sync queue</li>
+        <li onclick="navigate('command')">Command Control &rarr; Incident resolved</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="aira-panel" id="aira-panel">
+    <div class="aira-header" onclick="toggleAira()">
+      <div class="aira-avatar">AI</div>
+      <div class="aira-title"><span>AIRA</span><span class="aira-sub">Antarctic Intelligence &amp; Response Assistant</span></div>
+      <span class="aira-toggle-icon" id="aira-toggle-icon">&#x25B2;</span>
+    </div>
+    <div class="aira-body" id="aira-body">
+      <div class="aira-messages" id="aira-messages">
+        <div class="aira-msg system"><span class="msg-time" id="aira-init-time">--:--</span><span>AIRA online. Monitoring Maitri &amp; Bharati stations. All systems nominal. Ready for queries.</span></div>
+      </div>
+      <div class="aira-input-row">
+        <input type="text" id="aira-input" placeholder="Ask AIRA about station conditions..." onkeydown="if(event.key==='Enter') sendAiraMessage()" />
+        <button onclick="sendAiraMessage()" id="aira-send-btn">&#x2192;</button>
+      </div>
+      <div class="aira-quick-prompts">
+        <button onclick="quickAira('Why is Generator 02 vibrating?')">Generator vibration</button>
+        <button onclick="quickAira('Field team safety status?')">Field team status</button>
+        <button onclick="quickAira('Station health summary')">Health summary</button>
+        <button onclick="quickAira('Predictive maintenance alerts')">Maintenance alerts</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-content" id="main-content">
+
+    <!-- OVERVIEW PAGE -->
+    <section class="page active" id="page-overview">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Indian Antarctic Operations</h1>
+          <p class="page-sub">National Overview &mdash; Maitri &amp; Bharati Research Stations</p>
+        </div>
+        <div class="header-stats">
+          <div class="header-stat"><span class="hs-val" id="total-crew">34</span><span class="hs-label">Total Crew</span></div>
+          <div class="header-stat"><span class="hs-val red-text" id="active-alerts-count">0</span><span class="hs-label">Active Alerts</span></div>
+          <div class="header-stat"><span class="hs-val" id="mission-day">847</span><span class="hs-label">Mission Day</span></div>
+        </div>
+      </div>
+
+      <div class="antarctica-map-container">
+        <canvas id="antarctica-canvas"></canvas>
+        <div class="map-station-label maitri-label" id="maitri-map-label" onclick="navigate('maitri')">
+          <div class="station-beacon maitri-beacon"></div>
+          <div class="station-info-popup">
+            <div class="sip-name">&#x1F3D4;&#xFE0F; MAITRI</div>
+            <div class="sip-loc">70&deg;45'S, 11&deg;44'E &mdash; Queen Maud Land</div>
+            <div class="sip-health"><span id="maitri-health-dot" class="health-dot green-dot">&#x25CF;</span> <span id="maitri-score-mini">87</span> Health</div>
+          </div>
+        </div>
+        <div class="map-station-label bharati-label" id="bharati-map-label" onclick="navigate('bharati')">
+          <div class="station-beacon bharati-beacon"></div>
+          <div class="station-info-popup">
+            <div class="sip-name">&#x2744;&#xFE0F; BHARATI</div>
+            <div class="sip-loc">69&deg;24'S, 76&deg;11'E &mdash; Larsemann Hills</div>
+            <div class="sip-health"><span id="bharati-health-dot" class="health-dot green-dot">&#x25CF;</span> <span id="bharati-score-mini">92</span> Health</div>
+          </div>
+        </div>
+        <div class="map-legend">
+          <div class="leg-item"><span class="leg-dot green-dot">&#x25CF;</span> Station Online</div>
+          <div class="leg-item"><span class="leg-dot yellow-dot">&#x25CF;</span> Warning State</div>
+          <div class="leg-item"><span class="leg-dot red-dot">&#x25CF;</span> Critical</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid-4">
+        <div class="metric-card maitri-card" onclick="navigate('maitri')">
+          <div class="mc-header"><span class="mc-icon">&#x1F3D4;&#xFE0F;</span><span class="mc-name">MAITRI</span><span class="status-dot yellow" id="maitri-status-dot">&#x25CF;</span></div>
+          <div class="mc-health-ring-wrap">
+            <canvas id="maitri-health-canvas" width="120" height="120"></canvas>
+            <div class="mc-score-center"><span class="mc-score" id="maitri-health-score">87</span><span class="mc-score-label">HEALTH</span></div>
+          </div>
+          <div class="mc-quick-stats">
+            <div class="qs-item"><span class="qs-label">Crew</span><span class="qs-val" id="maitri-crew">18</span></div>
+            <div class="qs-item"><span class="qs-label">Temp</span><span class="qs-val" id="maitri-temp">-24&deg;C</span></div>
+            <div class="qs-item"><span class="qs-label">Power</span><span class="qs-val" id="maitri-power">92%</span></div>
+            <div class="qs-item"><span class="qs-label">Alerts</span><span class="qs-val red-text" id="maitri-alerts">1</span></div>
+          </div>
+          <button class="mc-action-btn" onclick="event.stopPropagation();navigate('maitri')">Open Station &rarr;</button>
+        </div>
+
+        <div class="metric-card bharati-card" onclick="navigate('bharati')">
+          <div class="mc-header"><span class="mc-icon">&#x2744;&#xFE0F;</span><span class="mc-name">BHARATI</span><span class="status-dot green" id="bharati-status-dot">&#x25CF;</span></div>
+          <div class="mc-health-ring-wrap">
+            <canvas id="bharati-health-canvas" width="120" height="120"></canvas>
+            <div class="mc-score-center"><span class="mc-score" id="bharati-health-score">92</span><span class="mc-score-label">HEALTH</span></div>
+          </div>
+          <div class="mc-quick-stats">
+            <div class="qs-item"><span class="qs-label">Crew</span><span class="qs-val" id="bharati-crew">16</span></div>
+            <div class="qs-item"><span class="qs-label">Temp</span><span class="qs-val" id="bharati-temp">-18&deg;C</span></div>
+            <div class="qs-item"><span class="qs-label">Power</span><span class="qs-val" id="bharati-power">96%</span></div>
+            <div class="qs-item"><span class="qs-label">Alerts</span><span class="qs-val" id="bharati-alerts">0</span></div>
+          </div>
+          <button class="mc-action-btn" onclick="event.stopPropagation();navigate('bharati')">Open Station &rarr;</button>
+        </div>
+
+        <div class="metric-card weather-card">
+          <div class="mc-header"><span class="mc-icon">&#x1F328;&#xFE0F;</span><span class="mc-name">WEATHER</span></div>
+          <div class="weather-grid">
+            <div class="wg-station">
+              <div class="wg-name">MAITRI</div>
+              <div class="wg-wind" id="ov-maitri-wind">&#x2197; 28 kt</div>
+              <div class="wg-vis" id="ov-maitri-vis">Vis: 8.2 km</div>
+              <div class="wg-cond" id="ov-maitri-cond">Overcast</div>
+            </div>
+            <div class="wg-div"></div>
+            <div class="wg-station">
+              <div class="wg-name">BHARATI</div>
+              <div class="wg-wind" id="ov-bharati-wind">&#x2196; 15 kt</div>
+              <div class="wg-vis" id="ov-bharati-vis">Vis: 12.4 km</div>
+              <div class="wg-cond" id="ov-bharati-cond">Clear</div>
+            </div>
+          </div>
+          <div class="forecast-bar">
+            <div class="fb-item"><span>D+1</span><span>&#x26C5;</span></div>
+            <div class="fb-item"><span>D+2</span><span>&#x1F328;&#xFE0F;</span></div>
+            <div class="fb-item"><span>D+3</span><span>&#x2744;&#xFE0F;</span></div>
+            <div class="fb-item"><span>D+4</span><span>&#x2600;&#xFE0F;</span></div>
+            <div class="fb-item"><span>D+5</span><span>&#x26C5;</span></div>
+          </div>
+        </div>
+
+        <div class="metric-card fleet-card">
+          <div class="mc-header"><span class="mc-icon">&#x1F681;</span><span class="mc-name">FLEET STATUS</span></div>
+          <div class="fleet-list">
+            <div class="fleet-item"><span class="fi-icon">&#x1F681;</span><div class="fi-info"><span class="fi-name">Dhruv ALH-01</span><span class="fi-status green-text">STANDBY</span></div><span class="fi-loc">Maitri Pad</span></div>
+            <div class="fleet-item"><span class="fi-icon">&#x1F697;</span><div class="fi-info"><span class="fi-name">Snowcat SC-04</span><span class="fi-status yellow-text">IN FIELD</span></div><span class="fi-loc">~14km NW</span></div>
+            <div class="fleet-item"><span class="fi-icon">&#x1F6A2;</span><div class="fi-info"><span class="fi-name">MV Nataraj</span><span class="fi-status green-text">EN ROUTE</span></div><span class="fi-loc">ETA D+12</span></div>
+            <div class="fleet-item"><span class="fi-icon">&#x1F697;</span><div class="fi-info"><span class="fi-name">Snowmobile SM-02</span><span class="fi-status green-text">PARKED</span></div><span class="fi-loc">Bharati Bay</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Live Event Timeline</h2>
+        <div class="timeline-filter">
+          <button class="tf-btn active" onclick="filterTimeline('all',this)">All</button>
+          <button class="tf-btn" onclick="filterTimeline('alert',this)">Alerts</button>
+          <button class="tf-btn" onclick="filterTimeline('system',this)">System</button>
+          <button class="tf-btn" onclick="filterTimeline('crew',this)">Crew</button>
+        </div>
+      </div>
+      <div class="event-timeline" id="event-timeline"></div>
+    </section>
+
+    <!-- COMMAND CONTROL PAGE -->
+    <section class="page" id="page-command">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Command &amp; Control</h1>
+          <p class="page-sub">Mission Operations Center &mdash; Cross-Station Coordination</p>
+        </div>
+        <div class="header-stats">
+          <div class="header-stat"><span class="hs-val green-text" id="cmd-status">NOMINAL</span><span class="hs-label">Mission Status</span></div>
+          <div class="header-stat"><span class="hs-val" id="cmd-uptime">847d 14h</span><span class="hs-label">Uptime</span></div>
+          <div class="header-stat"><span class="hs-val red-text" id="cmd-incidents">2</span><span class="hs-label">Open Incidents</span></div>
+        </div>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="cg-header">
+          <div class="cg-domain-col">Domain</div>
+          <div class="cg-station-col maitri-col">&#x1F3D4;&#xFE0F; MAITRI</div>
+          <div class="cg-station-col bharati-col">&#x2744;&#xFE0F; BHARATI</div>
+        </div>
+        <div class="cg-row"><div class="cg-domain">&#x26A1; Power</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-mp" style="width:92%"></div></div><span id="txt-mp">92% / 380 kW</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bp" style="width:96%"></div></div><span id="txt-bp">96% / 420 kW</span></div></div>
+        <div class="cg-row"><div class="cg-domain">&#x1F32C;&#xFE0F; Life Support</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-ml" style="width:88%"></div></div><span id="txt-ml">O&#x2082; 20.9% | CO&#x2082; 0.04% | 21&deg;C</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bl" style="width:94%"></div></div><span id="txt-bl">O&#x2082; 20.9% | CO&#x2082; 0.03% | 22&deg;C</span></div></div>
+        <div class="cg-row"><div class="cg-domain">&#x1F4E1; Communications</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-yellow" id="bar-mc" style="width:78%"></div></div><span id="txt-mc">Latency: 620ms | 2.4 Mbps</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bc" style="width:91%"></div></div><span id="txt-bc">Latency: 480ms | 3.1 Mbps</span></div></div>
+        <div class="cg-row"><div class="cg-domain">&#x26FD; Fuel / Resources</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-orange" id="bar-mf" style="width:63%"></div></div><span id="txt-mf">HSD: 63% | Endurance: 84d</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bf" style="width:77%"></div></div><span id="txt-bf">HSD: 77% | Endurance: 102d</span></div></div>
+        <div class="cg-row"><div class="cg-domain">&#x1F527; Maintenance</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-orange" id="bar-mm" style="width:55%"></div></div><span id="txt-mm">WO Open: 5 | 2 Urgent</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bm" style="width:82%"></div></div><span id="txt-bm">WO Open: 2 | 0 Urgent</span></div></div>
+        <div class="cg-row"><div class="cg-domain">&#x1F52C; Science Ops</div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-ms" style="width:89%"></div></div><span id="txt-ms">4/5 instruments online</span></div><div class="cg-val"><div class="cg-bar-wrap"><div class="cg-bar b-green" id="bar-bs" style="width:100%"></div></div><span id="txt-bs">6/6 instruments online</span></div></div>
+      </div>
+
+      <div class="section-header mt-24">
+        <h2>Active Incidents</h2>
+        <button class="btn-outline" onclick="clearResolvedIncidents()">Clear Resolved</button>
+      </div>
+      <div class="incidents-list" id="incidents-list">
+        <div class="incident-card yellow-border" id="incident-gen">
+          <div class="ic-header">
+            <span class="ic-severity yellow-badge">WARN</span>
+            <span class="ic-title">Generator 02 Vibration &mdash; Bharati</span>
+            <span class="ic-time">08:42 UTC</span>
+          </div>
+          <p class="ic-desc">Vibration sensor reading 18.4 mm/s (threshold: 15 mm/s). Trending up over past 2h. Predictive model suggests bearing wear. MTBF: ~72h at current rate.</p>
+          <div class="ic-actions">
+            <button class="btn-primary sm" onclick="triggerAira('generator')">Ask AIRA</button>
+            <button class="btn-outline sm" onclick="acknowledgeIncident('incident-gen', this)">Acknowledge</button>
+            <button class="btn-success sm" onclick="resolveIncident('incident-gen')">Resolve</button>
+          </div>
+        </div>
+        <div class="incident-card orange-border" id="incident-fuel">
+          <div class="ic-header">
+            <span class="ic-severity orange-badge">WATCH</span>
+            <span class="ic-title">Fuel Endurance Below 90d &mdash; Maitri</span>
+            <span class="ic-time">Yesterday 16:00 UTC</span>
+          </div>
+          <p class="ic-desc">HSD reserve at 63% equates to 84 days endurance. Resupply vessel ETA D+12. Recommend reducing auxiliary heating load by 8% to buffer against blizzard consumption spike.</p>
+          <div class="ic-actions">
+            <button class="btn-primary sm" onclick="triggerAira('fuel')">Ask AIRA</button>
+            <button class="btn-outline sm" onclick="acknowledgeIncident('incident-fuel', this)">Acknowledge</button>
+            <button class="btn-success sm" onclick="resolveIncident('incident-fuel')">Resolve</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header mt-24"><h2>Cross-Station Telemetry Charts</h2></div>
+      <div class="charts-row">
+        <div class="chart-card"><div class="chart-title">Power Load (kW) &mdash; Last 24h</div><canvas id="chart-power" width="400" height="160"></canvas></div>
+        <div class="chart-card"><div class="chart-title">Ambient Temperature (&deg;C) &mdash; Last 24h</div><canvas id="chart-temp" width="400" height="160"></canvas></div>
+        <div class="chart-card"><div class="chart-title">SATCOM Latency (ms) &mdash; Last 24h</div><canvas id="chart-latency" width="400" height="160"></canvas></div>
+      </div>
+    </section>
+
+    <!-- MAITRI PAGE -->
+    <section class="page" id="page-maitri">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">&#x1F3D4;&#xFE0F; Maitri Research Station</h1>
+          <p class="page-sub">70&deg;45'S, 11&deg;44'E &mdash; Queen Maud Land, East Antarctica &mdash; Est. 1989</p>
+        </div>
+        <div class="header-stats">
+          <div class="header-stat"><span class="hs-val" id="maitri-health-display">87</span><span class="hs-label">Station Health</span></div>
+          <div class="header-stat"><span class="hs-val" id="maitri-crew-display">18</span><span class="hs-label">Crew Active</span></div>
+          <div class="header-stat"><span class="hs-val red-text" id="maitri-alerts-display">1</span><span class="hs-label">Active Alerts</span></div>
+        </div>
+      </div>
+      <div class="station-layout">
+        <div class="digital-twin-panel">
+          <div class="twin-header">
+            <span>MAITRI DIGITAL TWIN</span>
+            <div class="twin-controls">
+              <button class="twin-ctrl" onclick="rotateTwin('maitri','left')">&#x25C0;</button>
+              <button class="twin-ctrl" onclick="rotateTwin('maitri','right')">&#x25B6;</button>
+              <button class="twin-ctrl" onclick="resetTwinView('maitri')">&#x27F3;</button>
+            </div>
+          </div>
+          <canvas id="maitri-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'maitri')" style="cursor:crosshair"></canvas>
+          <div class="twin-legend">
+            <span class="tl-item green-tl">&#x25A0; Normal</span>
+            <span class="tl-item yellow-tl">&#x25A0; Warning</span>
+            <span class="tl-item red-tl">&#x25A0; Critical</span>
+            <span class="tl-item blue-tl">&#x25A0; Selected</span>
+          </div>
+          <div class="twin-subsystem-info" id="maitri-subsystem-info"><span class="no-selection">Click a zone to inspect subsystem</span></div>
+        </div>
+        <div class="inspector-panel" id="maitri-inspector">
+          <div class="inspector-tabs">
+            <button class="it-tab active" onclick="selectSubsystem('maitri','power',this)">&#x26A1; Power</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','life',this)">&#x1F32C;&#xFE0F; Life</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','comms',this)">&#x1F4E1; Comms</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','hvac',this)">&#x1F321;&#xFE0F; HVAC</button>
+            <button class="it-tab" onclick="selectSubsystem('maitri','science',this)">&#x1F52C; Science</button>
+          </div>
+          <div class="inspector-content" id="maitri-inspector-content"></div>
+        </div>
+      </div>
+      <div class="section-header mt-24">
+        <h2>Live Telemetry &mdash; Maitri</h2>
+        <div class="update-indicator"><span class="pulse-dot green small"></span><span id="maitri-last-update">Live</span></div>
+      </div>
+      <div class="telemetry-grid" id="maitri-telemetry-grid"></div>
+      <div class="section-header mt-24"><h2>Crew Status</h2></div>
+      <div class="crew-grid" id="maitri-crew-grid"></div>
+    </section>
+
+    <!-- BHARATI PAGE -->
+    <section class="page" id="page-bharati">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">&#x2744;&#xFE0F; Bharati Research Station</h1>
+          <p class="page-sub">69&deg;24'S, 76&deg;11'E &mdash; Larsemann Hills, East Antarctica &mdash; Est. 2012</p>
+        </div>
+        <div class="header-stats">
+          <div class="header-stat"><span class="hs-val" id="bharati-health-display">92</span><span class="hs-label">Station Health</span></div>
+          <div class="header-stat"><span class="hs-val" id="bharati-crew-display">16</span><span class="hs-label">Crew Active</span></div>
+          <div class="header-stat"><span class="hs-val" id="bharati-alerts-display">0</span><span class="hs-label">Active Alerts</span></div>
+        </div>
+      </div>
+      <div class="station-layout">
+        <div class="digital-twin-panel">
+          <div class="twin-header">
+            <span>BHARATI DIGITAL TWIN</span>
+            <div class="twin-controls">
+              <button class="twin-ctrl" onclick="rotateTwin('bharati','left')">&#x25C0;</button>
+              <button class="twin-ctrl" onclick="rotateTwin('bharati','right')">&#x25B6;</button>
+              <button class="twin-ctrl" onclick="resetTwinView('bharati')">&#x27F3;</button>
+            </div>
+          </div>
+          <canvas id="bharati-twin-canvas" width="600" height="400" onclick="handleTwinClick(event,'bharati')" style="cursor:crosshair"></canvas>
+          <div class="twin-legend">
+            <span class="tl-item green-tl">&#x25A0; Normal</span>
+            <span class="tl-item yellow-tl">&#x25A0; Warning</span>
+            <span class="tl-item red-tl">&#x25A0; Critical</span>
+            <span class="tl-item blue-tl">&#x25A0; Selected</span>
+          </div>
+          <div class="twin-subsystem-info" id="bharati-subsystem-info"><span class="no-selection">Click a zone to inspect subsystem &mdash; Try Generator 02</span></div>
+        </div>
+        <div class="inspector-panel" id="bharati-inspector">
+          <div class="inspector-tabs">
+            <button class="it-tab active" onclick="selectSubsystem('bharati','power',this)">&#x26A1; Power</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','life',this)">&#x1F32C;&#xFE0F; Life</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','comms',this)">&#x1F4E1; Comms</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','fuel',this)">&#x26FD; Fuel</button>
+            <button class="it-tab" onclick="selectSubsystem('bharati','science',this)">&#x1F52C; Science</button>
+          </div>
+          <div class="inspector-content" id="bharati-inspector-content"></div>
+        </div>
+      </div>
+      <div class="section-header mt-24">
+        <h2>Live Telemetry &mdash; Bharati</h2>
+        <div class="update-indicator"><span class="pulse-dot green small"></span><span id="bharati-last-update">Live</span></div>
+      </div>
+      <div class="telemetry-grid" id="bharati-telemetry-grid"></div>
+      <div class="section-header mt-24"><h2>Crew Status</h2></div>
+      <div class="crew-grid" id="bharati-crew-grid"></div>
+    </section>
+
+  </main>
+
+  <div class="alert-drawer hidden" id="alert-drawer">
+    <div class="alert-drawer-header"><span>&#x1F514; Active Alerts (<span id="alert-count-drawer">0</span>)</span><button onclick="toggleAlertDrawer()">&#x2715;</button></div>
+    <div class="alert-drawer-content" id="alert-drawer-content"></div>
+  </div>
+  <button class="alert-fab" id="alert-fab" onclick="toggleAlertDrawer()">&#x1F514;<span id="alert-fab-count" class="fab-badge">0</span></button>
+
+  <script src="app.js"></script>
+</body>
+</html>
