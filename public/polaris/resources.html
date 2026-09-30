@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bright">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources & Protocols — National Centre for Polar & Ocean Research</title>
+  <meta name="description" content="Official repository for Antarctic Standard Operating Procedures (SOPs), Scientific Datasets, Environmental Compliance Guidelines, and Operational Manuals." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .res-page-container {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 16px 28px 40px;
+    }
+    .res-header-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .res-search-input {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 320px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .res-search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(0, 119, 230, 0.2);
+    }
+    .res-category-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .cat-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+    .res-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .res-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .res-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--card-shadow-hover);
+    }
+    .res-top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .res-sop-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: var(--bg-secondary);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .res-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .badge-mandatory { background: rgba(230, 57, 70, 0.12); color: var(--accent-red); }
+    .badge-active { background: rgba(0, 168, 84, 0.12); color: var(--accent-green); }
+    .badge-data { background: rgba(0, 119, 230, 0.12); color: var(--accent-blue); }
+    .res-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+    .res-card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0 0 16px;
+    }
+    .res-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .res-action-btn {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+    .res-action-btn:hover {
+      background: var(--accent-blue-hover);
+    }
+    /* SOP Modal */
+    .sop-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .sop-modal-backdrop.open {
+      display: flex;
+    }
+    .sop-modal-dialog {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .sop-modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card-subtle);
+    }
+    .sop-modal-header h3 {
+      margin: 0;
+      font-size: 17px;
+      color: var(--text-primary);
+    }
+    .sop-modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .sop-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: var(--bg-card-subtle);
+    }
+    .sop-step-box {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent-blue);
+      padding: 10px 14px;
+      margin: 10px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .sop-step-box strong { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-wrapper" onclick="window.location.href='index.html'" style="cursor:pointer">
+        <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
+        <div class="brand-text">
+          <span class="brand-title">National Centre for Polar &amp; Ocean Research</span>
+          <span class="brand-subtitle">Ministry of Earth Sciences, Government of India</span>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <button class="nav-link-btn" onclick="window.location.href='index.html'">Home</button>
+        <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
+        <button class="nav-link-btn" onclick="window.location.href='maitri.html'">Maitri</button>
+        <button class="nav-link-btn" onclick="window.location.href='bharati.html'">Bharati</button>
+        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
+        <button class="nav-link-btn" onclick="window.location.href='livedata.html'">Live Data</button>
+        <button class="nav-link-btn active" onclick="window.location.href='resources.html'">Resources</button>
+        <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
+      </nav>
+
+      <div class="header-right">
+        <div class="system-status-indicator">
+          <span class="pulse-dot-green"></span>
+          <span>System Online</span>
+        </div>
+        <span class="header-v-sep">|</span>
+        <div class="gov-india-badge">
+          <svg class="flag-tiranga" viewBox="0 0 30 20">
+            <rect width="30" height="6.67" fill="#FF9933"/>
+            <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+            <rect y="13.34" width="30" height="6.67" fill="#138808"/>
+            <circle cx="15" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.7"/>
+          </svg>
+          <div class="gov-text-wrap">
+            <span class="gov-title">Government of India</span>
+            <span class="gov-tagline">Science for a Safer Planet</span>
+          </div>
+        </div>
+        <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Switch theme">
+          <span class="switch-icon sun-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+          <span class="switch-icon moon-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span class="switch-thumb"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- RESOURCES CONTENT -->
+  <main class="res-page-container">
+    
+    <div class="res-header-panel">
+      <div>
+        <div class="breadcrumbs-trail" style="margin-bottom:6px">
+          <a href="index.html" style="color:inherit; text-decoration:none">Home</a> &rsaquo; <span class="current">Resources &amp; Scientific Protocols</span>
+        </div>
+        <h1 style="font-size:24px; font-weight:800; color:var(--text-primary); margin:0 0 4px">Indian Antarctic Operations Library</h1>
+        <p style="font-size:13px; color:var(--text-secondary); margin:0">Standard Operating Procedures (SOPs), Scientific Callsets, and Expedition Protocols</p>
+      </div>
+
+      <input type="text" id="res-search" class="res-search-input" placeholder="Search SOPs, manuals, or datasets..." oninput="filterResources()" />
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="res-category-tabs">
+      <button class="cat-btn active" onclick="setResFilter('all', this)">All Documents (8)</button>
+      <button class="cat-btn" onclick="setResFilter('power', this)">Power &amp; Microgrid</button>
+      <button class="cat-btn" onclick="setResFilter('water', this)">Water &amp; Desalination</button>
+      <button class="cat-btn" onclick="setResFilter('comms', this)">Comms &amp; SATCOM</button>
+      <button class="cat-btn" onclick="setResFilter('data', this)">Scientific Datasets</button>
+      <button class="cat-btn" onclick="setResFilter('env', this)">Madrid Protocol (Env)</button>
+    </div>
+
+    <!-- Resources Card Grid -->
+    <div class="res-grid" id="res-grid-container">
+
+      <!-- Item 1: DG-2 Power SOP -->
+      <div class="res-card" data-cat="power" data-title="DG-02 Cold Start & Load Synchronization Protocol">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-PWR-12</span>
+            <span class="res-badge badge-mandatory">Priority Safety</span>
+          </div>
+          <h3 class="res-card-title">DG-02 Cold Start &amp; Microgrid Load Synchronization</h3>
+          <p class="res-card-desc">Detailed procedure for pre-heating diesel generator crankcases with glycol heaters and synchronizing phase angles onto the 415V busbar during blizzard conditions.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 4.2 &bull; NCPOR Engineering</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-PWR-12', 'DG-02 Cold Start & Microgrid Synchronization', `
+            <p><strong>Scope:</strong> Safe operation and phase synchronization of Maitri / Bharati primary diesel generators under sub-zero temperatures (-40°C to -10°C).</p>
+            <div class='sop-step-box'><strong>Step 1: Glycol Pre-Heating</strong><br/>Verify jacket water immersion heater is energized. Engine block temperature must reach minimum +25°C prior to turning starter motor.</div>
+            <div class='sop-step-box'><strong>Step 2: Fuel Delivery Verification</strong><br/>Inspect FSII additive levels in Jet A-1 supply. Check fuel line heat trace circuits are active with green telemetry indicator.</div>
+            <div class='sop-step-box'><strong>Step 3: Synchroscope Phasing</strong><br/>Bring DG to 1500 RPM (50 Hz). Engage synchroscope. When pointer rotates clockwise and passes 11:30 position, close generator air circuit breaker (ACB).</div>
+            <div class='sop-step-box'><strong>Step 4: Load Sharing</strong><br/>Gradually ramp governor to 45% base load over 10 minutes. Monitor DG-02 vibration sensor to ensure it stays below 3.5 mm/s.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Item 2: Priyadarshini Water Heating -->
+      <div class="res-card" data-cat="water" data-title="Priyadarshini Lake Water Pipeline Trace Heating">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-WTR-04</span>
+            <span class="res-badge badge-active">Active Routine</span>
+          </div>
+          <h3 class="res-card-title">Priyadarshini Lake Water Pipeline Freeze Protection</h3>
+          <p class="res-card-desc">Continuous monitoring SOP for the 1.2 km surface water intake pipeline from Lake Priyadarshini into Maitri Station water storage tanks.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 3.1 &bull; Maitri Station</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-WTR-04', 'Priyadarshini Lake Pipeline Trace Heating', `
+            <p><strong>Scope:</strong> Prevention of ice damming along the 1200m dual insulated conduit linking Lake Priyadarshini pump station to Maitri buffer tanks.</p>
+            <div class='sop-step-box'><strong>Step 1: Telemetry Check</strong><br/>Confirm all 6 thermal sensors along Zone A through Zone F report above +3.0°C. If any sensor drops below +1.5°C, auto-boost heat trace circuit #2.</div>
+            <div class='sop-step-box'><strong>Step 2: Flow Circulation</strong><br/>Maintain continuous minimum return recirculation loop velocity of 0.6 m/s even during non-pumping hours.</div>
+            <div class='sop-step-box'><strong>Step 3: Freeze Emergency</strong><br/>If pump pressure spikes above 8.5 bar, switch immediately to emergency steam purge port located at pump house shelter.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Item 3: SATCOM Storm Protocol -->
+      <div class="res-card" data-cat="comms" data-title="GSAT-17 Satellite Antenna High-Wind Lockout">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-COM-01</span>
+            <span class="res-badge badge-mandatory">Extreme Weather</span>
+          </div>
+          <h3 class="res-card-title">GSAT-17 Radome High-Wind Mechanical Stowing</h3>
+          <p class="res-card-desc">Protocol for locking parabolic tracking dishes at zero wind resistance elevation when katabatic wind gusts exceed 55 knots.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 5.0 &bull; ISRO Telemetry</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-COM-01', 'Radome High-Wind Mechanical Stowing', `
+            <p><strong>Scope:</strong> Structural preservation of the 7.3m C-band and Ku-band tracking dishes during category 3 polar blizzards.</p>
+            <div class='sop-step-box'><strong>Step 1: Wind Threshold Trigger</strong><br/>When ultrasonic anemometer registers sustained winds > 45 knots or gusts > 55 knots, sound level-2 comms alert.</div>
+            <div class='sop-step-box'><strong>Step 2: Zenith Stow Command</strong><br/>Issue remote servo command to drive antenna elevation to 90.0° (Zenith position) to minimize aerodynamic cross-section.</div>
+            <div class='sop-step-box'><strong>Step 3: Brake Engagement</strong><br/>Engage mechanical azimuth and elevation solenoid locks. Switch ground traffic to omnidirectional emergency Iridium link.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Item 4: Meteorological 10-Yr Dataset -->
+      <div class="res-card" data-cat="data" data-title="Maitri Meteorological Hourly Dataset (2015-2025)">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">DAT-MET-10Y</span>
+            <span class="res-badge badge-data">Dataset CSV</span>
+          </div>
+          <h3 class="res-card-title">Maitri Station 10-Year Meteorological Hourly Records</h3>
+          <p class="res-card-desc">Calibrated surface observations: 2m air temperature, pressure, wind velocity, humidity, solar net flux, and boundary layer turbulence.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Format: CSV / NetCDF4 &bull; 14.2 MB</span>
+          <button class="res-action-btn" onclick="downloadSampleData('maitri_met_hourly_sample.csv', 'timestamp,temp_c,wind_kt,pressure_hpa,solar_wm2\n2026-09-30T00:00:00Z,-14.2,16.5,984.2,120.4\n2026-09-30T01:00:00Z,-13.8,17.1,984.0,145.2\n2026-09-30T02:00:00Z,-12.4,18.0,983.8,188.0')">Download CSV &#x21E9;</button>
+        </div>
+      </div>
+
+      <!-- Item 5: Geomagnetic Observatory Feed -->
+      <div class="res-card" data-cat="data" data-title="Indian Institute of Geomagnetism Maitri Variometer Records">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">DAT-GEO-01S</span>
+            <span class="res-badge badge-data">Dataset IAGA</span>
+          </div>
+          <h3 class="res-card-title">Maitri Geomagnetic Fluxgate Variometer 1-Sec Stream</h3>
+          <p class="res-card-desc">High-resolution geomagnetic field components (H, D, Z) captured by the IIG non-magnetic variometer shelter for magnetospheric research.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Format: IAGA-2002 / CSV</span>
+          <button class="res-action-btn" onclick="downloadSampleData('maitri_geomag_sample.csv', 'time_utc,H_component_nT,D_component_deg,Z_component_nT\n2026-09-30 06:00:00,18420.4,-18.2,34210.8\n2026-09-30 06:01:00,18421.1,-18.2,34209.5\n2026-09-30 06:02:00,18419.8,-18.1,34212.1')">Download CSV &#x21E9;</button>
+        </div>
+      </div>
+
+      <!-- Item 6: Madrid Protocol Waste Management -->
+      <div class="res-card" data-cat="env" data-title="Protocol on Environmental Protection Waste Classification">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-ENV-02</span>
+            <span class="res-badge badge-mandatory">Treaty Law</span>
+          </div>
+          <h3 class="res-card-title">Zero-Discharge Hazardous Waste Segregation &amp; Retrograde</h3>
+          <p class="res-card-desc">Strict Antarctic Treaty compliance rules governing incineration ash, grey water bio-digestion, solid sorting, and retrograde container packaging.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 6.0 &bull; MoES Environmental Division</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-ENV-02', 'Antarctic Environmental Protection & Zero Discharge', `
+            <p><strong>Mandate:</strong> Complete compliance with Annex III (Waste Disposal and Management) of the Protocol on Environmental Protection to the Antarctic Treaty.</p>
+            <div class='sop-step-box'><strong>Classification Group 1:</strong> Solid organics must be processed through high-temperature dual chamber incinerators. Incineration ash must be sealed in steel drums for back-shipment to India.</div>
+            <div class='sop-step-box'><strong>Classification Group 2:</strong> Waste lubricating oils, spent hydraulic fluids, and chemical reagents must never be burnt on continent. Stored in certified UN steel UN-1A1 barrels.</div>
+            <div class='sop-step-box'><strong>Classification Group 3:</strong> Greywater must pass through rotating biological contactors (RBC) and UV disinfection, maintaining BOD < 20 mg/L before discharge into ice crack zones.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Item 7: Desalination RO Operations -->
+      <div class="res-card" data-cat="water" data-title="Bharati Seawater Reverse Osmosis Plant Maintenance">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-WTR-08</span>
+            <span class="res-badge badge-active">Bharati Specific</span>
+          </div>
+          <h3 class="res-card-title">Bharati Seawater Reverse Osmosis (SWRO) Membrane CIP</h3>
+          <p class="res-card-desc">Clean-In-Place (CIP) acid wash and anti-scalant dosage calibration for the 10 m³/day coastal seawater desalination plant at Bharati Station.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 2.4 &bull; Bharati Engineering</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-WTR-08', 'Bharati Seawater RO Membrane CIP Wash', `
+            <p><strong>Scope:</strong> Routine maintenance of FilmTec SW30 seawater polyamide thin-film membranes during high-turbidity summer melt phases.</p>
+            <div class='sop-step-box'><strong>Step 1: High Pressure Purge</strong><br/>Flush membrane bank with permeate water for 15 minutes at 3 bar to displace hyper-saline brine concentrate.</div>
+            <div class='sop-step-box'><strong>Step 2: Citric Acid Circulation</strong><br/>Circulate 2.0% citric acid solution at +35°C for 60 minutes to dissolve inorganic carbonates and iron precipitations.</div>
+            <div class='sop-step-box'><strong>Step 3: Quality Benchmark</strong><br/>Resume operations when permeate water electrical conductivity drops below 300 µS/cm.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Item 8: Polar Medical Hypothermia SOP -->
+      <div class="res-card" data-cat="env" data-title="Extreme Hypothermia & Frostbite Field Evacuation">
+        <div>
+          <div class="res-top-meta">
+            <span class="res-sop-code">SOP-MED-03</span>
+            <span class="res-badge badge-mandatory">Medical Emergency</span>
+          </div>
+          <h3 class="res-card-title">Acute Hypothermia Field Resuscitation &amp; Medevac</h3>
+          <p class="res-card-desc">Critical clinical protocols for active core rewarming, frostbite limb stabilization, and SAT-comms tele-medicine consult with AIIMS New Delhi.</p>
+        </div>
+        <div class="res-card-footer">
+          <span>Rev 4.0 &bull; Expedition Medical Officer</span>
+          <button class="res-action-btn" onclick="openSopModal('SOP-MED-03', 'Acute Hypothermia & Polar Field Resuscitation', `
+            <p><strong>Scope:</strong> Emergency triage for expedition scientists exposed to extreme wind chill (< -45°C equivalent).</p>
+            <div class='sop-step-box'><strong>Core Temperature < 32°C:</strong> Gently move patient to heated medical bay. Do not massage frozen extremities (prevents cold blood rush arrhythmia).</div>
+            <div class='sop-step-box'><strong>Active External Rewarming:</strong> Apply warm blankets and forced warm air convection at 40°C directed at trunk and groin.</div>
+            <div class='sop-step-box'><strong>Tele-Medicine Link:</strong> Dial EOC Medical Hotline on GSAT-17 Ch-01 to conference with AIIMS trauma specialists.</div>
+          `)">Read SOP &rarr;</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SOP MODAL DIALOG -->
+  <div class="sop-modal-backdrop" id="sop-modal-backdrop" onclick="closeSopModal(event)">
+    <div class="sop-modal-dialog" onclick="event.stopPropagation()">
+      <div class="sop-modal-header">
+        <div>
+          <span id="modal-sop-code" class="res-sop-code" style="margin-right:8px">SOP-00</span>
+          <strong id="modal-sop-title" style="color:var(--text-primary); font-size:15px">Protocol Title</strong>
+        </div>
+        <button onclick="closeSopModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div class="sop-modal-body" id="modal-sop-content">
+        <!-- Content injected dynamically -->
+      </div>
+      <div class="sop-modal-footer">
+        <button class="res-action-btn" onclick="window.print()">Print Protocol &#x2399;</button>
+        <button class="cat-btn" onclick="closeSopModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // SOP Modal Controls
+    function openSopModal(code, title, htmlContent) {
+      document.getElementById('modal-sop-code').textContent = code;
+      document.getElementById('modal-sop-title').textContent = title;
+      document.getElementById('modal-sop-content').innerHTML = htmlContent;
+      document.getElementById('sop-modal-backdrop').classList.add('open');
+    }
+
+    function closeSopModal(e) {
+      document.getElementById('sop-modal-backdrop').classList.remove('open');
+    }
+
+    // Category Filtering
+    function setResFilter(cat, btn) {
+      const buttons = document.querySelectorAll('.cat-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('#res-grid-container .res-card');
+      cards.forEach(card => {
+        if (cat === 'all' || card.dataset.cat === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Search Filtering
+    function filterResources() {
+      const q = document.getElementById('res-search').value.toLowerCase();
+      const cards = document.querySelectorAll('#res-grid-container .res-card');
+      cards.forEach(card => {
+        const text = (card.dataset.title + ' ' + card.innerText).toLowerCase();
+        card.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    // Instant Sample Data Download
+    function downloadSampleData(filename, content) {
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

@@ -100,7 +100,12 @@ function setTheme(theme) {
 
   const stationBg = document.getElementById('station-main-bg');
   if (stationBg) {
-    stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    const isBharati = STATE.selectedStation === 'bharati' || (typeof window !== 'undefined' && window.location.pathname.includes('bharati'));
+    if (isBharati) {
+      stationBg.src = theme === 'dark' ? 'assets/station_bharati_panorama_dark.png' : 'assets/station_bharati_panorama_bright.png';
+    } else {
+      stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+    }
   }
 
   // Camera strip cards
@@ -183,9 +188,9 @@ function selectStation(station) {
     }
   } else {
     if (titleEl) titleEl.textContent = 'Bharati Research Station';
-    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA";
+    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • LARSEMANN HILLS • EAST ANTARCTICA";
     if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_bharati_panorama_dark.png' : 'assets/station_bharati_panorama_bright.png';
     }
   }
 }
@@ -502,14 +507,236 @@ function switchAdminRightTab(tab, btn) {
   }
 }
 
+// ============================================================
+// PROTOTYPE MODAL ENGINE & OPERATIONAL TAB HANDLERS
+// ============================================================
+
+function showPrototypeModal(title, htmlBody) {
+  let modal = document.getElementById('global-prototype-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'global-prototype-modal';
+    modal.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      padding: 20px; box-sizing: border-box;
+    `;
+    modal.onclick = (e) => { if (e.target === modal) closePrototypeModal(); };
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div style="background:var(--bg-card); border:1px solid var(--border-medium); border-radius:12px; width:100%; max-width:620px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 40px rgba(0,0,0,0.3); overflow:hidden;" onclick="event.stopPropagation()">
+      <div style="padding:16px 22px; border-bottom:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; background:var(--bg-card-subtle);">
+        <h3 style="margin:0; font-size:16px; color:var(--text-primary); font-weight:800;">${title}</h3>
+        <button onclick="closePrototypeModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div style="padding:22px; overflow-y:auto; font-size:13.5px; color:var(--text-secondary); line-height:1.6;">
+        ${htmlBody}
+      </div>
+      <div style="padding:12px 22px; border-top:1px solid var(--border-light); display:flex; justify-content:flex-end; gap:10px; background:var(--bg-card-subtle);">
+        <button onclick="closePrototypeModal()" style="background:var(--accent-blue); color:#fff; border:none; padding:8px 18px; border-radius:6px; font-weight:700; font-size:12.5px; cursor:pointer;">Acknowledge &bull; Close</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+function closePrototypeModal() {
+  const modal = document.getElementById('global-prototype-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function openHotspotInfo(title, description) {
+  showPrototypeModal(`📍 ${title} &bull; Subsystem Telemetry`, `
+    <div style="background:var(--bg-secondary); border-left:3px solid var(--accent-blue); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:14px;">
+      <strong style="color:var(--text-primary); display:block; font-size:14px; margin-bottom:4px;">${title}</strong>
+      <span>${description}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12.5px; margin-bottom:12px;">
+      <div style="background:var(--bg-card-subtle); border:1px solid var(--border-light); padding:10px; border-radius:6px;">
+        <span style="color:var(--text-muted); display:block;">Telemetry Uplink</span>
+        <strong style="color:var(--accent-green);">&#x25CF; Online (100 Hz Stream)</strong>
+      </div>
+      <div style="background:var(--bg-card-subtle); border:1px solid var(--border-light); padding:10px; border-radius:6px;">
+        <span style="color:var(--text-muted); display:block;">Health Rating</span>
+        <strong style="color:var(--accent-blue);">99.4% Nominal</strong>
+      </div>
+    </div>
+    <p style="font-size:12px; color:var(--text-muted); margin:0;">Automated telemetry calibrated under Ministry of Earth Sciences (MoES) protocol standards.</p>
+  `);
+}
+
 function setOpsTab(tabName, btn) {
   document.querySelectorAll('.ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+
+  if (tabName === 'overview') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (tabName === 'cameras') {
+    const el = document.querySelector('.live-camera-strip-card');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (tabName === 'machines') {
+    showPrototypeModal('⚙️ Machine Health & Power Diagnostics', `
+      <p>Real-time telemetry from station mechanical plants and diesel-electric microgrid:</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0;">
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>DG Unit #1:</strong> 210 kW Load &bull; 82°C Jacket Water</span>
+          <span style="color:var(--accent-green); font-weight:700;">NORMAL</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>DG Unit #2:</strong> 210 kW Load &bull; Vibration 3.4 mm/s</span>
+          <span style="color:var(--accent-orange); font-weight:700;">CAUTION &lt; 3.5</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>Pipeline Trace Heating:</strong> Circuit #2 active (+4.2°C)</span>
+          <span style="color:var(--accent-green); font-weight:700;">HEATING</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:10px 14px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <span><strong>Battery Bank (48V / 2400 Ah):</strong> Float Charge 54.2V</span>
+          <span style="color:var(--accent-green); font-weight:700;">98.4%</span>
+        </div>
+      </div>
+    `);
+  } else if (tabName === 'environment') {
+    window.location.href = 'livedata.html';
+  } else if (tabName === 'research') {
+    showPrototypeModal('🔬 Research Ops & Active Scientific Experiments', `
+      <p>National Polar Data Repository active observatories streaming live datasets:</p>
+      <ul style="padding-left:18px; line-height:1.8;">
+        <li><strong>Geomagnetic Observatory:</strong> 3-axis fluxgate magnetometer (IIG Mumbai) &bull; Streaming 1-sec variometer records</li>
+        <li><strong>Atmospheric &amp; Ozone Soundings:</strong> Dobson spectrophotometer &amp; ozonesonde balloon sorties nominal</li>
+        <li><strong>Meteorological Radiation:</strong> Net radiometer, pyranometer, and boundary layer sonic anemometer</li>
+        <li><strong>Seismology:</strong> Broadband 3-component digital seismometer (NGRI Hyderabad)</li>
+      </ul>
+      <a href="resources.html" style="color:var(--accent-blue); font-weight:700; text-decoration:none;">Download Calibrated Callsets in Resources &rarr;</a>
+    `);
+  } else if (tabName === 'supplies') {
+    showPrototypeModal('📦 Supplies, Consumables & Logistics Projection', `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">Fuel Endurance</span>
+          <h4 style="margin:4px 0; font-size:18px; color:var(--accent-blue);">58 Days Reserve</h4>
+          <span style="font-size:12px;">Pre-conditioned Jet A-1</span>
+        </div>
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">Potable Water Stock</span>
+          <h4 style="margin:4px 0; font-size:18px; color:var(--accent-green);">38.0 m³ Available</h4>
+          <span style="font-size:12px;">Daily burn: 1.8 m³/day</span>
+        </div>
+      </div>
+      <p style="font-size:13px;">Next resupply scheduled via Antarctic chartered icebreaker <em>MV Vasiliy Golovnin</em> during 45th Indian Antarctic Expedition.</p>
+    `);
+  } else if (tabName === 'crew') {
+    showPrototypeModal('👥 Winter-Over Expedition Crew Roster', `
+      <p>Personnel stationed on continent for 365-day polar isolation mission:</p>
+      <div style="display:flex; flex-direction:column; gap:8px; margin:14px 0;">
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Dr. Arvind Saxena</strong> &bull; Station Commander &amp; Glaciologist</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Dr. Priya Nambiar</strong> &bull; Expedition Medical Officer (AIIMS)</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Er. Rajesh Verma</strong> &bull; Chief Mechanical &amp; Power Engineer</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-secondary); border-radius:6px;">
+          <span><strong>Suresh Kumar</strong> &bull; SATCOM &amp; Telemetry Specialist (ISRO)</span>
+          <span style="color:var(--accent-green); font-weight:700;">FIT</span>
+        </div>
+      </div>
+      <span style="font-size:12px; color:var(--text-muted);">Total: 24 active personnel &bull; 0 in sick bay &bull; Quarantine protocol active.</span>
+    `);
+  } else if (tabName === 'reports') {
+    downloadStationSITREP();
+  }
 }
 
 function setAdminTab(tabName, btn) {
   document.querySelectorAll('.admin-layout-grid .ops-left-sidebar .sidebar-nav-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+
+  if (tabName === 'stations') {
+    showPrototypeModal('🛰️ Polar Stations Operations', `
+      <p>Select station to inspect real-time digital twin:</p>
+      <div style="display:flex; gap:12px; margin-top:14px;">
+        <button onclick="window.location.href='maitri.html'" style="flex:1; padding:14px; background:#ff7a00; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Open Maitri (Oasis) &rarr;</button>
+        <button onclick="window.location.href='bharati.html'" style="flex:1; padding:14px; background:#0077e6; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Open Bharati (Coast) &rarr;</button>
+      </div>
+    `);
+  } else if (tabName === 'comms') {
+    showPrototypeModal('📡 ISRO / GSAT Satellite Comms Telemetry', `
+      <div style="background:var(--bg-secondary); padding:14px; border-radius:8px; font-family:'JetBrains Mono'; font-size:12.5px; line-height:1.6;">
+        <div>UPLINK CARRIER: GSAT-17 C-band 4.8 GHz</div>
+        <div>DOWNLINK CARRIER: 3.6 GHz Nominal</div>
+        <div>BIT ERROR RATE: &lt; 1.2 x 10^-9</div>
+        <div>LATENCY (ROUND TRIP): 620 ms</div>
+        <div>AUTOMATED TRACKING SERVO: Locked (Az: 142.4°, El: 31.8°)</div>
+      </div>
+    `);
+  } else if (tabName === 'alerts') {
+    switchAdminRightTab('alerts');
+  } else if (tabName === 'supplies') {
+    setOpsTab('supplies');
+  } else if (tabName === 'crew') {
+    setOpsTab('crew');
+  } else if (tabName === 'machines') {
+    setOpsTab('machines');
+  } else if (tabName === 'research') {
+    setOpsTab('research');
+  }
+}
+
+function downloadStationSITREP() {
+  const content = `================================================================================
+NATIONAL CENTRE FOR POLAR & OCEAN RESEARCH (NCPOR)
+MINISTRY OF EARTH SCIENCES, GOVERNMENT OF INDIA
+DAILY ANTARCTIC OPERATIONS SITUATION REPORT (SITREP)
+================================================================================
+Date/Time UTC : ${new Date().toISOString()}
+Reporting Post : Antarctic Remote Operations Center (Goa)
+
+1. STATION STATUS SUMMARY:
+--------------------------------------------------------------------------------
+- Maitri Research Station (70°45'S, 11°44'E)  : ONLINE - All Subsystems Nominal
+- Bharati Research Station (69°24'S, 76°11'E) : ONLINE - All Subsystems Nominal
+
+2. METEOROLOGICAL TELEMETRY:
+--------------------------------------------------------------------------------
+- Maitri  : Temp -12.4°C | Wind 18.0 kt SE | Pressure 984.2 hPa
+- Bharati : Temp -8.6°C  | Wind 12.0 kt SE | Pressure 988.4 hPa
+
+3. MICROGRID & ENERGY INVENTORY:
+--------------------------------------------------------------------------------
+- Maitri Primary Load   : 420 kW / 510 kW (82% base load)
+- Bharati Cogeneration  : 380 kW / 440 kW (88% base load)
+- Total HSD Fuel Stock  : 242 kl combined (68 days operational autonomy)
+
+4. EXPEDITION PERSONNEL:
+--------------------------------------------------------------------------------
+- Total Crew Stationed  : 44 Personnel (24 Maitri, 20 Bharati)
+- Medical Readiness     : 100% Fit, Nil Inpatients
+
+5. SATELLITE COMMS LINK:
+--------------------------------------------------------------------------------
+- Carrier Status        : ISRO GSAT-17 Transponder Synchronized (12.4 Mbps / 20.0 Mbps)
+
+Authorized Signature:
+Mission Operations Controller, NCPOR
+================================================================================
+`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `NCPOR_ANTARCTIC_SITREP_${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 // ============================================================

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bright">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maitri Research Station — Operations & Digital Twin — NCPOR</title>
+  <meta name="description" content="Live digital twin and remote operational monitoring dashboard for Maitri Research Station, Schirmacher Oasis, Antarctica. NCPOR, Ministry of Earth Sciences." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .station-single-page {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 4px 20px 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP GOVERNMENT NAVBAR -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-wrapper" onclick="window.location.href='index.html'" style="cursor:pointer">
+        <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
+        <div class="brand-text">
+          <span class="brand-title">National Centre for Polar &amp; Ocean Research</span>
+          <span class="brand-subtitle">Ministry of Earth Sciences, Government of India</span>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <button class="nav-link-btn" onclick="window.location.href='index.html'">Home</button>
+        <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
+        <button class="nav-link-btn active" onclick="window.location.href='maitri.html'">Maitri</button>
+        <button class="nav-link-btn" onclick="window.location.href='bharati.html'">Bharati</button>
+        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
+        <button class="nav-link-btn" onclick="window.location.href='livedata.html'">Live Data</button>
+        <button class="nav-link-btn" onclick="window.location.href='resources.html'">Resources</button>
+        <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
+      </nav>
+
+      <div class="header-right">
+        <div class="system-status-indicator">
+          <span class="pulse-dot-green"></span>
+          <span>System Online</span>
+        </div>
+        <span class="header-v-sep">|</span>
+        <div class="gov-india-badge">
+          <svg class="flag-tiranga" viewBox="0 0 30 20">
+            <rect width="30" height="6.67" fill="#FF9933"/>
+            <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+            <rect y="13.34" width="30" height="6.67" fill="#138808"/>
+            <circle cx="15" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.7"/>
+          </svg>
+          <div class="gov-text-wrap">
+            <span class="gov-title">Government of India</span>
+            <span class="gov-tagline">Science for a Safer Planet</span>
+          </div>
+        </div>
+        <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Switch theme">
+          <span class="switch-icon sun-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+          <span class="switch-icon moon-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span class="switch-thumb"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAITRI OPERATIONS DASHBOARD -->
+  <main class="station-single-page">
+    <div class="station-ops-page">
+      
+      <!-- Breadcrumb & Top Bar -->
+      <div class="ops-top-header-bar">
+        <div>
+          <div class="breadcrumbs-trail">
+            <a href="index.html" style="color:inherit; text-decoration:none">Home</a> &rsaquo; <span>Stations</span> &rsaquo; <span class="current">Maitri Research Station Operations</span>
+          </div>
+          <h1 class="ops-main-title">Maitri Research Station Operations</h1>
+          <div class="ops-subtitle-strip">MONITOR &nbsp;|&nbsp; OPERATE &nbsp;|&nbsp; ENSURE SAFETY &nbsp;|&nbsp; SUPPORT RESEARCH &nbsp;|&nbsp; A SUSTAINABLE TOMORROW</div>
+        </div>
+
+        <!-- Station Selector Buttons -->
+        <div class="top-station-switchers">
+          <div class="station-pill-card active" id="spc-maitri" onclick="window.location.href='maitri.html'">
+            <img class="spc-thumb" id="spc-thumb-maitri" src="assets/station_maitri_thumb_bright.png" alt="Maitri Research Station" />
+            <div class="spc-info">
+              <div class="spc-name-row">
+                <span class="spc-radio-indicator orange-fill"></span>
+                <span class="spc-name">Maitri</span>
+              </div>
+              <span class="spc-coords">(70&deg;45'S, 11&deg;44'E)</span>
+            </div>
+          </div>
+
+          <div class="station-pill-card" id="spc-bharati" onclick="window.location.href='bharati.html'">
+            <img class="spc-thumb" id="spc-thumb-bharati" src="assets/station_bharati_thumb_bright.png" alt="Bharati Research Station" />
+            <div class="spc-info">
+              <div class="spc-name-row">
+                <span class="spc-radio-indicator"></span>
+                <span class="spc-name">Bharati</span>
+              </div>
+              <span class="spc-coords">(69&deg;24'S, 76&deg;11'E)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ops Grid: Left Sidebar + Central Stage + Right KPI Panel -->
+      <div class="ops-grid-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="ops-left-sidebar">
+          <button class="sidebar-nav-btn active" onclick="setOpsTab('overview', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>Station Overview</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('cameras', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+            <span>Live Cameras</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('machines', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Machine Health</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('environment', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            <span>Environment</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('research', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
+            <span>Research Ops</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('supplies', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>Supplies &amp; Logistics</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('crew', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Crew Management</span>
+          </button>
+          <button class="sidebar-nav-btn" onclick="setOpsTab('reports', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Reports</span>
+          </button>
+        </aside>
+
+        <!-- Central Stage: Digital Twin + Cameras + Metrics -->
+        <div class="ops-center-stage">
+          
+          <!-- Digital Twin Viewport -->
+          <div class="digital-twin-hero-card">
+            <div class="dt-header-bar">
+              <div class="dt-station-title-group">
+                <h2 class="dt-station-title" id="ops-station-name-heading">Maitri Research Station</h2>
+                <span class="online-chip"><span class="dot-green"></span> ONLINE</span>
+                <span class="dt-station-coords" id="ops-station-coords-label">70&deg;45'S, 11&deg;44'E &bull; SCHIRMACHER OASIS</span>
+              </div>
+              
+              <div class="dt-view-selectors">
+                <button class="view-mode-pill active">3D View</button>
+                <button class="view-mode-pill" onclick="alert('Switching to Topographic Map Layer')">Map View</button>
+                <button class="view-mode-pill" onclick="alert('Switching to Architectural Site Blueprint')">Site Plan</button>
+                <button class="view-mode-pill btn-icon-square" onclick="alert('Toggle Fullscreen 3D Viewport')" title="Fullscreen">&#x26F6;</button>
+              </div>
+            </div>
+
+            <!-- Interactive Visual Container with Hotspots -->
+            <div class="station-interactive-visual">
+              <img id="station-main-bg" class="main-twin-img" src="assets/station_maitri_panorama_bright.png" alt="Maitri Digital Twin" />
+
+              <!-- Interactive Hotspot Click Targets -->
+              <div class="station-hitbox" style="top: 4.1%; left: 35.7%; width: 9%; height: 9%;" onclick="openHotspotInfo('Communications Mast', 'GSAT-17 Uplink / High-Gain Array: 99.4% Link Quality')" title="Communications Mast: 99.4% Link Quality"></div>
+              <div class="station-hitbox" style="top: 26.8%; left: 16.5%; width: 12%; height: 12%;" onclick="openHotspotInfo('Living Modules', 'Habitation quarters: 24 personnel, 21.2°C, 48% humidity nominal')" title="Living Modules: 24 personnel nominal"></div>
+              <div class="station-hitbox" style="top: 27.1%; left: 38.5%; width: 11%; height: 11.5%;" onclick="openHotspotInfo('Research Lab', 'Atmospheric & Geomagnetic Laboratory: 6 instruments streaming')" title="Research Lab: 6 instruments streaming"></div>
+              <div class="station-hitbox" style="top: 27.6%; left: 53.3%; width: 10%; height: 13%;" onclick="openHotspotInfo('Power Generator', 'DG-01 & DG-02 Units: 420 kW / 510 kW capacity (82% load)')" title="Power Generator: 420 kW / 510 kW"></div>
+              <div class="station-hitbox" style="top: 69.1%; left: 21.5%; width: 12.5%; height: 16.5%;" onclick="openHotspotInfo('Water Treatment', 'Priyadarshini trace heated pipeline: 38 m³ reserve (76%)')" title="Water Treatment: 38 m³ reserve"></div>
+              <div class="station-hitbox" style="top: 66.3%; left: 40.9%; width: 11.5%; height: 16.5%;" onclick="openHotspotInfo('Vehicle Bay', 'PistenBully Snowcats & Snowmobiles: 3 active, 2 standby')" title="Vehicle Bay: 3 active snowcats"></div>
+              <div class="station-hitbox" style="top: 71.8%; left: 54.3%; width: 12%; height: 14%;" onclick="openHotspotInfo('Fuel Storage', 'HSD Fuel Reserve: 102 kl / 150 kl (68% capacity, 58 days endurance)')" title="Fuel Storage: 102 kl / 150 kl"></div>
+            </div>
+          </div>
+
+          <!-- Live Camera Feeds Row -->
+          <div class="live-camera-strip-card">
+            <div class="lcs-header">
+              <div class="lcs-title-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                <span><strong>Live Camera Feeds</strong> &nbsp;&bull;&nbsp; <span class="dot-green"></span> <span class="text-green">4 / 4 Online</span></span>
+              </div>
+              <div class="lcs-actions">
+                <a href="livedata.html" class="kpi-view-all">View All Sensors &rarr;</a>
+                <div class="cam-arrows">
+                  <button class="cam-arrow-btn" onclick="alert('Camera feed previous')">&lsaquo;</button>
+                  <button class="cam-arrow-btn" onclick="alert('Camera feed next')">&rsaquo;</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cam-grid-4">
+              <div class="cam-box" onclick="alert('Opening Maitri External Station Pan HD Stream')">
+                <img id="cam-img-1" src="assets/cam1_card_bright.png" alt="Station Pan" />
+                <span class="cam-tag-badge">EXT-01</span>
+                <span class="cam-desc-label">Maitri &bull; External Station Pan</span>
+              </div>
+
+              <div class="cam-box" onclick="alert('Opening Priyadarshini Lake Intake Pump Stream')">
+                <img id="cam-img-2" src="assets/cam2_card_bright.png" alt="Priyadarshini Lake" />
+                <span class="cam-tag-badge">WTR-02</span>
+                <span class="cam-desc-label">Priyadarshini Lake Intake</span>
+              </div>
+
+              <div class="cam-box" onclick="alert('Opening Generator Microgrid Room Stream')">
+                <img id="cam-img-3" src="assets/cam3_card_bright.png" alt="Generator Room" />
+                <span class="cam-tag-badge">PWR-03</span>
+                <span class="cam-desc-label">DG Microgrid Room</span>
+              </div>
+
+              <div class="cam-box" onclick="alert('Opening Helipad & Logistics Yard Stream')">
+                <img id="cam-img-4" src="assets/cam4_card_bright.png" alt="Helipad Area" />
+                <span class="cam-tag-badge">AIR-04</span>
+                <span class="cam-desc-label">Helipad &amp; Cargo Staging</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Key Station Metrics (6 Items) -->
+          <div class="key-metrics-bento-strip">
+            <div class="kmb-header">
+              <div class="kmb-title-wrap">
+                <span class="hero-eyebrow">DIAGNOSTICS &amp; SUBSYSTEM TELEMETRY</span>
+                <h3 class="kmb-title">Key Station Metrics</h3>
+              </div>
+              <span class="kmc-sub">Synced 12s ago via ISRO GSAT-17 Uplink</span>
+            </div>
+
+            <div class="metrics-grid-6">
+              <div class="kmetric-card">
+                <span class="kmc-title">Power Microgrid</span>
+                <span class="kmc-value" id="km-val-power">420 kW</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" id="km-bar-power" style="width: 82%;"></div></div>
+                <span class="kmc-sub">82% of 510 kW &bull; DG-1 &amp; DG-2</span>
+              </div>
+
+              <div class="kmetric-card">
+                <span class="kmc-title">Potable Water</span>
+                <span class="kmc-value" id="km-val-water">38.0 m&sup3;</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" id="km-bar-water" style="width: 76%;"></div></div>
+                <span class="kmc-sub">76% &bull; Lake Pipeline Heated</span>
+              </div>
+
+              <div class="kmetric-card">
+                <span class="kmc-title">Fuel Storage (HSD)</span>
+                <span class="kmc-value" id="km-val-fuel">102 kl</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" id="km-bar-fuel" style="width: 68%;"></div></div>
+                <span class="kmc-sub">68% &bull; 58 days endurance</span>
+              </div>
+
+              <div class="kmetric-card">
+                <span class="kmc-title">SATCOM Link</span>
+                <span class="kmc-value text-green">12.4 Mbps</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 95%;"></div></div>
+                <span class="kmc-sub">Latency 640ms &bull; GSAT-17 Locked</span>
+              </div>
+
+              <div class="kmetric-card">
+                <span class="kmc-title">Surface Wind</span>
+                <span class="kmc-value text-orange" id="km-val-wind">18.0 kt</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" id="km-bar-wind" style="width: 42%;"></div></div>
+                <span class="kmc-sub">SE Gusts 23 kt &bull; Chill -24.8&deg;C</span>
+              </div>
+
+              <div class="kmetric-card">
+                <span class="kmc-title">Crew &amp; Habitation</span>
+                <span class="kmc-value" id="km-val-crew">24 / 25</span>
+                <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 96%;"></div></div>
+                <span class="kmc-sub">100% Medical Fit &bull; +21.2&deg;C Cabin</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right KPI Panel: 2x3 Grid + Status Cards -->
+        <div class="ops-right-panel">
+          <div class="station-kpis-header">
+            <h3 class="kpis-title">Station Operations KPIs</h3>
+            <a href="resources.html" class="kpi-view-all">SOPs &rarr;</a>
+          </div>
+
+          <!-- 2x3 KPI Grid matching reference -->
+          <div class="kpi-grid-2x3">
+            <div class="kpi-mini-card">
+              <span class="kmc-label">DG-02 Vibration</span>
+              <span class="kmc-num text-orange">3.4 mm/s</span>
+              <span class="kmc-sub">Nominal &lt; 3.5 mm/s</span>
+            </div>
+
+            <div class="kpi-mini-card">
+              <span class="kmc-label">Water Melt Rate</span>
+              <span class="kmc-num text-blue">2.8 m&sup3;/d</span>
+              <span class="kmc-sub">+4.2&deg;C Line Temp</span>
+            </div>
+
+            <div class="kpi-mini-card">
+              <span class="kmc-label">Daily Fuel Burn</span>
+              <span class="kmc-num">1.4 kl/d</span>
+              <span class="kmc-sub">Pre-conditioned FSII</span>
+            </div>
+
+            <div class="kpi-mini-card">
+              <span class="kmc-label">Battery Backup</span>
+              <span class="kmc-num text-green">98.4%</span>
+              <span class="kmc-sub">48V / 2400 Ah Nominal</span>
+            </div>
+
+            <div class="kpi-mini-card">
+              <span class="kmc-label">SATCOM Uplink</span>
+              <span class="kmc-num text-green">99.8%</span>
+              <span class="kmc-sub">Bit Error &lt; 10^-8</span>
+            </div>
+
+            <div class="kpi-mini-card">
+              <span class="kmc-label">Habitation Temp</span>
+              <span class="kmc-num text-blue">+21.2&deg;C</span>
+              <span class="kmc-sub">48% RH Air Flow</span>
+            </div>
+          </div>
+
+          <!-- Critical Equipment List -->
+          <div class="subsystem-equipment-block">
+            <div class="seb-header">
+              <span><strong>Subsystem Status</strong></span>
+              <span class="text-green" style="font-size:11px;font-weight:700">&bull; 7 Active</span>
+            </div>
+
+            <div class="seb-item">
+              <div class="seb-item-name">
+                <span class="dot-green"></span>
+                <span>DG Set #1 (Kirloskar 255 kW)</span>
+              </div>
+              <span class="seb-status-pill pill-green">RUNNING</span>
+            </div>
+
+            <div class="seb-item">
+              <div class="seb-item-name">
+                <span class="dot-green"></span>
+                <span>DG Set #2 (Kirloskar 255 kW)</span>
+              </div>
+              <span class="seb-status-pill pill-green">RUNNING</span>
+            </div>
+
+            <div class="seb-item">
+              <div class="seb-item-name">
+                <span class="dot-green"></span>
+                <span>Lake Intake Pump #1</span>
+              </div>
+              <span class="seb-status-pill pill-green">ONLINE</span>
+            </div>
+
+            <div class="seb-item">
+              <div class="seb-item-name">
+                <span class="dot-green"></span>
+                <span>Trace Heating Cable Cir-2</span>
+              </div>
+              <span class="seb-status-pill pill-green">ACTIVE</span>
+            </div>
+
+            <div class="seb-item">
+              <div class="seb-item-name">
+                <span class="dot-green"></span>
+                <span>GSAT-17 Tracking Servo</span>
+              </div>
+              <span class="seb-status-pill pill-green">LOCKED</span>
+            </div>
+          </div>
+
+          <!-- Quick Help Action -->
+          <div style="margin-top:14px; background:var(--bg-card); border:1px solid var(--border-light); border-radius:10px; padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+              <strong style="font-size:13px; color:var(--text-primary)">Maitri Station Support</strong>
+              <span class="online-chip"><span class="dot-green"></span> AIRA AI</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-secondary); margin:0 0 12px">Need protocol guidance for DG-02 vibration or trace heating? AIRA is standby 24/7.</p>
+            <button class="res-action-btn" style="width:100%; justify-content:center;" onclick="window.location.href='support.html'">Open AIRA Support Chatbot &rarr;</button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Make sure Maitri assets are loaded
+    window.addEventListener('load', () => {
+      selectStation('maitri');
+    });
+  </script>
+</body>
+</html>

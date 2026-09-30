@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bright">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Sensor Telemetry — National Centre for Polar & Ocean Research</title>
+  <meta name="description" content="Real-time environmental, meteorological, and microgrid telemetry streaming from Maitri and Bharati Antarctic research stations via ISRO GSAT-17." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .livedata-container {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 16px 28px 40px;
+    }
+    .live-top-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .station-toggle-group {
+      display: flex;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-medium);
+    }
+    .st-toggle-btn {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .st-toggle-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .st-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .st-dot.maitri { background: #ff7a00; }
+    .st-dot.bharati { background: #0077e6; }
+    
+    .gauges-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .gauge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+    }
+    .gauge-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .gauge-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+    .gauge-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .gauge-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .live-feed-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .feed-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+    }
+    .terminal-box {
+      background: #060d17;
+      color: #64d2ff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      border-radius: 8px;
+      padding: 16px;
+      height: 280px;
+      overflow-y: auto;
+      border: 1px solid rgba(100, 210, 255, 0.2);
+    }
+    .terminal-line {
+      margin-bottom: 4px;
+      display: flex;
+      gap: 12px;
+    }
+    .terminal-line .t-time { color: #88a0b8; }
+    .terminal-line .t-ok { color: #00ff88; }
+    .terminal-line .t-warn { color: #ffbb00; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-wrapper" onclick="window.location.href='index.html'" style="cursor:pointer">
+        <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
+        <div class="brand-text">
+          <span class="brand-title">National Centre for Polar &amp; Ocean Research</span>
+          <span class="brand-subtitle">Ministry of Earth Sciences, Government of India</span>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <button class="nav-link-btn" onclick="window.location.href='index.html'">Home</button>
+        <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
+        <button class="nav-link-btn" onclick="window.location.href='maitri.html'">Maitri</button>
+        <button class="nav-link-btn" onclick="window.location.href='bharati.html'">Bharati</button>
+        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
+        <button class="nav-link-btn active" onclick="window.location.href='livedata.html'">Live Data</button>
+        <button class="nav-link-btn" onclick="window.location.href='resources.html'">Resources</button>
+        <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
+      </nav>
+
+      <div class="header-right">
+        <div class="system-status-indicator">
+          <span class="pulse-dot-green"></span>
+          <span>System Online</span>
+        </div>
+        <span class="header-v-sep">|</span>
+        <div class="gov-india-badge">
+          <svg class="flag-tiranga" viewBox="0 0 30 20">
+            <rect width="30" height="6.67" fill="#FF9933"/>
+            <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+            <rect y="13.34" width="30" height="6.67" fill="#138808"/>
+            <circle cx="15" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.7"/>
+          </svg>
+          <div class="gov-text-wrap">
+            <span class="gov-title">Government of India</span>
+            <span class="gov-tagline">Science for a Safer Planet</span>
+          </div>
+        </div>
+        <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Switch theme">
+          <span class="switch-icon sun-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+          <span class="switch-icon moon-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span class="switch-thumb"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE DATA CONTENT -->
+  <main class="livedata-container">
+    
+    <div class="live-top-bar">
+      <div>
+        <div class="breadcrumbs-trail" style="margin-bottom:6px">
+          <a href="index.html" style="color:inherit; text-decoration:none">Home</a> &rsaquo; <span class="current">Real-Time Polar Telemetry Hub</span>
+        </div>
+        <h1 style="font-size:24px; font-weight:800; color:var(--text-primary); margin:0 0 4px">Live Antarctic Sensor Feeds &bull; GSAT-17 Uplink</h1>
+        <p style="font-size:13px; color:var(--text-secondary); margin:0">Calibrated real-time sensor streams from Maitri and Bharati permanent research observatories</p>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:14px">
+        <div class="station-toggle-group">
+          <button class="st-toggle-btn active" id="btn-tel-maitri" onclick="switchTelemetryStation('maitri')">
+            <span class="st-dot maitri"></span> Maitri (Oasis)
+          </button>
+          <button class="st-toggle-btn" id="btn-tel-bharati" onclick="switchTelemetryStation('bharati')">
+            <span class="st-dot bharati"></span> Bharati (Coast)
+          </button>
+        </div>
+
+        <button class="res-action-btn" onclick="exportLiveTelemetryJSON()">Export JSON &#x21E9;</button>
+      </div>
+    </div>
+
+    <!-- 4 Primary Live Telemetry Gauges -->
+    <div class="gauges-grid-4">
+      <div class="gauge-card">
+        <div class="gauge-label">
+          <span>Surface Ambient Temp</span>
+          <span style="color:var(--accent-blue)">AWS-01</span>
+        </div>
+        <div class="gauge-value" id="val-temp">-12.4&deg;C</div>
+        <div class="gauge-sub">Wind Chill: <span id="val-chill">-24.8&deg;C</span> &bull; Status: Nominal</div>
+        <div class="gauge-bar-track">
+          <div class="gauge-bar-fill" id="bar-temp" style="width: 65%; background: var(--accent-blue);"></div>
+        </div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gauge-label">
+          <span>Wind Velocity &bull; Direction</span>
+          <span style="color:var(--accent-orange)">Ultrasonic</span>
+        </div>
+        <div class="gauge-value" id="val-wind">18.0 kt</div>
+        <div class="gauge-sub">Direction: 142&deg; SE &bull; Gusts: 23 kt</div>
+        <div class="gauge-bar-track">
+          <div class="gauge-bar-fill" id="bar-wind" style="width: 42%; background: var(--accent-orange);"></div>
+        </div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gauge-label">
+          <span>Microgrid Power Output</span>
+          <span style="color:var(--accent-green)">Generator Bus</span>
+        </div>
+        <div class="gauge-value" id="val-power">420 kW</div>
+        <div class="gauge-sub">Capacity: 510 kW &bull; 82% Base Load</div>
+        <div class="gauge-bar-track">
+          <div class="gauge-bar-fill" id="bar-power" style="width: 82%; background: var(--accent-green);"></div>
+        </div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gauge-label">
+          <span>Water Pipeline Buffer</span>
+          <span style="color:var(--accent-cyan)">Potable Trace</span>
+        </div>
+        <div class="gauge-value" id="val-water">76.0%</div>
+        <div class="gauge-sub">Trace Heating: +4.2&deg;C &bull; 38.0 m&sup3;</div>
+        <div class="gauge-bar-track">
+          <div class="gauge-bar-fill" id="bar-water" style="width: 76%; background: var(--accent-cyan);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Stream Layout -->
+    <div class="live-feed-layout">
+      
+      <!-- Left: Real-Time Auto-Scrolling Packet Terminal -->
+      <div class="feed-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
+          <div>
+            <h3 style="margin:0; font-size:16px; color:var(--text-primary)">Satellite Packet Telemetry Stream</h3>
+            <span style="font-size:12px; color:var(--text-muted)">Live demodulated telemetry packets from ISRO Ground Link</span>
+          </div>
+          <span class="online-chip"><span class="dot-green"></span> 100 Hz STREAM</span>
+        </div>
+
+        <div class="terminal-box" id="telemetry-terminal">
+          <div class="terminal-line"><span class="t-time">11:30:00Z</span><span class="t-ok">[UPLINK OK]</span><span>GSAT-17 C-band transponder locked at 12.4 Mbps, Eb/N0 = 14.8 dB</span></div>
+          <div class="terminal-line"><span class="t-time">11:30:02Z</span><span class="t-ok">[SENSOR]</span><span>Maitri Priyadarshini water trace heat circuit 2 at +4.2°C (nominal)</span></div>
+          <div class="terminal-line"><span class="t-time">11:30:05Z</span><span class="t-ok">[PWR-GRID]</span><span>DG-01 active 210 kW, DG-02 active 210 kW. Busbar frequency 50.02 Hz</span></div>
+          <div class="terminal-line"><span class="t-time">11:30:08Z</span><span class="t-warn">[VIBRATION]</span><span>DG-02 crankcase accelerometer: 3.4 mm/s (Within caution threshold < 3.5 mm/s)</span></div>
+          <div class="terminal-line"><span class="t-time">11:30:11Z</span><span class="t-ok">[WEATHER]</span><span>Surface barometer 984.2 hPa, relative humidity 78%, net solar 120 W/m²</span></div>
+        </div>
+      </div>
+
+      <!-- Right: Telemetry Health Overview -->
+      <div class="feed-panel">
+        <h3 style="margin:0 0 14px; font-size:16px; color:var(--text-primary)">Subsystem Health</h3>
+        
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-secondary); border-radius:6px">
+            <span><strong>SATCOM Carrier Link</strong></span>
+            <span style="color:var(--accent-green); font-weight:700">99.8% Quality</span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-secondary); border-radius:6px">
+            <span><strong>Microgrid Bus Voltage</strong></span>
+            <span style="font-family:'JetBrains Mono'; font-weight:700">415.2 V (Nominal)</span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-secondary); border-radius:6px">
+            <span><strong>Living Module Temp</strong></span>
+            <span style="font-family:'JetBrains Mono'; font-weight:700">+21.4&deg;C</span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-secondary); border-radius:6px">
+            <span><strong>Jet A-1 Fuel Farm</strong></span>
+            <span style="font-family:'JetBrains Mono'; font-weight:700">102 kl (68%)</span>
+          </div>
+
+          <div style="margin-top:10px">
+            <button class="res-action-btn" style="width:100%; justify-content:center; padding:10px" onclick="window.location.href='command.html'">Open Command Control Room &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    let currentStation = 'maitri';
+
+    const STATION_DATA = {
+      maitri: {
+        temp: '-12.4°C',
+        chill: '-24.8°C',
+        wind: '18.0 kt',
+        power: '420 kW',
+        water: '76.0%',
+        tempPct: '65%',
+        windPct: '42%',
+        powerPct: '82%',
+        waterPct: '76%'
+      },
+      bharati: {
+        temp: '-8.6°C',
+        chill: '-17.2°C',
+        wind: '12.0 kt',
+        power: '380 kW',
+        water: '79.0%',
+        tempPct: '55%',
+        windPct: '30%',
+        powerPct: '88%',
+        waterPct: '79%'
+      }
+    };
+
+    function switchTelemetryStation(st) {
+      currentStation = st;
+      document.getElementById('btn-tel-maitri').classList.toggle('active', st === 'maitri');
+      document.getElementById('btn-tel-bharati').classList.toggle('active', st === 'bharati');
+
+      const d = STATION_DATA[st];
+      document.getElementById('val-temp').innerHTML = d.temp;
+      document.getElementById('val-chill').innerHTML = d.chill;
+      document.getElementById('val-wind').innerHTML = d.wind;
+      document.getElementById('val-power').innerHTML = d.power;
+      document.getElementById('val-water').innerHTML = d.water;
+
+      document.getElementById('bar-temp').style.width = d.tempPct;
+      document.getElementById('bar-wind').style.width = d.windPct;
+      document.getElementById('bar-power').style.width = d.powerPct;
+      document.getElementById('bar-water').style.width = d.waterPct;
+
+      addTerminalPacket(`Switched telemetry stream focus to ${st.toUpperCase()} Research Station`);
+    }
+
+    function addTerminalPacket(msg, type = 'ok') {
+      const term = document.getElementById('telemetry-terminal');
+      if (!term) return;
+      const now = new Date().toISOString().substring(11, 19) + 'Z';
+      const div = document.createElement('div');
+      div.className = 'terminal-line';
+      div.innerHTML = `<span class="t-time">${now}</span><span class="${type === 'warn' ? 't-warn' : 't-ok'}">[SYNC]</span><span>${msg}</span>`;
+      term.appendChild(div);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    // Auto-feed simulated packets
+    setInterval(() => {
+      const messages = [
+        "Atmospheric radon monitor packet ACK: 14.2 Bq/m³",
+        "Geomagnetic fluxgate variometer total intensity: 48,210 nT",
+        "Priyadarshini lake return line thermal sensor 3: +4.1°C",
+        "ISRO telemetry bit error rate (BER): < 10^-8",
+        "Living modules humidity: 48% RH, CO2: 440 ppm nominal"
+      ];
+      const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+      addTerminalPacket(randomMsg);
+    }, 4000);
+
+    function exportLiveTelemetryJSON() {
+      const payload = {
+        station: currentStation,
+        timestamp: new Date().toISOString(),
+        telemetry: STATION_DATA[currentStation]
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `polar_telemetry_${currentStation}_${Date.now()}.json`;
+      link.click();
+    }
+  </script>
+</body>
+</html>

@@ -6,17 +6,82 @@
   <title>National Centre for Polar & Ocean Research — Indian Antarctic Operations Portal</title>
   <meta name="description" content="Remote Operational Management Portal for Indian Antarctic Research Stations Maitri & Bharati. Ministry of Earth Sciences, Government of India." />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Home Additional Services Grid */
+    .home-services-section {
+      margin-top: 20px;
+      padding: 0 4px;
+    }
+    .services-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+    .service-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--card-shadow-hover);
+      border-color: var(--accent-blue);
+    }
+    .service-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .icon-about { background: rgba(0, 119, 230, 0.12); color: var(--accent-blue); }
+    .icon-res { background: rgba(255, 122, 0, 0.12); color: var(--accent-orange); }
+    .icon-live { background: rgba(0, 168, 84, 0.12); color: var(--accent-green); }
+    .icon-supp { background: rgba(114, 9, 183, 0.12); color: var(--accent-purple); }
+    .service-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 6px;
+    }
+    .service-desc {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin: 0 0 12px;
+    }
+    .service-link-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  </style>
 </head>
 <body>
 
   <!-- ============================================================
-       TOP GOVERNMENT & NCPOR NAVBAR (WITH SUN/MOON THEME TOGGLE)
+       TOP GOVERNMENT & NCPOR NAVBAR
        ============================================================ -->
   <header class="site-header">
     <div class="header-container">
       
       <!-- Brand & Emblem -->
-      <div class="brand-wrapper" onclick="switchView('home')">
+      <div class="brand-wrapper" onclick="window.location.href='index.html'" style="cursor:pointer">
         <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
         <div class="brand-text">
           <span class="brand-title">National Centre for Polar &amp; Ocean Research</span>
@@ -26,11 +91,13 @@
 
       <!-- Main Navigation -->
       <nav class="main-nav">
-        <button class="nav-link-btn active" id="nav-btn-home" onclick="switchView('home')">Home</button>
-        <button class="nav-link-btn" onclick="alert('About National Centre for Polar & Ocean Research (NCPOR), Ministry of Earth Sciences.')">About</button>
-        <button class="nav-link-btn" id="nav-btn-stations" onclick="switchView('stations')">Stations</button>
-        <button class="nav-link-btn" onclick="alert('National Polar Data Repository - All datasets synchronized.')">Live Data</button>
-        <button class="nav-link-btn" onclick="alert('Indian Antarctic Expeditions Documentation & Research Protocols.')">Resources</button>
+        <button class="nav-link-btn active" onclick="window.location.href='index.html'">Home</button>
+        <button class="nav-link-btn" onclick="window.location.href='about.html'">About</button>
+        <button class="nav-link-btn" onclick="window.location.href='maitri.html'">Maitri</button>
+        <button class="nav-link-btn" onclick="window.location.href='bharati.html'">Bharati</button>
+        <button class="nav-link-btn" onclick="window.location.href='command.html'">Command Control</button>
+        <button class="nav-link-btn" onclick="window.location.href='livedata.html'">Live Data</button>
+        <button class="nav-link-btn" onclick="window.location.href='resources.html'">Resources</button>
         <button class="nav-link-btn" onclick="window.location.href='support.html'">Support</button>
       </nav>
 
@@ -45,7 +112,6 @@
         <span class="header-v-sep">|</span>
 
         <div class="gov-india-badge">
-          <!-- Indian Tiranga Flag SVG -->
           <svg class="flag-tiranga" viewBox="0 0 30 20">
             <rect width="30" height="6.67" fill="#FF9933"/>
             <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
@@ -75,11 +141,10 @@
   </header>
 
   <!-- ============================================================
-       APPLICATION VIEW CONTAINER
+       APPLICATION VIEW CONTAINER: PORTAL HOME
        ============================================================ -->
-  <mai    <!-- ============================================================
-         PAGE VIEW 1: PORTAL HOME / GATEWAY (MATCHING REFERENCE IMAGE 1)
-         ============================================================ -->
+  <main class="portal-main-container">
+    
     <section class="portal-view active" id="view-home">
       
       <!-- Hero Top Section -->
@@ -95,14 +160,14 @@
               <span>STATION STATUS</span>
               <span class="fssc-chevron">&rsaquo;</span>
             </div>
-            <div class="fssc-row" onclick="switchView('stations', 'maitri')" title="Open Maitri Station Operations">
+            <div class="fssc-row" onclick="window.location.href='maitri.html'" title="Open Maitri Station Operations" style="cursor:pointer">
               <span class="fssc-dot orange-dot"></span>
               <div class="fssc-info">
                 <span class="fssc-name">Maitri Research Station</span>
                 <span class="fssc-status">Online &nbsp;|&nbsp; All Systems Nominal</span>
               </div>
             </div>
-            <div class="fssc-row" onclick="switchView('stations', 'bharati')" title="Open Bharati Station Operations">
+            <div class="fssc-row" onclick="window.location.href='bharati.html'" title="Open Bharati Station Operations" style="cursor:pointer">
               <span class="fssc-dot cyan-dot"></span>
               <div class="fssc-info">
                 <span class="fssc-name">Bharati Research Station</span>
@@ -132,14 +197,14 @@
       <div class="portal-selection-section">
         <div class="portal-section-header">
           <h2 class="ps-title">Select Access Portal</h2>
-          <p class="ps-sub">Choose your portal to securely access station operations, research systems and real-time data.</p>
+          <p class="ps-sub">Choose your dedicated operational portal to securely access station operations, digital twins, and central command.</p>
         </div>
 
         <div class="portal-cards-layout">
           
           <!-- Card 1: Command Control Admin -->
           <div class="access-portal-card card-command">
-            <div class="card-img-header">
+            <div class="card-img-header" onclick="window.location.href='command.html'" style="cursor:pointer">
               <img id="card-img-command" src="assets/card_header_command_bright.png" alt="Command Control Operations Room" />
             </div>
             <div class="card-body-content">
@@ -159,64 +224,64 @@
                   <span>Data &amp;<br/>Communications</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-orange" id="btn-signin-command" onclick="handlePortalSignIn('command')">
-                Sign In &rarr;
+              <button class="ap-sign-in-btn btn-gradient-orange" onclick="window.location.href='command.html'">
+                Enter Command &rarr;
               </button>
             </div>
           </div>
 
           <!-- Card 2: Maitri Research Station -->
           <div class="access-portal-card card-maitri">
-            <div class="card-img-header">
+            <div class="card-img-header" onclick="window.location.href='maitri.html'" style="cursor:pointer">
               <img id="card-img-maitri" src="assets/card_header_maitri_bright.png" alt="Maitri Research Station" />
             </div>
             <div class="card-body-content">
               <h3 class="ap-card-title">Maitri Research Station</h3>
-              <p class="ap-card-desc">Station operations and research monitoring</p>
+              <p class="ap-card-desc">Station operations and 3D digital twin</p>
               <div class="ap-features-row">
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                  <span>Station<br/>Systems</span>
+                  <span>Microgrid &amp;<br/>Priyadarshini</span>
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                  <span>Research<br/>Data</span>
+                  <span>Geomagnetic<br/>Observatory</span>
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  <span>Weather &amp;<br/>Environment</span>
+                  <span>Weather &amp;<br/>CCTV Feeds</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-maitri" onclick="handlePortalSignIn('stations', 'maitri')">
-                Sign In &rarr;
+              <button class="ap-sign-in-btn btn-gradient-blue" onclick="window.location.href='maitri.html'">
+                Open Maitri &rarr;
               </button>
             </div>
           </div>
 
           <!-- Card 3: Bharati Research Station -->
           <div class="access-portal-card card-bharati">
-            <div class="card-img-header">
+            <div class="card-img-header" onclick="window.location.href='bharati.html'" style="cursor:pointer">
               <img id="card-img-bharati" src="assets/card_header_bharati_bright.png" alt="Bharati Research Station" />
             </div>
             <div class="card-body-content">
               <h3 class="ap-card-title">Bharati Research Station</h3>
-              <p class="ap-card-desc">Station operations and research monitoring</p>
+              <p class="ap-card-desc">Station operations and coastal monitoring</p>
               <div class="ap-features-row">
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/><line x1="12" y1="14" x2="12" y2="22"/></svg>
-                  <span>Station<br/>Systems</span>
+                  <span>ISRO IMGEOS<br/>Tracking</span>
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                  <span>Research<br/>Data</span>
+                  <span>Scania CHP &amp;<br/>Desalination</span>
                 </div>
                 <div class="ap-feature-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  <span>Weather &amp;<br/>Environment</span>
+                  <span>Larsemann<br/>Coastal Ice</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-bharati" onclick="handlePortalSignIn('stations', 'bharati')">
-                Sign In &rarr;
+              <button class="ap-sign-in-btn btn-gradient-blue" onclick="window.location.href='bharati.html'">
+                Open Bharati &rarr;
               </button>
             </div>
           </div>
@@ -237,6 +302,62 @@
                 &ldquo;From the Indian Ocean to the Antarctic, for a resilient Earth.&rdquo;
               </p>
             </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Additional Services & Resources Grid (About, Resources, Live Data, Support) -->
+      <div class="home-services-section">
+        <div class="portal-section-header">
+          <h2 class="ps-title">Operations Library &amp; Scientific Services</h2>
+          <p class="ps-sub">Direct access to scientific protocols, historical expedition records, sensor streams, and AIRA helpdesk.</p>
+        </div>
+
+        <div class="services-grid-4">
+          
+          <div class="service-card" onclick="window.location.href='about.html'">
+            <div>
+              <div class="service-icon-box icon-about">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              </div>
+              <h3 class="service-title">About NCPOR &amp; History</h3>
+              <p class="service-desc">Explore 44+ expeditions, station chronology from Dakshin Gangotri to Maitri-II, and polar mandates.</p>
+            </div>
+            <span class="service-link-text">Read History &rarr;</span>
+          </div>
+
+          <div class="service-card" onclick="window.location.href='resources.html'">
+            <div>
+              <div class="service-icon-box icon-res">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <h3 class="service-title">SOPs &amp; Protocols</h3>
+              <p class="service-desc">Standard Operating Procedures, freeze-protection guides, Madrid Protocol, and downloadable data callsets.</p>
+            </div>
+            <span class="service-link-text">Browse SOPs &rarr;</span>
+          </div>
+
+          <div class="service-card" onclick="window.location.href='livedata.html'">
+            <div>
+              <div class="service-icon-box icon-live">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <h3 class="service-title">Live Sensor Feeds</h3>
+              <p class="service-desc">Real-time telemetry stream via ISRO GSAT-17, weather dials, barometric records, and JSON exports.</p>
+            </div>
+            <span class="service-link-text">View Telemetry &rarr;</span>
+          </div>
+
+          <div class="service-card" onclick="window.location.href='support.html'">
+            <div>
+              <div class="service-icon-box icon-supp">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <h3 class="service-title">AIRA AI &amp; Support</h3>
+              <p class="service-desc">Mission knowledge base, emergency hotlines, ticket dispatch, and AIRA Antarctic intelligent assistant.</p>
+            </div>
+            <span class="service-link-text">Get Helpdesk &rarr;</span>
           </div>
 
         </div>
@@ -315,789 +436,8 @@
 
     </section>
 
-    <!-- ============================================================
-         PAGE VIEW 2: RESEARCH STATION OPERATIONS (MATCHING IMAGE 2 & 3)
-         ============================================================ -->
-    <section class="portal-view" id="view-stations">
-      <div class="station-ops-page">
-        
-        <!-- Breadcrumb & Top Bar -->
-        <div class="ops-top-header-bar">
-          <div>
-            <div class="breadcrumbs-trail">
-              <span>Home</span> &rsaquo; <span>Stations</span> &rsaquo; <span class="current">Research Station Operations</span>
-            </div>
-            <h1 class="ops-main-title">Research Station Operations</h1>
-            <div class="ops-subtitle-strip">MONITOR &nbsp;|&nbsp; OPERATE &nbsp;|&nbsp; ENSURE SAFETY &nbsp;|&nbsp; SUPPORT RESEARCH &nbsp;|&nbsp; A SUSTAINABLE TOMORROW</div>
-          </div>
-
-          <!-- Station Selector Buttons (Maitri vs Bharati) -->
-          <div class="top-station-switchers">
-            <div class="station-pill-card active" id="spc-maitri" onclick="selectStation('maitri')">
-              <img class="spc-thumb" id="spc-thumb-maitri" src="assets/station_maitri_thumb_bright.png" alt="Maitri Research Station" />
-              <div class="spc-info">
-                <div class="spc-name-row">
-                  <span class="spc-radio-indicator orange-fill"></span>
-                  <span class="spc-name">Maitri</span>
-                </div>
-                <span class="spc-coords">(70&deg;45'S, 11&deg;44'E)</span>
-              </div>
-            </div>
-
-            <div class="station-pill-card" id="spc-bharati" onclick="selectStation('bharati')">
-              <img class="spc-thumb" id="spc-thumb-bharati" src="assets/station_bharati_thumb_bright.png" alt="Bharati Research Station" />
-              <div class="spc-info">
-                <div class="spc-name-row">
-                  <span class="spc-radio-indicator"></span>
-                  <span class="spc-name">Bharati</span>
-                </div>
-                <span class="spc-coords">(69&deg;24'S, 76&deg;11'E)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ops Grid: Left Sidebar + Central Stage + Right KPI Panel -->
-        <div class="ops-grid-container">
-          
-          <!-- Left Sidebar -->
-          <aside class="ops-left-sidebar">
-            <button class="sidebar-nav-btn active" onclick="setOpsTab('overview', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-              <span>Station Overview</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('cameras', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-              <span>Live Cameras</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('machines', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              <span>Machine Health</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('environment', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-              <span>Environment</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('research', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
-              <span>Research Ops</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('supplies', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              <span>Supplies &amp; Logistics</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('crew', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <span>Crew Management</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setOpsTab('reports', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span>Reports</span>
-            </button>
-          </aside>
-
-          <!-- Central Stage: Digital Twin + Cameras + Metrics -->
-          <div class="ops-center-stage">
-            
-            <!-- Digital Twin Viewport -->
-            <div class="digital-twin-hero-card">
-              <div class="dt-header-bar">
-                <div class="dt-station-title-group">
-                  <h2 class="dt-station-title" id="ops-station-name-heading">Maitri Research Station</h2>
-                  <span class="online-chip"><span class="dot-green"></span> ONLINE</span>
-                  <span class="dt-station-coords" id="ops-station-coords-label">70&deg;45'S, 11&deg;44'E &bull; EAST ANTARCTICA</span>
-                </div>
-                
-                <div class="dt-view-selectors">
-                  <button class="view-mode-pill active">3D View</button>
-                  <button class="view-mode-pill" onclick="alert('Switching to Topographic Map Layer')">Map View</button>
-                  <button class="view-mode-pill" onclick="alert('Switching to Architectural Site Blueprint')">Site Plan</button>
-                  <button class="view-mode-pill btn-icon-square" onclick="alert('Toggle Fullscreen 3D Viewport')" title="Fullscreen">&#x26F6;</button>
-                </div>
-              </div>
-
-              <!-- Interactive Visual Container with Hotspots -->
-              <div class="station-interactive-visual">
-                <img id="station-main-bg" class="main-twin-img" src="assets/station_maitri_panorama_bright.png" alt="Station Digital Twin" />
-
-                <!-- Interactive Hotspot Click Targets directly over the buildings -->
-                <div class="station-hitbox" style="top: 4.1%; left: 35.7%; width: 9%; height: 9%;" onclick="openHotspotInfo('Communications Mast', 'GSAT-17 Uplink / High-Gain Array: 99.4% Link Quality')" title="Communications Mast: 99.4% Link Quality"></div>
-                <div class="station-hitbox" style="top: 26.8%; left: 16.5%; width: 12%; height: 12%;" onclick="openHotspotInfo('Living Modules', 'Habitation quarters: 24 personnel, 21.2°C, 48% humidity nominal')" title="Living Modules: 24 personnel nominal"></div>
-                <div class="station-hitbox" style="top: 27.1%; left: 38.5%; width: 11%; height: 11.5%;" onclick="openHotspotInfo('Research Lab', 'Atmospheric & Geomagnetic Laboratory: 6 instruments streaming')" title="Research Lab: 6 instruments streaming"></div>
-                <div class="station-hitbox" style="top: 27.6%; left: 53.3%; width: 10%; height: 13%;" onclick="openHotspotInfo('Power Generator', 'DG-01 & DG-02 Units: 420 kW / 510 kW capacity (82% load)')" title="Power Generator: 420 kW / 510 kW"></div>
-                <div class="station-hitbox" style="top: 69.1%; left: 21.5%; width: 12.5%; height: 16.5%;" onclick="openHotspotInfo('Water Treatment', 'Reverse osmosis & melt-water processing: 38 m³ reserve (76%)')" title="Water Treatment: 38 m³ reserve"></div>
-                <div class="station-hitbox" style="top: 66.3%; left: 40.9%; width: 11.5%; height: 16.5%;" onclick="openHotspotInfo('Vehicle Bay', 'PistenBully Snowcats & Snowmobiles: 3 active, 2 standby')" title="Vehicle Bay: 3 active snowcats"></div>
-                <div class="station-hitbox" style="top: 71.8%; left: 54.3%; width: 12%; height: 14%;" onclick="openHotspotInfo('Fuel Storage', 'HSD Fuel Reserve: 102 kl / 150 kl (68% capacity, 58 days endurance)')" title="Fuel Storage: 102 kl / 150 kl"></div>
-              </div>
-            </div>
-
-            <!-- Live Camera Feeds Row -->
-            <div class="live-camera-strip-card">
-              <div class="lcs-header">
-                <div class="lcs-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                  <span><strong>Live Camera Feeds</strong> &nbsp;&bull;&nbsp; <span class="dot-green"></span> <span class="text-green">4 / 4 Online</span></span>
-                </div>
-                <div class="lcs-actions">
-                  <a href="#viewall" class="kpi-view-all" onclick="alert('Opening Full HD Quad Camera Matrix')">View All Cameras &rarr;</a>
-                  <div class="cam-arrows">
-                    <button class="cam-arrow-btn">&lsaquo;</button>
-                    <button class="cam-arrow-btn">&rsaquo;</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="cam-grid-4">
-                <div class="single-cam-card" onclick="alert('Viewing Live Feed: Cam 01 Main Station')">
-                  <img id="cam-img-1" src="assets/cam1_card_bright.png" alt="Cam 01 Main Station View" />
-                </div>
-                <div class="single-cam-card" onclick="alert('Viewing Live Feed: Cam 02 Generator Area')">
-                  <img id="cam-img-2" src="assets/cam2_card_bright.png" alt="Cam 02 Generator Area" />
-                </div>
-                <div class="single-cam-card" onclick="alert('Viewing Live Feed: Cam 03 Vehicle Bay')">
-                  <img id="cam-img-3" src="assets/cam3_card_bright.png" alt="Cam 03 Vehicle Bay" />
-                </div>
-                <div class="single-cam-card" onclick="alert('Viewing Live Feed: Cam 04 Science Deck')">
-                  <img id="cam-img-4" src="assets/cam4_card_bright.png" alt="Cam 04 Science Deck" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Row: Metrics & Sensor Trends & Events -->
-            <div class="ops-bottom-bar">
-              
-              <!-- Key Station Metrics -->
-              <div class="key-metrics-card">
-                <div class="alb-title-bar">
-                  <div class="alb-title">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    <span>Key Station Metrics</span>
-                  </div>
-                </div>
-                <div class="kmc-grid-6">
-                  
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                      <span class="kmc-label">Power Supply</span>
-                    </div>
-                    <div class="kmc-val">82%</div>
-                    <div class="kmc-progress-track"><div class="kmc-progress-fill green" style="width: 82%;"></div></div>
-                    <span class="kmc-sub">420 kW / 510 kW</span>
-                  </div>
-
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                      <span class="kmc-label">Water System</span>
-                    </div>
-                    <div class="kmc-val">76%</div>
-                    <div class="kmc-progress-track"><div class="kmc-progress-fill blue" style="width: 76%;"></div></div>
-                    <span class="kmc-sub">38 m&sup3; / 50 m&sup3;</span>
-                  </div>
-
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-orange)" stroke-width="2.5"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
-                      <span class="kmc-label">Fuel Storage</span>
-                    </div>
-                    <div class="kmc-val">68%</div>
-                    <div class="kmc-progress-track"><div class="kmc-progress-fill orange" style="width: 68%;"></div></div>
-                    <span class="kmc-sub">102 kl / 150 kl</span>
-                  </div>
-
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                      <span class="kmc-label">Weather (Now)</span>
-                    </div>
-                    <div class="kmc-val">-12.4&deg;C</div>
-                    <span class="kmc-sub">18 km/h (SSE)</span>
-                    <span class="kmc-status-tag green">Clear Skies</span>
-                  </div>
-
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                      <span class="kmc-label">Crew On Station</span>
-                    </div>
-                    <div class="kmc-val">24 / 24</div>
-                    <span class="kmc-status-tag green">&bull; All Safe</span>
-                  </div>
-
-                  <div class="kmc-item">
-                    <div class="kmc-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                      <span class="kmc-label">Data Quality</span>
-                    </div>
-                    <div class="kmc-val">98%</div>
-                    <span class="kmc-status-tag green">&bull; All Systems Nominal</span>
-                  </div>
-
-                </div>
-              </div>
-
-              <!-- Sensor Trends Chart -->
-              <div class="sensor-trends-card">
-                <div class="alb-title-bar">
-                  <div class="alb-title">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                    <span>Sensor Trends <span class="sub-paren">(Last 24 Hours)</span></span>
-                  </div>
-                </div>
-                <div class="st-tabs-row">
-                  <button class="st-tab-btn active" onclick="switchSensorTrend('power', this)">Power</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('temp', this)">Temperature</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('wind', this)">Wind Speed</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('fuel', this)">Fuel Level</button>
-                </div>
-                <div class="canvas-chart-wrap">
-                  <div class="canvas-y-axis">
-                    <span>kW</span>
-                    <span>400</span>
-                    <span>200</span>
-                    <span>0</span>
-                  </div>
-                  <canvas id="sensor-trend-canvas" width="340" height="90"></canvas>
-                </div>
-                <div class="canvas-x-axis">
-                  <span>00:00</span>
-                  <span>06:00</span>
-                  <span>12:00</span>
-                  <span>18:00</span>
-                  <span>24:00</span>
-                </div>
-              </div>
-
-              <!-- Station Events Log -->
-              <div class="station-events-card">
-                <div class="alb-title-bar">
-                  <div class="alb-title">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <span>Station Events</span>
-                  </div>
-                  <a href="#events" class="kpi-view-all" onclick="alert('Opening Full Audit Log')">View All &rarr;</a>
-                </div>
-                <div class="events-scroll-list">
-                  <div class="event-micro-row">
-                    <span class="dot-event green"></span>
-                    <span class="emr-time">14:32</span>
-                    <span class="emr-desc">Water treatment system nominal</span>
-                  </div>
-                  <div class="event-micro-row">
-                    <span class="dot-event blue"></span>
-                    <span class="emr-time">12:18</span>
-                    <span class="emr-desc">Routine weather balloon launch</span>
-                  </div>
-                  <div class="event-micro-row">
-                    <span class="dot-event orange"></span>
-                    <span class="emr-time">08:46</span>
-                    <span class="emr-desc">Generator 2 maintenance completed</span>
-                  </div>
-                  <div class="event-micro-row">
-                    <span class="dot-event blue"></span>
-                    <span class="emr-time">06:20</span>
-                    <span class="emr-desc">Wind speed increased (24 km/h)</span>
-                  </div>
-                  <div class="event-micro-row">
-                    <span class="dot-event blue"></span>
-                    <span class="emr-time">04:12</span>
-                    <span class="emr-desc">New research data uploaded (178 GB)</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- Right Column: 2x3 KPI Grid + AI Insights -->
-          <div class="ops-right-panel">
-            
-            <div class="kpi-grid-2x3">
-              
-              <!-- Card 1: Cameras -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                    <span>Cameras</span>
-                  </div>
-                </div>
-                <div class="kpi-camera-body">
-                  <div class="kpi-cam-text">
-                    <div class="kpi-main-readout text-green">4 / 4 Online</div>
-                    <span class="kmc-sub">Live station feeds</span>
-                  </div>
-                  <img id="widget-cam-thumb" class="kpi-thumb-preview" src="assets/widget_cam_preview_bright.png" alt="Live cameras preview" />
-                </div>
-                <span class="kpi-view-all" onclick="alert('All 4 Station Optical Feeds Active')">View All &rarr;</span>
-              </div>
-
-              <!-- Card 2: Machine Health -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    <span>Machine Health</span>
-                  </div>
-                  <span class="card-chevron">&rsaquo;</span>
-                </div>
-                <div class="kpi-main-readout"><span class="text-green">12 / 14</span> Healthy</div>
-                <div class="kpi-sub-warn text-orange"><span class="badge-num">2</span> Attention</div>
-              </div>
-
-              <!-- Card 3: Crew Status -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                    <span>Crew Status</span>
-                  </div>
-                </div>
-                <div class="kpi-main-readout">24 <span class="unit">On Station</span></div>
-                <span class="text-green status-line">&bull; All Safe &amp; Well</span>
-                <span class="kpi-view-all" onclick="alert('Expedition Medical: All vitals normal.')">View Details &rarr;</span>
-              </div>
-
-              <!-- Card 4: Research Operations -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
-                    <span>Research Operations</span>
-                  </div>
-                </div>
-                <div class="kpi-main-readout">5 <span class="unit">Active Projects</span></div>
-                <span class="text-orange status-line">2 Field Activities</span>
-                <span class="kpi-view-all" onclick="alert('5 Ongoing Experiments: Geomagnetism, Seismology, Glaciology, Meteorology, Biology')">View Projects &rarr;</span>
-              </div>
-
-              <!-- Card 5: Supplies & Logistics -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                    <span>Supplies &amp; Logistics</span>
-                  </div>
-                </div>
-                <div class="supplies-row">
-                  <span class="text-green font-bold">&bull; Normal</span>
-                  <span class="text-green font-bold">78%</span>
-                </div>
-                <div class="kmc-progress-track"><div class="kmc-progress-fill green" style="width: 78%;"></div></div>
-                <span class="kmc-sub">Next re-supply in 42 days</span>
-                <span class="kpi-view-all" onclick="alert('Inventory: 18 months shelf life remaining.')">View Inventory &rarr;</span>
-              </div>
-
-              <!-- Card 6: Environment -->
-              <div class="kpi-compact-card">
-                <div class="header-row">
-                  <div class="kpi-title-wrap">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                    <span>Environment</span>
-                  </div>
-                </div>
-                <div class="env-metric-row">
-                  <span>&#x2744; -12.4&deg;C</span>
-                  <span>&#x1F4A8; 18 km/h <span class="unit">(SSE)</span></span>
-                </div>
-                <span class="text-green status-line">&bull; Good Station Conditions</span>
-                <span class="kpi-view-all" onclick="alert('Station Meteorological Summary: Clear weather, UV low, Barometric pressure 982 hPa')">View Live Data &rarr;</span>
-              </div>
-
-            </div>
-
-            <!-- AI Assistant Insights Box -->
-            <div class="ai-insights-box">
-              <div class="ai-ib-header">
-                <div class="ai-ib-title">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>AI Assistant Insights</span>
-                </div>
-                <span class="ai-insights-count">3 new insights</span>
-              </div>
-
-              <div class="ai-insight-bullet">
-                <span class="ai-dot green"></span>
-                <span>Power consumption 12% lower than monthly average.</span>
-              </div>
-              <div class="ai-insight-bullet">
-                <span class="ai-dot orange"></span>
-                <span>Wind speeds expected to increase in next 12 hours (up to 32 km/h).</span>
-              </div>
-              <div class="ai-insight-bullet">
-                <span class="ai-dot green"></span>
-                <span>Fuel levels sufficient for 58 days at current consumption.</span>
-              </div>
-              <a href="#ai" class="kpi-view-all" style="margin-top:6px;" onclick="alert('AIRA Automated Decision Engine: All predictive thresholds within nominal envelope.')">View All Insights &rarr;</a>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ============================================================
-         PAGE VIEW 3: COMMAND CONTROL ADMIN (MATCHING IMAGE 3 & 2)
-         ============================================================ -->
-    <section class="portal-view" id="view-command">
-      <div class="command-admin-page">
-        
-        <div class="admin-layout-grid">
-          
-          <!-- Left Admin Sidebar -->
-          <aside class="ops-left-sidebar">
-            <button class="sidebar-nav-btn active" onclick="setAdminTab('overview', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-              <span>Overview</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('stations', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              <span>Stations</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('cameras', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-              <span>Cameras</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('crew', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-              <span>Crew</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('machines', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              <span>Machines</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('supplies', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              <span>Supplies</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('research', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
-              <span>Research</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('alerts', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-              <span>Alerts</span>
-              <span class="alert-badge-tag high" style="margin-left:auto">3</span>
-            </button>
-            <button class="sidebar-nav-btn" onclick="setAdminTab('comms', this)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
-              <span>Communications</span>
-            </button>
-          </aside>
-
-          <!-- Center Content: Title + Triad + Bottom 5-Card Row -->
-          <div class="admin-center-content">
-            
-            <!-- Admin Title Row -->
-            <div class="admin-title-row">
-              <div class="admin-title-left">
-                <span class="hero-eyebrow">INDIA &bull; ANTARCTICA &bull; A SAFER, CLEANER PLANET</span>
-                <h1 class="admin-title">Command Control Admin</h1>
-                <span class="admin-subtitle">Central oversight for India's Antarctic operations</span>
-              </div>
-
-              <!-- Satellite Link Widget -->
-              <div class="admin-satellite-banner">
-                <div class="asb-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 19.07A10 10 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.76-1.12 5.26-2.93 7.07"/><circle cx="12" cy="12" r="2"/></svg>
-                </div>
-                <div class="asb-meta">
-                  <span class="asb-title">Satellite Link &bull; ISRO / GSAT (LEO/GEO)</span>
-                  <span class="asb-status">&bull; Connected &nbsp;|&nbsp; Latency: 620 ms</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Triad Grid: Maitri Card - Map - Bharati Card + Right Alerts Panel -->
-            <div class="triad-dashboard-layout">
-              
-              <!-- Maitri Station Card -->
-              <div class="admin-station-card">
-                <div>
-                  <div class="asc-top-header" onclick="switchView('stations', 'maitri')" style="cursor:pointer">
-                    <img class="asc-thumb" src="assets/bright_station.png" alt="Maitri" />
-                    <div>
-                      <div class="asc-name">Maitri Research Station &rsaquo;</div>
-                      <div class="asc-status-dot">&bull; Online &bull; All Systems Nominal</div>
-                      <div class="asc-coords-sub">70.76&deg; S, 11.72&deg; E &bull; Queen Maud Land</div>
-                    </div>
-                  </div>
-
-                  <div class="asc-weather-strip">
-                    <div class="ws-item text-orange">&#x2600;&#xFE0F; -12.4&deg;C Clear Sky</div>
-                    <div class="ws-item text-blue">&#x1F4A8; 18 km/h NE Wind</div>
-                  </div>
-
-                  <div class="asc-progress-meters">
-                    <div class="meter-row">
-                      <span class="meter-title">&#x26A1; Power</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 92%;"></div></div>
-                      <span class="meter-readout">92% 420 kW</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x26FD; Fuel</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 78%;"></div></div>
-                      <span class="meter-readout">78% 120 kl</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F4A7; Water</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 83%;"></div></div>
-                      <span class="meter-readout">83% 65 kl</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F4E1; SATCOM</span>
-                      <span class="meter-readout text-green" style="width:auto;flex:1;text-align:right;">&bull; Online High Bandwidth</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F465; Crew</span>
-                      <span class="meter-readout" style="width:auto;flex:1;text-align:right;">24 / 25 Active</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:8px;border-top:1px solid var(--border-light)">
-                  <span style="font-size:11.5px;font-weight:700">Station Health</span>
-                  <span class="text-green" style="font-size:11.5px;font-weight:800">&#x1F49A; Good (94%)</span>
-                </div>
-              </div>
-
-              <!-- Center Continental Antarctica Canvas Map -->
-              <div class="admin-antarctica-map-card">
-                <canvas id="admin-canvas-map"></canvas>
-                <div class="map-view-controls-bar">
-                  <button class="map-view-btn active" onclick="setAdminMapMode('2d', this)">2D VIEW</button>
-                  <button class="map-view-btn" onclick="setAdminMapMode('satellite', this)">SATELLITE</button>
-                  <button class="map-view-btn" onclick="setAdminMapMode('terrain', this)">TERRAIN</button>
-                  <button class="map-view-btn" onclick="setAdminMapMode('weather', this)">WEATHER</button>
-                </div>
-              </div>
-
-              <!-- Bharati Station Card -->
-              <div class="admin-station-card">
-                <div>
-                  <div class="asc-top-header" onclick="switchView('stations', 'bharati')" style="cursor:pointer">
-                    <img class="asc-thumb" src="assets/bright_home.png" alt="Bharati" />
-                    <div>
-                      <div class="asc-name">Bharati Research Station &rsaquo;</div>
-                      <div class="asc-status-dot">&bull; Online &bull; All Systems Nominal</div>
-                      <div class="asc-coords-sub">69.40&deg; S, 76.12&deg; E &bull; Larsemann Hills</div>
-                    </div>
-                  </div>
-
-                  <div class="asc-weather-strip">
-                    <div class="ws-item text-blue">&#x26C5; -8.6&deg;C Partly Cloudy</div>
-                    <div class="ws-item text-cyan">&#x1F4A8; 12 km/h SE Wind</div>
-                  </div>
-
-                  <div class="asc-progress-meters">
-                    <div class="meter-row">
-                      <span class="meter-title">&#x26A1; Power</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 88%;"></div></div>
-                      <span class="meter-readout">88% 380 kW</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x26FD; Fuel</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 81%;"></div></div>
-                      <span class="meter-readout">81% 140 kl</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F4A7; Water</span>
-                      <div class="meter-bar-track"><div class="meter-bar-fill fill-green" style="width: 79%;"></div></div>
-                      <span class="meter-readout">79% 62 kl</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F4E1; SATCOM</span>
-                      <span class="meter-readout text-green" style="width:auto;flex:1;text-align:right;">&bull; Online High Bandwidth</span>
-                    </div>
-
-                    <div class="meter-row">
-                      <span class="meter-title">&#x1F465; Crew</span>
-                      <span class="meter-readout" style="width:auto;flex:1;text-align:right;">20 / 24 Active</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:8px;border-top:1px solid var(--border-light)">
-                  <span style="font-size:11.5px;font-weight:700">Station Health</span>
-                  <span class="text-green" style="font-size:11.5px;font-weight:800">&#x1F49A; Good (91%)</span>
-                </div>
-              </div>
-
-              <!-- Right Control Panel: Alerts / Insights / Emergency -->
-              <div class="admin-right-control-panel">
-                <div class="admin-tabs-header">
-                  <button class="admin-tab-chip active" onclick="switchAdminRightTab('alerts', this)">Alerts (3)</button>
-                  <button class="admin-tab-chip" onclick="switchAdminRightTab('insights', this)">AI Insights (4)</button>
-                  <button class="admin-tab-chip" onclick="switchAdminRightTab('emergency', this)">Emergency</button>
-                </div>
-
-                <div class="priority-alerts-container" id="admin-right-content">
-                  
-                  <div class="alert-row-item">
-                    <span class="alert-badge-tag high">HIGH</span>
-                    <div class="alert-text-body">
-                      <span class="atb-title">Wind speed high at Bharati</span>
-                      <span class="atb-sub">14:18 &bull; 42 km/h (Threshold 40 km/h)</span>
-                    </div>
-                  </div>
-
-                  <div class="alert-row-item">
-                    <span class="alert-badge-tag medium">MEDIUM</span>
-                    <div class="alert-text-body">
-                      <span class="atb-title">Generator 2 bearing check</span>
-                      <span class="atb-sub">11:05 &bull; Maitri Research Station</span>
-                    </div>
-                  </div>
-
-                  <div class="alert-row-item">
-                    <span class="alert-badge-tag info">INFO</span>
-                    <div class="alert-text-body">
-                      <span class="atb-title">Sea ice shift telemetry</span>
-                      <span class="atb-sub">09:26 &bull; Near Bharati (AI Analysis)</span>
-                    </div>
-                  </div>
-
-                </div>
-
-                <!-- Emergency Status Banner -->
-                <div class="emergency-banner-card">
-                  <div class="ebc-icon">&#x1F6E1;&#xFE0F;</div>
-                  <div class="ebc-text-wrap">
-                    <span class="ebc-title">No Active Emergency</span>
-                    <span class="ebc-desc">All stations operating normally. Standard protocols standby.</span>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-            <!-- Lower Admin 5-Card Bento Row -->
-            <div class="admin-lower-bento-row">
-              
-              <!-- 1. Live Camera Monitoring -->
-              <div class="alb-card">
-                <div class="alb-title-bar">
-                  <span class="alb-title">Live Camera Monitoring</span>
-                  <a href="#cam" class="kpi-view-all" onclick="switchView('stations')">View All &rarr;</a>
-                </div>
-                <div style="position:relative;height:100px;border-radius:8px;overflow:hidden;background:#000;">
-                  <img src="assets/bright_home.png" style="width:100%;height:100%;object-fit:cover;" alt="Cam" />
-                  <span class="cam-live-badge">LIVE</span>
-                  <span class="cam-meta-footer">Maitri &bull; External Cam 01</span>
-                </div>
-              </div>
-
-              <!-- 2. Logistics & Fleet Tracking -->
-              <div class="alb-card">
-                <div class="alb-title-bar">
-                  <span class="alb-title">Logistics &amp; Fleet Tracking</span>
-                  <span class="kpi-view-all" onclick="alert('3 Vehicles deployed: SC-01, SC-02, Cargo-01')">View All &rarr;</span>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">
-                  <div><span style="font-weight:800;font-size:16px;">3</span> <span class="kmc-sub">Vehicles</span></div>
-                  <div><span style="font-weight:800;font-size:16px;">1</span> <span class="kmc-sub">Cargo Sled</span></div>
-                  <div><span style="font-weight:800;font-size:16px;">1</span> <span class="kmc-sub">IL-76 Standby</span></div>
-                </div>
-                <span class="text-green" style="font-size:11px;font-weight:700">&bull; Snowcat SC-04 en route to Field Site</span>
-              </div>
-
-              <!-- 3. Weather Conditions -->
-              <div class="alb-card">
-                <div class="alb-title-bar">
-                  <span class="alb-title">Weather Conditions</span>
-                  <span class="kpi-view-all">Live &rarr;</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;font-size:11.5px;padding:4px 0;">
-                  <div><strong>Maitri</strong><br/>-12.4&deg;C &bull; 18 km/h</div>
-                  <div><strong>Bharati</strong><br/>-8.6&deg;C &bull; 12 km/h</div>
-                </div>
-                <span class="kmc-sub">Pressure: 982 hPa (M) | 988 hPa (B)</span>
-              </div>
-
-              <!-- 4. Data Sync Status -->
-              <div class="alb-card">
-                <div class="alb-title-bar">
-                  <span class="alb-title">Data Sync Status</span>
-                  <span class="kpi-view-all">Details &rarr;</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;margin:6px 0;">
-                  <span style="font-size:24px;font-weight:900;color:var(--accent-blue)">98%</span>
-                  <span style="font-size:11px;font-weight:700;color:var(--accent-green)">&bull; All systems synced</span>
-                </div>
-                <span class="kmc-sub">Last Sync: 2m ago &bull; Next: 8m</span>
-              </div>
-
-              <!-- 5. Mission Health Summary (Segmented LED Bar) -->
-              <div class="alb-card">
-                <div class="alb-title-bar">
-                  <span class="alb-title">Mission Health Summary</span>
-                  <span class="kpi-view-all">Details &rarr;</span>
-                </div>
-                <div class="health-led-segments-row">
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                  <div class="led-bar-segment"></div>
-                </div>
-                <div class="led-stats-grid">
-                  <div class="led-stat-cell">
-                    <span class="lsc-label">Stations</span>
-                    <span class="lsc-val text-green">2/2</span>
-                  </div>
-                  <div class="led-stat-cell">
-                    <span class="lsc-label">Critical Sys</span>
-                    <span class="lsc-val text-green">12/12</span>
-                  </div>
-                  <div class="led-stat-cell">
-                    <span class="lsc-label">Research</span>
-                    <span class="lsc-val text-blue">8/8</span>
-                  </div>
-                  <div class="led-stat-cell">
-                    <span class="lsc-label">Comms</span>
-                    <span class="lsc-val text-green">100%</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
   </main>
 
-  <!-- Clerk JS CDN Script -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-    type="text/javascript">
-  </script>
   <script src="app.js"></script>
 </body>
 </html>
