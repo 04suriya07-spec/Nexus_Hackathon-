@@ -1,95 +1,87 @@
-/* ============================================================
-   POLARIS — Indian Antarctic Remote Operations Portal
-   National Centre for Polar & Ocean Research (NCPOR)
-   Application Logic — Dual Theme Engine, View Switcher & Simulation
-   ============================================================ */
+// ============================================================
+// POLARIS — NCPOR ANTARCTIC OPERATIONS PLATFORM
+// Realtime Telemetry, Digital Twin & Operations Control
+// National Centre for Polar and Ocean Research, Goa, India
+// ============================================================
 
-// Application State
 const STATE = {
-  theme: localStorage.getItem('polaris_theme') || 'bright',
   currentView: 'home',
   selectedStation: 'maitri',
-  currentTrendMetric: 'power',
-  adminMapMode: '2d',
-  animationTimer: null,
-  mapAnimTime: 0,
-  
-  // Real-time telemetry values
-  maitri: {
-    temp: -12.4,
-    windKt: 18,
-    humidity: 78,
-    power: 420,
-    powerMax: 510,
-    powerPct: 82,
-    water: 76,
-    fuel: 68,
-    crew: 24,
-    crewTotal: 25,
-    health: 94
-  },
-  bharati: {
-    temp: -8.6,
-    windKt: 12,
-    humidity: 72,
-    power: 380,
-    powerMax: 440,
-    powerPct: 88,
-    water: 79,
-    fuel: 81,
-    crew: 20,
-    crewTotal: 24,
-    health: 91
+  selectedModule: 'living',
+  currentTrendMetric: 'temp',
+  sensors: {
+    temp: { status: 'nominal', value: '-18.4 °C', trend: [ -19.2, -18.8, -18.5, -18.2, -18.4, -18.4 ] },
+    wind: { status: 'warning', value: '42 km/h', trend: [ 28, 32, 35, 40, 44, 42 ] },
+    humidity: { status: 'nominal', value: '68%', trend: [ 65, 66, 67, 68, 67, 68 ] },
+    power: { status: 'nominal', value: '94.2 kW', trend: [ 91, 92, 95, 94, 93, 94.2 ] },
+    life_support: { status: 'nominal', value: '99.1%', trend: [ 99, 99.2, 98.9, 99.1, 99.1, 99.1 ] },
+    structural: { status: 'nominal', value: 'Nominal', trend: [ 100, 100, 99, 100, 100, 100 ] }
   }
 };
 
 // ============================================================
-// THEME SWITCHING ENGINE (BRIGHT <-> DARK)
+// THEME SWITCHER (BRIGHT VS DARK)
 // ============================================================
 
 function initTheme() {
-  setTheme(STATE.theme);
+  const saved = localStorage.getItem('polaris_theme') || 'bright';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcon(saved);
 }
 
 function toggleTheme() {
-  const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'bright' : 'dark';
-  setTheme(newTheme);
+  const current = document.documentElement.getAttribute('data-theme') || 'bright';
+  const next = current === 'dark' ? 'bright' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('polaris_theme', next);
+  updateThemeIcon(next);
+
+  // Redraw charts with theme awareness
+  if (STATE.currentView === 'stations') {
+    renderSensorTrendsChart(STATE.currentTrendMetric);
+  } else if (STATE.currentView === 'command') {
+    drawAdminMap();
+  }
 }
 
-function setTheme(theme) {
-  STATE.theme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('polaris_theme', theme);
-
-  // Update theme-specific images
-  const heroBg = document.getElementById('hero-dynamic-bg');
-  if (heroBg) {
-    heroBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+function updateThemeIcon(theme) {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  if (theme === 'dark') {
+    btn.innerHTML = `
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <span class="btn-text-label">Bright</span>
+    `;
+  } else {
+    btn.innerHTML = `
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      <span class="btn-text-label">Dark</span>
+    `;
   }
-
-  const stationBg = document.getElementById('station-main-bg');
-  if (stationBg) {
-    if (STATE.selectedStation === 'maitri') {
-      stationBg.src = theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
-    } else {
-      stationBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
-    }
-  }
-
-  // Redraw canvases
-  renderSensorTrendsChart(STATE.currentTrendMetric);
-  drawAdminMap();
 }
 
 // ============================================================
-// PAGE VIEW ROUTING (HOME / STATIONS / COMMAND)
+// PAGE VIEW ROUTING (HOME / STATIONS / COMMAND / LIVE DATA)
 // ============================================================
 
 function switchView(viewName, station = null) {
+  if (viewName === 'live-data') viewName = 'livedata';
   STATE.currentView = viewName;
 
   // Update navbar active states
-  ['home', 'stations', 'command'].forEach(v => {
+  ['home', 'stations', 'command', 'livedata'].forEach(v => {
     const navBtn = document.getElementById(`nav-btn-${v}`);
     if (navBtn) {
       navBtn.classList.toggle('active', v === viewName);
@@ -103,6 +95,7 @@ function switchView(viewName, station = null) {
   // If specific station passed
   if (station) {
     selectStation(station);
+    if (typeof selectLiveStation === 'function') selectLiveStation(station);
   }
 
   // Scroll to top
@@ -130,183 +123,271 @@ function selectStation(station) {
   if (maitriBtn) maitriBtn.classList.toggle('active', station === 'maitri');
   if (bharatiBtn) bharatiBtn.classList.toggle('active', station === 'bharati');
 
-  const titleEl = document.getElementById('ops-station-name-heading');
-  const coordsEl = document.getElementById('ops-station-coords-label');
-  const stationBg = document.getElementById('station-main-bg');
+  const titleEl = document.getElementById('dt-station-title');
+  const coordsEl = document.getElementById('dt-station-coords');
+  const subEl = document.getElementById('dt-station-sub');
 
   if (station === 'maitri') {
     if (titleEl) titleEl.textContent = 'Maitri Research Station';
-    if (coordsEl) coordsEl.textContent = "70°45'S, 11°44'E • EAST ANTARCTICA (Queen Maud Land)";
-    if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
-    }
+    if (coordsEl) coordsEl.textContent = "70°45'58\"S, 11°44'09\"E • Schirmacher Oasis";
+    if (subEl) subEl.textContent = 'Living Complex & Laboratory Module 3D Spatial Grid';
+    updateStationSensorValues({
+      temp: '-18.4 °C',
+      wind: '42 km/h',
+      humidity: '68%',
+      pressure: '988 hPa',
+      power: '94.2 kW',
+      life: '99.1%'
+    });
   } else {
     if (titleEl) titleEl.textContent = 'Bharati Research Station';
-    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA (Larsemann Hills)";
-    if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
-    }
+    if (coordsEl) coordsEl.textContent = "69°24'28\"S, 76°11'14\"E • Larsemann Hills";
+    if (subEl) subEl.textContent = 'Energy-Efficient Container Architecture 3D Model';
+    updateStationSensorValues({
+      temp: '-14.8 °C',
+      wind: '28 km/h',
+      humidity: '72%',
+      pressure: '994 hPa',
+      power: '112.5 kW',
+      life: '99.8%'
+    });
   }
+
+  if (typeof selectLiveStation === 'function') {
+    selectLiveStation(station);
+  }
+
+  renderSensorTrendsChart(STATE.currentTrendMetric);
+}
+
+function updateStationSensorValues(vals) {
+  const mapping = {
+    'val-temp': vals.temp,
+    'val-wind': vals.wind,
+    'val-humidity': vals.humidity,
+    'val-pressure': vals.pressure,
+    'val-power': vals.power,
+    'val-life': vals.life
+  };
+  Object.entries(mapping).forEach(([id, v]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = v;
+  });
+}
+
+function switchStationTab(tabName, btn) {
+  document.querySelectorAll('.module-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  STATE.selectedModule = tabName;
 }
 
 // ============================================================
-// SENSOR TRENDS 24H CANVAS CHART
+// SENSOR TRENDS CHART (CANVAS RENDERING)
 // ============================================================
 
-const TREND_DATA = {
-  power: [410, 415, 412, 420, 422, 418, 425, 420, 415, 422, 420, 418],
-  temp: [-14, -13.5, -13, -12.4, -12.0, -11.8, -12.2, -12.4, -12.8, -13.2, -13.6, -14],
-  wind: [14, 15, 17, 18, 20, 22, 19, 18, 17, 16, 17, 18],
-  fuel: [105, 104.8, 104.5, 104.2, 103.9, 103.5, 103.1, 102.8, 102.5, 102.2, 102.0, 102.0]
-};
-
-function switchSensorTrend(metric, btn) {
+function selectTrendMetric(metric, chip) {
+  document.querySelectorAll('.trend-chip').forEach(c => c.classList.remove('active'));
+  if (chip) chip.classList.add('active');
   STATE.currentTrendMetric = metric;
-  document.querySelectorAll('.st-tab-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
   renderSensorTrendsChart(metric);
 }
 
-function renderSensorTrendsChart(metric = 'power') {
-  const canvas = document.getElementById('sensor-trend-canvas');
+function renderSensorTrendsChart(metric) {
+  const canvas = document.getElementById('sensor-chart-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 340;
-  const H = canvas.height = 90;
+  if (!ctx) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const W = rect.width;
+  const H = rect.height;
 
   ctx.clearRect(0, 0, W, H);
 
-  const values = TREND_DATA[metric] || TREND_DATA.power;
+  // Theme colors
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  
-  const minVal = Math.min(...values) * 0.95;
-  const maxVal = Math.max(...values) * 1.05;
-  const range = maxVal - minVal || 1;
-  const stepX = (W - 20) / (values.length - 1);
+  const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
+  const textColor = isDark ? '#7a889b' : '#64748b';
 
-  // Subtle grid lines
-  ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(11, 46, 89, 0.08)';
+  // Sample data points depending on metric
+  const datasets = {
+    temp: { data: [-16, -18, -19.5, -21, -19, -18.4, -17.5, -18.4], color: '#0077e6', unit: '°C' },
+    wind: { data: [22, 28, 35, 48, 52, 44, 38, 42], color: '#ff7a00', unit: 'km/h' },
+    power: { data: [88, 90, 92, 96, 94, 93, 95, 94.2], color: '#00a854', unit: 'kW' },
+    life: { data: [99.0, 99.2, 99.1, 98.9, 99.3, 99.1, 99.2, 99.1], color: '#7209b7', unit: '%' }
+  };
+
+  const set = datasets[metric] || datasets.temp;
+  const points = set.data;
+  const minVal = Math.min(...points) * 0.95;
+  const maxVal = Math.max(...points) * 1.05;
+  const range = maxVal - minVal || 1;
+
+  const padLeft = 40;
+  const padRight = 20;
+  const padTop = 20;
+  const padBottom = 30;
+  const plotW = W - padLeft - padRight;
+  const plotH = H - padTop - padBottom;
+
+  // Draw Grid Lines (horizontal)
+  ctx.strokeStyle = gridColor;
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 3; i++) {
-    const y = H * (i / 4);
+  ctx.fillStyle = textColor;
+  ctx.font = '10px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'right';
+
+  const gridSteps = 4;
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = padTop + (plotH / gridSteps) * i;
     ctx.beginPath();
-    ctx.moveTo(10, y);
-    ctx.lineTo(W - 10, y);
+    ctx.moveTo(padLeft, y);
+    ctx.lineTo(W - padRight, y);
     ctx.stroke();
+
+    const val = (maxVal - (range / gridSteps) * i).toFixed(1);
+    ctx.fillText(`${val} ${set.unit}`, padLeft - 6, y + 3);
   }
 
-  // Curve gradient fill
-  const strokeColor = metric === 'fuel' ? '#ff7a00' : isDark ? '#00d4ff' : '#0077e6';
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, isDark ? 'rgba(0, 212, 255, 0.35)' : 'rgba(0, 119, 230, 0.25)');
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  // Draw X axis time marks
+  const times = ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', 'Now'];
+  ctx.textAlign = 'center';
+  times.forEach((t, i) => {
+    const x = padLeft + (plotW / (times.length - 1)) * i;
+    ctx.fillText(t, x, H - 10);
+  });
+
+  // Calculate coordinates
+  const coords = points.map((p, i) => {
+    const x = padLeft + (plotW / (points.length - 1)) * i;
+    const y = padTop + plotH - ((p - minVal) / range) * plotH;
+    return { x, y };
+  });
+
+  // Draw Gradient Area
+  const grad = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
+  grad.addColorStop(0, set.color + '44');
+  grad.addColorStop(1, set.color + '00');
 
   ctx.beginPath();
-  values.forEach((v, i) => {
-    const x = 10 + i * stepX;
-    const y = H - 15 - ((v - minVal) / range) * (H - 30);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  ctx.moveTo(coords[0].x, padTop + plotH);
+  coords.forEach((pt, i) => {
+    if (i === 0) {
+      ctx.lineTo(pt.x, pt.y);
+    } else {
+      const prev = coords[i - 1];
+      const cx = (prev.x + pt.x) / 2;
+      ctx.bezierCurveTo(cx, prev.y, cx, pt.y, pt.x, pt.y);
+    }
   });
-  ctx.lineTo(10 + (values.length - 1) * stepX, H);
-  ctx.lineTo(10, H);
+  ctx.lineTo(coords[coords.length - 1].x, padTop + plotH);
   ctx.closePath();
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // Draw smooth line
+  // Draw Line
   ctx.beginPath();
-  values.forEach((v, i) => {
-    const x = 10 + i * stepX;
-    const y = H - 15 - ((v - minVal) / range) * (H - 30);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  coords.forEach((pt, i) => {
+    if (i === 0) {
+      ctx.moveTo(pt.x, pt.y);
+    } else {
+      const prev = coords[i - 1];
+      const cx = (prev.x + pt.x) / 2;
+      ctx.bezierCurveTo(cx, prev.y, cx, pt.y, pt.x, pt.y);
+    }
   });
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = set.color;
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // End point pulse dot
-  const lastX = 10 + (values.length - 1) * stepX;
-  const lastY = H - 15 - ((values[values.length - 1] - minVal) / range) * (H - 30);
-  ctx.beginPath();
-  ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
-  ctx.fillStyle = strokeColor;
-  ctx.shadowColor = strokeColor;
-  ctx.shadowBlur = 8;
-  ctx.fill();
-  ctx.shadowBlur = 0;
+  // Draw Data Points
+  coords.forEach((pt, i) => {
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = isDark ? '#141c2b' : '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = set.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Pulse effect on latest point
+    if (i === coords.length - 1) {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = set.color + '55';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
 }
 
 // ============================================================
-// CONTINENTAL ANTARCTICA MAP (COMMAND CONTROL VIEW)
+// ADMIN COMMAND MAP (ANTARCTIC HIGH-RES RADAR CANVAS)
 // ============================================================
-
-function setAdminMapMode(mode, btn) {
-  STATE.adminMapMode = mode;
-  document.querySelectorAll('.map-view-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  drawAdminMap();
-}
 
 function drawAdminMap() {
-  const canvas = document.getElementById('admin-canvas-map');
+  const canvas = document.getElementById('admin-map-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 500;
-  const H = canvas.height = canvas.offsetHeight || 380;
+  if (!ctx) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const W = rect.width;
+  const H = rect.height;
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
   ctx.clearRect(0, 0, W, H);
 
-  // Background tint
-  ctx.fillStyle = isDark ? '#061528' : '#0d2847';
-  ctx.fillRect(0, 0, W, H);
+  // Background Grid Rings (Radar Style)
+  const centerX = W * 0.48;
+  const centerY = H * 0.52;
+  const maxR = Math.min(W, H) * 0.45;
 
-  // Latitude circles
-  ctx.strokeStyle = isDark ? 'rgba(0, 212, 255, 0.08)' : 'rgba(255, 255, 255, 0.06)';
+  ctx.strokeStyle = isDark ? 'rgba(0, 180, 255, 0.08)' : 'rgba(0, 119, 230, 0.06)';
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 5; i++) {
+
+  for (let r = 40; r <= maxR; r += 45) {
     ctx.beginPath();
-    ctx.arc(W * 0.5, H * 0.54, i * 40, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
     ctx.stroke();
   }
 
-  // Antarctica Continent Outline (Simplified Stylized Polar Contour)
+  // Crosshairs
   ctx.beginPath();
-  const pts = [
-    [0.26 * W, 0.78 * H], [0.18 * W, 0.62 * H], [0.20 * W, 0.44 * H],
-    [0.28 * W, 0.35 * H], [0.38 * W, 0.28 * H], [0.46 * W, 0.22 * H],
-    [0.55 * W, 0.24 * H], [0.65 * W, 0.28 * H], [0.74 * W, 0.36 * H],
-    [0.82 * W, 0.48 * H], [0.80 * W, 0.64 * H], [0.72 * W, 0.78 * H],
-    [0.58 * W, 0.86 * H], [0.44 * W, 0.88 * H], [0.34 * W, 0.85 * H]
-  ];
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) {
-    ctx.lineTo(pts[i][0], pts[i][1]);
-  }
+  ctx.moveTo(centerX - maxR, centerY);
+  ctx.lineTo(centerX + maxR, centerY);
+  ctx.moveTo(centerX, centerY - maxR);
+  ctx.lineTo(centerX, centerY + maxR);
+  ctx.stroke();
+
+  // Continent Approximate Outline (Stylized Vector)
+  ctx.beginPath();
+  ctx.moveTo(W * 0.25, H * 0.45);
+  ctx.bezierCurveTo(W * 0.28, H * 0.25, W * 0.45, H * 0.22, W * 0.60, H * 0.28);
+  ctx.bezierCurveTo(W * 0.72, H * 0.32, W * 0.80, H * 0.48, W * 0.74, H * 0.68);
+  ctx.bezierCurveTo(W * 0.68, H * 0.82, W * 0.48, H * 0.86, W * 0.36, H * 0.78);
+  ctx.bezierCurveTo(W * 0.22, H * 0.70, W * 0.20, H * 0.55, W * 0.25, H * 0.45);
   ctx.closePath();
 
-  // Ice shelf fill
-  const iceGrad = ctx.createRadialGradient(W*0.5, H*0.5, 20, W*0.5, H*0.5, W*0.4);
-  if (isDark) {
-    iceGrad.addColorStop(0, 'rgba(100, 180, 255, 0.25)');
-    iceGrad.addColorStop(1, 'rgba(20, 80, 150, 0.12)');
-  } else {
-    iceGrad.addColorStop(0, 'rgba(180, 220, 255, 0.35)');
-    iceGrad.addColorStop(1, 'rgba(60, 130, 210, 0.18)');
-  }
-  ctx.fillStyle = iceGrad;
+  ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 119, 230, 0.03)';
   ctx.fill();
-
-  ctx.strokeStyle = isDark ? 'rgba(0, 212, 255, 0.5)' : 'rgba(255, 255, 255, 0.5)';
+  ctx.strokeStyle = isDark ? 'rgba(0, 212, 255, 0.25)' : 'rgba(0, 119, 230, 0.25)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // Stations Positions
+  // Station Coordinates
   const maitriX = W * 0.38;
-  const maitriY = H * 0.42;
+  const maitriY = H * 0.36;
   const bharatiX = W * 0.68;
   const bharatiY = H * 0.52;
   const satX = W * 0.52;
@@ -370,7 +451,7 @@ function drawAdminMap() {
   ctx.fillText('Bharati', bharatiX - 18, bharatiY + 20);
 
   // Central Title
-  ctx.fillStyle = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.6)';
+  ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(255, 255, 255, 0.6)';
   ctx.font = '11px Plus Jakarta Sans, sans-serif';
   ctx.letterSpacing = '0.1em';
   ctx.fillText('A N T A R C T I C A', W * 0.40, H * 0.62);
@@ -518,6 +599,16 @@ document.addEventListener('DOMContentLoaded', () => {
     drawAdminMap();
     renderSensorTrendsChart(STATE.currentTrendMetric);
   }, 100);
+
+  // Initialize live cameras & environmental telemetry
+  if (typeof renderLiveCameras === 'function') {
+    renderLiveCameras();
+    selectLiveStation('maitri');
+    refreshAllLiveCameras();
+    setInterval(refreshAllLiveCameras, 30000);
+    fetchLiveEnvironmentalData();
+    setInterval(fetchLiveEnvironmentalData, 10000);
+  }
 });
 
 // Check if user arrived via redirect with view/station params
@@ -677,4 +768,152 @@ async function initClerkAuth() {
   }
 }
 
+// ============================================================
+// LIVE ANTARCTIC RESEARCH CAMERAS & ENVIRONMENTAL TELEMETRY
+// ============================================================
 
+const LIVE_CAMERAS = [
+  { id: "arrivalHeights", name: "Arrival Heights" },
+  { id: "boreSite", name: "Observation Hill" },
+  { id: "aimsCam", name: "Royal Society Range" },
+  { id: "palmer", name: "Palmer Station" }
+];
+
+const LIVE_CAMERA_IMAGE_BASE = "https://www.usap.gov/videoclipsandmaps/SouthPoleWebcam/";
+const LIVE_CAMERA_API = "/api/webcam-feed";
+const liveCameraOrder = LIVE_CAMERAS.map(camera => camera.id);
+const liveCameraSources = new Map();
+
+function renderLiveCameras(animate = false) {
+  const mainImage = document.getElementById("lm-main-cam-img");
+  const mainName = document.getElementById("lm-main-cam-name");
+  const mainLocation = document.getElementById("lm-main-cam-loc");
+  const thumbnailGrid = document.getElementById("lm-thumb-grid");
+  if (!mainImage || !mainName || !thumbnailGrid) return;
+
+  const selectedCamera = LIVE_CAMERAS.find(camera => camera.id === liveCameraOrder[0]);
+  mainImage.dataset.liveCamera = selectedCamera.id;
+  mainImage.alt = `${selectedCamera.name} live camera`;
+  mainName.textContent = selectedCamera.name;
+  if (mainLocation) {
+    mainLocation.textContent = selectedCamera.id === "palmer"
+      ? "Palmer Station — Anvers Island, Antarctica • USAP"
+      : "McMurdo Station — Antarctica • USAP";
+  }
+  mainImage.src = liveCameraSources.get(selectedCamera.id) || "";
+
+  const thumbnailButtons = liveCameraOrder.slice(1).map(cameraId => {
+    const camera = LIVE_CAMERAS.find(item => item.id === cameraId);
+    const button = document.createElement("button");
+    button.className = "lm-camera-thumb";
+    button.type = "button";
+    button.setAttribute("aria-label", `Show ${camera.name} as the large camera`);
+    button.addEventListener("click", () => swapLiveCamera(camera.id));
+
+    const image = document.createElement("img");
+    image.className = "lm-camera-thumb-image";
+    image.dataset.liveCamera = camera.id;
+    image.alt = `${camera.name} live camera`;
+    image.src = liveCameraSources.get(camera.id) || "";
+
+    const name = document.createElement("span");
+    name.className = "lm-camera-thumb-name";
+    name.textContent = camera.name;
+
+    button.append(image, name);
+    return button;
+  });
+
+  thumbnailGrid.replaceChildren(...thumbnailButtons);
+  if (animate) {
+    const mainWrapper = document.getElementById("lm-main-cam-wrapper");
+    if (mainWrapper) {
+      mainWrapper.classList.remove("camera-swap-in");
+      void mainWrapper.offsetWidth;
+      mainWrapper.classList.add("camera-swap-in");
+    }
+  }
+}
+
+function swapLiveCamera(cameraId) {
+  const selectedIndex = liveCameraOrder.indexOf(cameraId);
+  if (selectedIndex < 1) return;
+
+  [liveCameraOrder[0], liveCameraOrder[selectedIndex]] = [liveCameraOrder[selectedIndex], liveCameraOrder[0]];
+  renderLiveCameras(true);
+}
+
+async function refreshLiveCamera(camera) {
+  const query = new URLSearchParams({ camera: camera.id });
+
+  try {
+    const response = await fetch(`${LIVE_CAMERA_API}?${query}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Webcam request failed: ${response.status}`);
+
+    const [imageFile] = (await response.text()).trim().split(",");
+    if (!imageFile) throw new Error("Webcam response did not contain an image filename");
+
+    const imageUrl = new URL(imageFile.trim(), LIVE_CAMERA_IMAGE_BASE).href;
+    liveCameraSources.set(camera.id, imageUrl);
+    document.querySelectorAll(`[data-live-camera="${camera.id}"]`).forEach(image => {
+      if (image.src !== imageUrl) image.src = imageUrl;
+    });
+  } catch (error) {
+    console.warn(`Unable to refresh ${camera.name}:`, error);
+  }
+}
+
+function refreshAllLiveCameras() {
+  LIVE_CAMERAS.forEach(camera => refreshLiveCamera(camera));
+}
+
+function selectLiveStation(station) {
+  const stations = {
+    maitri: {
+      name: "Maitri Research Station",
+      coordinates: "70°45'S, 11°44'E • EAST ANTARCTICA"
+    },
+    bharati: {
+      name: "Bharati Research Station",
+      coordinates: "69°24'S, 76°11'E • EAST ANTARCTICA"
+    }
+  };
+  const selectedStation = stations[station];
+  if (!selectedStation) return;
+
+  document.getElementById("lm-tab-maitri")?.classList.toggle("active", station === "maitri");
+  document.getElementById("lm-tab-bharati")?.classList.toggle("active", station === "bharati");
+  const stationName = document.getElementById("lm-sic-name");
+  const stationCoordinates = document.getElementById("lm-sic-coords");
+  const telemetryStation = document.getElementById("lm-env-station-heading");
+  if (stationName) stationName.textContent = selectedStation.name;
+  if (stationCoordinates) stationCoordinates.textContent = selectedStation.coordinates;
+  if (telemetryStation) telemetryStation.textContent = selectedStation.name;
+}
+
+function fetchLiveEnvironmentalData(force = false) {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false }) + ' IST';
+  const updatedEl = document.getElementById('lm-val-updated');
+  if (updatedEl) updatedEl.textContent = timeStr;
+
+  const solarTimeEl = document.getElementById('lm-station-local-time');
+  if (solarTimeEl) {
+    const utcHours = now.getUTCHours();
+    const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
+    solarTimeEl.textContent = `Station Solar Time: ${String(utcHours).padStart(2, '0')}:${utcMinutes} UTC`;
+  }
+
+  if (force) {
+    const tempEl = document.getElementById('lm-val-temp');
+    if (tempEl) {
+      const base = -12.4;
+      const variation = (Math.random() * 0.6 - 0.3).toFixed(1);
+      tempEl.textContent = (base + parseFloat(variation)).toFixed(1);
+    }
+    const windEl = document.getElementById('lm-val-windspeed');
+    if (windEl) {
+      windEl.textContent = Math.round(16 + Math.random() * 6);
+    }
+  }
+}
