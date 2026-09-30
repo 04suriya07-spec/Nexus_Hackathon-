@@ -61,19 +61,60 @@ function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('polaris_theme', theme);
 
-  // Update theme-specific images
+  // Update Page 1 Theme-Specific Visual Assets
   const heroBg = document.getElementById('hero-dynamic-bg');
   if (heroBg) {
-    heroBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+    heroBg.src = theme === 'dark' ? 'assets/hero_globe_dark.png' : 'assets/hero_globe_bright.png';
+  }
+
+  const cardCmd = document.getElementById('card-img-command');
+  if (cardCmd) {
+    cardCmd.src = theme === 'dark' ? 'assets/card_header_command_dark.png' : 'assets/card_header_command_bright.png';
+  }
+
+  const cardMaitri = document.getElementById('card-img-maitri');
+  if (cardMaitri) {
+    cardMaitri.src = theme === 'dark' ? 'assets/card_header_maitri_dark.png' : 'assets/card_header_maitri_bright.png';
+  }
+
+  const cardBharati = document.getElementById('card-img-bharati');
+  if (cardBharati) {
+    cardBharati.src = theme === 'dark' ? 'assets/card_header_bharati_dark.png' : 'assets/card_header_bharati_bright.png';
+  }
+
+  const mottoBg = document.getElementById('motto-bg-img');
+  if (mottoBg) {
+    mottoBg.src = theme === 'dark' ? 'assets/motto_bg_dark.png' : 'assets/motto_bg_bright.png';
+  }
+
+  // Station and Command page backgrounds
+  const maitriThumb = document.getElementById('spc-thumb-maitri');
+  if (maitriThumb) {
+    maitriThumb.src = theme === 'dark' ? 'assets/station_maitri_thumb_dark.png' : 'assets/station_maitri_thumb_bright.png';
+  }
+
+  const bharatiThumb = document.getElementById('spc-thumb-bharati');
+  if (bharatiThumb) {
+    bharatiThumb.src = theme === 'dark' ? 'assets/station_bharati_thumb_dark.png' : 'assets/station_bharati_thumb_bright.png';
   }
 
   const stationBg = document.getElementById('station-main-bg');
   if (stationBg) {
-    if (STATE.selectedStation === 'maitri') {
-      stationBg.src = theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
-    } else {
-      stationBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+    stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+  }
+
+  // Camera strip cards
+  for (let i = 1; i <= 4; i++) {
+    const camImg = document.getElementById(`cam-img-${i}`);
+    if (camImg) {
+      camImg.src = theme === 'dark' ? `assets/cam${i}_card_dark.png` : `assets/cam${i}_card_bright.png`;
     }
+  }
+
+  // Right-hand widget camera preview
+  const widgetCam = document.getElementById('widget-cam-thumb');
+  if (widgetCam) {
+    widgetCam.src = theme === 'dark' ? 'assets/widget_cam_preview_dark.png' : 'assets/widget_cam_preview_bright.png';
   }
 
   // Redraw canvases
@@ -136,15 +177,15 @@ function selectStation(station) {
 
   if (station === 'maitri') {
     if (titleEl) titleEl.textContent = 'Maitri Research Station';
-    if (coordsEl) coordsEl.textContent = "70°45'S, 11°44'E • EAST ANTARCTICA (Queen Maud Land)";
+    if (coordsEl) coordsEl.textContent = "70°45'S, 11°44'E • EAST ANTARCTICA";
     if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
     }
   } else {
     if (titleEl) titleEl.textContent = 'Bharati Research Station';
-    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA (Larsemann Hills)";
+    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA";
     if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
     }
   }
 }
@@ -171,8 +212,8 @@ function renderSensorTrendsChart(metric = 'power') {
   const canvas = document.getElementById('sensor-trend-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 340;
-  const H = canvas.height = 90;
+  const W = canvas.width = canvas.offsetWidth || 260;
+  const H = canvas.height = canvas.offsetHeight || 48;
 
   ctx.clearRect(0, 0, W, H);
 
