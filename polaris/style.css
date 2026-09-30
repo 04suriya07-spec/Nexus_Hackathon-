@@ -187,6 +187,11 @@ body {
   height: 44px;
   object-fit: contain;
   flex-shrink: 0;
+  transition: filter 0.25s ease;
+}
+
+[data-theme="dark"] .emblem-icon {
+  filter: invert(1) brightness(1.2);
 }
 
 .brand-text {
