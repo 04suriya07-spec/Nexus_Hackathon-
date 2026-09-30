@@ -511,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateClock();
   setInterval(updateClock, 1000);
   initClerkAuth();
+  checkAuthRoutingOnLoad();
   
   // Initial canvas draw
   setTimeout(() => {
@@ -519,36 +520,74 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 100);
 });
 
+// Check if user arrived via redirect with view/station params
+function checkAuthRoutingOnLoad() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetView = urlParams.get('view');
+  const targetStation = urlParams.get('station');
+  if (targetView) {
+    setTimeout(() => {
+      switchView(targetView, targetStation);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }, 150);
+  }
+}
+
 // ============================================================
-// CLERK AUTHENTICATION INTEGRATION
+// CLERK AUTHENTICATION INTEGRATION & PORTAL SIGN-IN HANDLER
 // ============================================================
+
+function handlePortalSignIn(targetView, station = null) {
+  const isAuth = (typeof Clerk !== 'undefined' && Clerk.user) || sessionStorage.getItem('polaris_auth_user');
+
+  if (isAuth) {
+    // Already authenticated: directly switch to the requested view
+    switchView(targetView, station);
+  } else {
+    // Not authenticated: save redirect state and open Clerk sign-in
+    sessionStorage.setItem('polaris_auth_redirect', JSON.stringify({ view: targetView, station: station }));
+
+    if (typeof Clerk !== 'undefined' && typeof Clerk.openSignIn === 'function') {
+      const destUrl = `index.html?view=${targetView}${station ? '&station=' + station : ''}`;
+      Clerk.openSignIn({
+        afterSignInUrl: destUrl,
+        afterSignUpUrl: destUrl
+      });
+    } else {
+      // Direct redirect to signin.html with target destination
+      const params = new URLSearchParams();
+      params.set('view', targetView);
+      if (station) params.set('station', station);
+      window.location.href = `signin.html?${params.toString()}`;
+    }
+  }
+}
 
 async function initClerkAuth() {
   const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
-  const userBtnMount = document.getElementById('clerk-user-button');
-  const signinBtn = document.getElementById('nav-signin-btn');
-  const btnLabel = document.getElementById('auth-btn-label');
 
-  // 1. Check for local/session authentication
+  // Helper to update the 3 portal buttons when authenticated
+  const updateButtonsToAuthenticated = (userName) => {
+    const btnCommand = document.getElementById('btn-signin-command');
+    const btnMaitri = document.getElementById('btn-signin-maitri');
+    const btnBharati = document.getElementById('btn-signin-bharati');
+    
+    if (btnCommand) btnCommand.innerHTML = 'Enter Command &rarr;';
+    if (btnMaitri) btnMaitri.innerHTML = 'Access Maitri &rarr;';
+    if (btnBharati) btnBharati.innerHTML = 'Access Bharati &rarr;';
+
+    const statusText = document.querySelector('.system-status-indicator span:last-child');
+    if (statusText) {
+      statusText.innerHTML = `Auth: <strong style="color:var(--accent-green)">${userName || 'Officer'}</strong>`;
+    }
+  };
+
+  // 1. Check for session/evaluator bypass user
   const sessionUser = sessionStorage.getItem('polaris_auth_user');
   if (sessionUser) {
     try {
       const u = JSON.parse(sessionUser);
-      if (btnLabel) {
-        btnLabel.textContent = (u.fullName || 'Officer').split(' ')[0];
-      }
-      if (signinBtn) {
-        signinBtn.title = `Signed in as ${u.fullName} (${u.role}). Click to Sign Out.`;
-        signinBtn.style.background = 'var(--accent-green)';
-        signinBtn.href = '#';
-        signinBtn.onclick = (e) => {
-          e.preventDefault();
-          if (confirm(`Signed in as ${u.fullName}\nRole: ${u.role}\n\nDo you want to sign out?`)) {
-            sessionStorage.removeItem('polaris_auth_user');
-            window.location.reload();
-          }
-        };
-      }
+      updateButtonsToAuthenticated(u.fullName.split(' ')[0]);
     } catch (e) {
       console.warn('Session parse error:', e);
     }
@@ -574,15 +613,6 @@ async function initClerkAuth() {
       });
 
       if (Clerk.user) {
-        // Authenticated with Clerk
-        if (signinBtn) signinBtn.style.display = 'none';
-        if (userBtnMount) {
-          Clerk.mountUserButton(userBtnMount, {
-            afterSignOutUrl: 'signin.html'
-          });
-        }
-
-        // Store user in session
         sessionStorage.setItem('polaris_auth_user', JSON.stringify({
           fullName: Clerk.user.fullName || Clerk.user.firstName || 'Authorized Expedition Personnel',
           email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : '',
@@ -590,14 +620,12 @@ async function initClerkAuth() {
           id: Clerk.user.id
         }));
 
-        const statusText = document.querySelector('.system-status-indicator span:last-child');
-        if (statusText) {
-          statusText.textContent = `Auth: ${Clerk.user.firstName || 'Online'}`;
-        }
+        updateButtonsToAuthenticated(Clerk.user.firstName || 'Officer');
       }
     }
   } catch (err) {
     console.warn('Clerk auth handler notice:', err);
   }
 }
+
 

@@ -77,15 +77,6 @@
           <span class="switch-thumb"></span>
         </button>
 
-        <!-- AUTH USER / SIGN IN BUTTON (CLERK) -->
-        <div id="auth-header-container" class="auth-header-pill">
-          <a href="signin.html" class="nav-signin-btn" id="nav-signin-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span id="auth-btn-label">Sign In</span>
-          </a>
-          <div id="clerk-user-button"></div>
-        </div>
-
       </div>
 
     </div>
@@ -188,7 +179,7 @@
                   <span>Data &amp;<br/>Comms</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-orange" onclick="switchView('command')">
+              <button class="ap-sign-in-btn btn-gradient-orange" id="btn-signin-command" onclick="handlePortalSignIn('command')">
                 Sign In &rarr;
               </button>
             </div>
@@ -223,7 +214,7 @@
                   <span>Weather &amp;<br/>Enviro</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" onclick="switchView('stations', 'maitri')">
+              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-maitri" onclick="handlePortalSignIn('stations', 'maitri')">
                 Sign In &rarr;
               </button>
             </div>
@@ -258,7 +249,7 @@
                   <span>Weather &amp;<br/>Enviro</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" onclick="switchView('stations', 'bharati')">
+              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-bharati" onclick="handlePortalSignIn('stations', 'bharati')">
                 Sign In &rarr;
               </button>
             </div>

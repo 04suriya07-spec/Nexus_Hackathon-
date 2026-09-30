@@ -397,6 +397,16 @@
 
     initAuthTheme();
 
+    function getTargetRedirectUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const view = urlParams.get('view');
+      const station = urlParams.get('station');
+      if (view) {
+        return `index.html?view=${view}${station ? '&station=' + station : ''}`;
+      }
+      return 'index.html';
+    }
+
     // Evaluator Fast Bypass
     function demoBypassAuth(role = 'Expeditions Commander') {
       sessionStorage.setItem('polaris_auth_user', JSON.stringify({
@@ -406,7 +416,7 @@
         station: 'NCPOR Goa & Bharati',
         authenticatedAt: new Date().toISOString()
       }));
-      window.location.href = 'index.html';
+      window.location.href = getTargetRedirectUrl();
     }
 
     // Clerk Initialization via CDN
@@ -447,13 +457,13 @@
               role: 'Authenticated Officer',
               id: Clerk.user.id
             }));
-            window.location.href = 'index.html';
+            window.location.href = getTargetRedirectUrl();
           } else {
             // Mount the Clerk Sign In component
             const container = document.getElementById('clerk-sign-in');
             Clerk.mountSignIn(container, {
-              afterSignInUrl: 'index.html',
-              afterSignUpUrl: 'index.html'
+              afterSignInUrl: getTargetRedirectUrl(),
+              afterSignUpUrl: getTargetRedirectUrl()
             });
           }
         } else {

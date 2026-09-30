@@ -367,35 +367,6 @@ body {
 .sun-icon { color: #f59e0b; }
 .moon-icon { color: #60a5fa; }
 
-/* Auth Header Pill & Sign In Button */
-.auth-header-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-signin-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--accent-blue);
-  color: #ffffff;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  font-size: 12.5px;
-  font-weight: 700;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 119, 230, 0.3);
-}
-
-.nav-signin-btn:hover {
-  background: var(--accent-blue-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 119, 230, 0.45);
-}
-
 .switch-thumb {
   position: absolute;
   top: 3px;
