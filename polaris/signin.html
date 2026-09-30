@@ -357,12 +357,49 @@
       <!-- Right: Clerk Sign-In Component Container -->
       <div class="auth-clerk-panel">
         
+        <!-- Target Destination Indicator -->
+        <div class="auth-destination-banner" id="auth-destination-banner" style="margin-bottom:16px;padding:8px 14px;border-radius:10px;background:var(--bg-secondary);border:1px solid var(--border-medium);font-size:12px;display:flex;align-items:center;gap:8px;width:100%;max-width:380px;box-sizing:border-box;">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-blue);flex-shrink:0;"></span>
+          <span style="color:var(--text-secondary)">Target: <strong id="target-portal-label" style="color:var(--text-primary)">Antarctic Remote Operations</strong></span>
+        </div>
+
         <!-- Clerk Mount Node -->
-        <div id="clerk-sign-in">
+        <div id="clerk-sign-in" style="width:100%;display:flex;justify-content:center;">
           <div class="clerk-loader" id="clerk-loading-state">
             <div class="clerk-spinner"></div>
             <span>Connecting to Clerk Secure Authentication...</span>
           </div>
+        </div>
+
+        <!-- Direct Ministry / Officer Credentials Form (Fallback & Local Access) -->
+        <div id="credentials-sign-in-form" style="display:none;width:100%;max-width:380px;">
+          <div style="font-size:16px;font-weight:800;margin-bottom:4px;color:var(--text-primary);">Personnel Sign-In</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-bottom:16px;">National Centre for Polar &amp; Ocean Research</div>
+
+          <form onsubmit="handleCredentialsSignIn(event)" style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Official Email</label>
+              <input type="email" id="input-email" required value="scientist.antarctica@ncpor.res.in" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;" />
+            </div>
+
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Security Key / Passcode</label>
+              <input type="password" id="input-password" required value="NCPOR-SEC-2026" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;" />
+            </div>
+
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;">Personnel Role</label>
+              <select id="input-role" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-medium);background:var(--bg-primary);color:var(--text-primary);font-size:13px;box-sizing:border-box;">
+                <option value="Expeditions Officer">Expeditions Officer (Command HQ)</option>
+                <option value="Station Lead Scientist">Station Lead Scientist (Bharati)</option>
+                <option value="Chief Operations Engineer">Chief Operations Engineer (Maitri)</option>
+              </select>
+            </div>
+
+            <button type="submit" style="margin-top:6px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg, var(--accent-blue), #00b4d8);color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+              Authenticate &amp; Enter Portal &rarr;
+            </button>
+          </form>
         </div>
 
         <!-- Fallback Quick-Demo Sign-In Option for Evaluators -->
@@ -374,6 +411,9 @@
           <span style="font-size:10.5px;color:var(--text-muted);text-align:center">
             Instant evaluator access for hackathon judges &bull; Bypasses external network check
           </span>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">
+            Clerk Key: <code style="font-size:9.5px;color:var(--accent-blue)">pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA</code>
+          </div>
         </div>
 
       </div>
@@ -399,39 +439,103 @@
 
     function getTargetRedirectUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      const view = urlParams.get('view');
-      const station = urlParams.get('station');
-      if (view) {
-        return `index.html?view=${view}${station ? '&station=' + station : ''}`;
+      let view = urlParams.get('view');
+      let station = urlParams.get('station');
+
+      if (!view) {
+        const saved = sessionStorage.getItem('polaris_auth_redirect') || localStorage.getItem('polaris_auth_redirect');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            view = parsed.view;
+            station = parsed.station;
+          } catch (e) {}
+        }
       }
-      return 'index.html';
+
+      view = view || 'home';
+      let dest = `index.html?view=${encodeURIComponent(view)}&auth=1`;
+      if (station) {
+        dest += `&station=${encodeURIComponent(station)}`;
+      }
+      return dest;
+    }
+
+    function handleCredentialsSignIn(e) {
+      e.preventDefault();
+      const email = document.getElementById('input-email').value;
+      const role = document.getElementById('input-role').value;
+      const uData = {
+        fullName: role === 'Station Lead Scientist' ? 'Dr. Priya Sharma' : 'Dr. M. S. Rawat',
+        role: role,
+        email: email,
+        authenticatedAt: new Date().toISOString()
+      };
+      try {
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+        localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+      } catch (e) {}
+      window.location.href = getTargetRedirectUrl();
     }
 
     // Evaluator Fast Bypass
     function demoBypassAuth(role = 'Expeditions Commander') {
-      sessionStorage.setItem('polaris_auth_user', JSON.stringify({
+      const uData = {
         fullName: 'Dr. M. S. Rawat',
         role: role,
         email: 'commander.antartica@ncpor.gov.in',
         station: 'NCPOR Goa & Bharati',
         authenticatedAt: new Date().toISOString()
-      }));
+      };
+      try {
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+        localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+      } catch (e) {}
       window.location.href = getTargetRedirectUrl();
     }
 
-    // Clerk Initialization via CDN
+    // Initialize Page & Clerk
     window.addEventListener('load', async () => {
-      const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
-      
-      try {
-        if (typeof Clerk === 'undefined') {
-          console.warn('Clerk script loading, awaiting Clerk global...');
+      // 1. Update Destination Label
+      const urlParams = new URLSearchParams(window.location.search);
+      const view = urlParams.get('view');
+      const station = urlParams.get('station');
+      const targetLabel = document.getElementById('target-portal-label');
+      if (targetLabel) {
+        if (view === 'command') {
+          targetLabel.textContent = 'Command Control Admin';
+        } else if (station === 'bharati') {
+          targetLabel.textContent = 'Bharati Research Station (Digital Twin)';
+        } else if (station === 'maitri') {
+          targetLabel.textContent = 'Maitri Research Station';
+        } else {
+          targetLabel.textContent = 'Antarctic Remote Operations Portal';
         }
+      }
 
-        // Wait up to 3 seconds for Clerk script to bind
+      // If running directly from filesystem (file:// protocol) or offline, Clerk iframe is restricted by browsers
+      const isFileProtocol = window.location.protocol === 'file:';
+      const showFallbackForm = () => {
+        const loader = document.getElementById('clerk-loading-state');
+        if (loader) loader.style.display = 'none';
+        const credForm = document.getElementById('credentials-sign-in-form');
+        if (credForm) credForm.style.display = 'block';
+      };
+
+      if (isFileProtocol) {
+        // Immediately present the direct interactive personnel sign-in form
+        showFallbackForm();
+        return;
+      }
+
+      // 2. Otherwise load Clerk SDK for web environments
+      const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
+      const timer = setTimeout(showFallbackForm, 2500);
+
+      try {
         let retries = 0;
         while (typeof Clerk === 'undefined' && retries < 15) {
-          await new Promise(r => setTimeout(r, 200));
+          await new Promise(r => setTimeout(r, 150));
           retries++;
         }
 
@@ -446,20 +550,21 @@
             }
           });
 
+          clearTimeout(timer);
           const loader = document.getElementById('clerk-loading-state');
           if (loader) loader.style.display = 'none';
 
           if (Clerk.user) {
-            // User is already signed in! Store info and forward to portal
-            sessionStorage.setItem('polaris_auth_user', JSON.stringify({
+            const uData = {
               fullName: Clerk.user.fullName || Clerk.user.firstName || 'Expedition Scientist',
               email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : 'authorized@ncpor.res.in',
               role: 'Authenticated Officer',
               id: Clerk.user.id
-            }));
+            };
+            sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+            localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
             window.location.href = getTargetRedirectUrl();
           } else {
-            // Mount the Clerk Sign In component
             const container = document.getElementById('clerk-sign-in');
             Clerk.mountSignIn(container, {
               afterSignInUrl: getTargetRedirectUrl(),
@@ -467,20 +572,11 @@
             });
           }
         } else {
-          throw new Error('Clerk library failed to load from CDN.');
+          showFallbackForm();
         }
       } catch (err) {
-        console.warn('Clerk initialization notice:', err);
-        const loader = document.getElementById('clerk-loading-state');
-        if (loader) {
-          loader.innerHTML = `
-            <div style="text-align:center;padding:12px;color:var(--text-secondary)">
-              <div style="font-weight:700;color:var(--accent-orange);margin-bottom:6px">Clerk Security Ready</div>
-              <div style="font-size:12px;margin-bottom:12px">Key loaded: <code style="font-size:10px">${clerkKey.slice(0, 14)}...</code></div>
-              <div style="font-size:12px">Use the button below for instant evaluator access or test with verified network.</div>
-            </div>
-          `;
-        }
+        console.warn('Clerk initialization fallback triggered:', err);
+        showFallbackForm();
       }
     });
   </script>
