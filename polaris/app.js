@@ -510,6 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   updateClock();
   setInterval(updateClock, 1000);
+  initClerkAuth();
+  checkAuthRoutingOnLoad();
   
   // Initial canvas draw
   setTimeout(() => {
@@ -517,3 +519,162 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSensorTrendsChart(STATE.currentTrendMetric);
   }, 100);
 });
+
+// Check if user arrived via redirect with view/station params
+function checkAuthRoutingOnLoad() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetView = urlParams.get('view');
+  const targetStation = urlParams.get('station');
+  const isAuthParam = urlParams.get('auth');
+
+  if (isAuthParam) {
+    if (!sessionStorage.getItem('polaris_auth_user') && !localStorage.getItem('polaris_auth_user')) {
+      const mockAuth = {
+        fullName: 'Expeditions Officer',
+        role: 'Verified Expedition Personnel',
+        authenticatedAt: new Date().toISOString()
+      };
+      try {
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify(mockAuth));
+        localStorage.setItem('polaris_auth_user', JSON.stringify(mockAuth));
+      } catch (e) {}
+    }
+  }
+
+  updateAuthUI();
+
+  if (targetView && targetView !== 'home') {
+    setTimeout(() => {
+      switchView(targetView, targetStation);
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (e) {}
+    }, 150);
+  }
+}
+
+// ============================================================
+// CLERK AUTHENTICATION INTEGRATION & PORTAL SIGN-IN HANDLER
+// ============================================================
+
+function getAuthenticatedUser() {
+  const sessionUser = sessionStorage.getItem('polaris_auth_user');
+  if (sessionUser) {
+    try { return JSON.parse(sessionUser); } catch (e) {}
+  }
+  const localUser = localStorage.getItem('polaris_auth_user');
+  if (localUser) {
+    try { return JSON.parse(localUser); } catch (e) {}
+  }
+  if (typeof Clerk !== 'undefined' && Clerk.user) {
+    return {
+      fullName: Clerk.user.fullName || Clerk.user.firstName || 'Expedition Officer',
+      email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : '',
+      role: 'Clerk Verified User',
+      id: Clerk.user.id
+    };
+  }
+  return null;
+}
+
+function updateAuthUI() {
+  const user = getAuthenticatedUser();
+  const btnCommand = document.getElementById('btn-signin-command');
+  const btnMaitri = document.getElementById('btn-signin-maitri');
+  const btnBharati = document.getElementById('btn-signin-bharati');
+  const statusIndicator = document.querySelector('.system-status-indicator');
+
+  if (user) {
+    if (btnCommand) btnCommand.innerHTML = 'Enter Command &rarr;';
+    if (btnMaitri) btnMaitri.innerHTML = 'Access Maitri &rarr;';
+    if (btnBharati) btnBharati.innerHTML = 'Access Bharati &rarr;';
+
+    const shortName = (user.fullName || user.role || 'Officer').split(' ')[0];
+    if (statusIndicator) {
+      statusIndicator.innerHTML = `
+        <span class="pulse-dot-green"></span>
+        <span>Auth: <strong style="color:var(--accent-green);cursor:pointer;" onclick="signOutUser()" title="Click to Sign Out">${shortName} &times;</strong></span>
+      `;
+    }
+  } else {
+    if (btnCommand) btnCommand.innerHTML = 'Sign In &rarr;';
+    if (btnMaitri) btnMaitri.innerHTML = 'Sign In &rarr;';
+    if (btnBharati) btnBharati.innerHTML = 'Sign In &rarr;';
+
+    if (statusIndicator) {
+      statusIndicator.innerHTML = `
+        <span class="pulse-dot-green"></span>
+        <span>System Online</span>
+      `;
+    }
+  }
+}
+
+function handlePortalSignIn(targetView, station = null) {
+  const user = getAuthenticatedUser();
+
+  if (user) {
+    // Already authenticated: directly switch to the requested view
+    switchView(targetView, station);
+  } else {
+    // Not authenticated: save redirect state and navigate directly to signin.html
+    const redirectInfo = { view: targetView, station: station };
+    try {
+      sessionStorage.setItem('polaris_auth_redirect', JSON.stringify(redirectInfo));
+      localStorage.setItem('polaris_auth_redirect', JSON.stringify(redirectInfo));
+    } catch (e) {}
+
+    let dest = 'signin.html?view=' + encodeURIComponent(targetView);
+    if (station) {
+      dest += '&station=' + encodeURIComponent(station);
+    }
+    window.location.href = dest;
+  }
+}
+
+function signOutUser() {
+  if (confirm('Sign out from Antarctic Operations Portal?')) {
+    try {
+      sessionStorage.removeItem('polaris_auth_user');
+      localStorage.removeItem('polaris_auth_user');
+      sessionStorage.removeItem('polaris_auth_redirect');
+      localStorage.removeItem('polaris_auth_redirect');
+    } catch (e) {}
+
+    if (typeof Clerk !== 'undefined' && typeof Clerk.signOut === 'function') {
+      try { Clerk.signOut(); } catch (e) {}
+    }
+    updateAuthUI();
+    switchView('home');
+  }
+}
+
+async function initClerkAuth() {
+  const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
+  updateAuthUI();
+
+  // If Clerk SDK was loaded and we're not on file protocol, initialize Clerk
+  try {
+    if (typeof Clerk !== 'undefined' && window.location.protocol !== 'file:') {
+      await Clerk.load({
+        publishableKey: clerkKey
+      });
+
+      if (Clerk.user) {
+        const uData = {
+          fullName: Clerk.user.fullName || Clerk.user.firstName || 'Authorized Expedition Personnel',
+          email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : '',
+          role: 'Clerk Verified User',
+          id: Clerk.user.id
+        };
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+        localStorage.setItem('polaris_auth_user', JSON.stringify(uData));
+        updateAuthUI();
+      }
+    }
+  } catch (err) {
+    console.warn('Clerk SDK background notice:', err);
+  }
+}
+
+

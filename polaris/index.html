@@ -179,7 +179,7 @@
                   <span>Data &amp;<br/>Comms</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-orange" onclick="switchView('command')">
+              <button class="ap-sign-in-btn btn-gradient-orange" id="btn-signin-command" onclick="handlePortalSignIn('command')">
                 Sign In &rarr;
               </button>
             </div>
@@ -214,7 +214,7 @@
                   <span>Weather &amp;<br/>Enviro</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" onclick="switchView('stations', 'maitri')">
+              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-maitri" onclick="handlePortalSignIn('stations', 'maitri')">
                 Sign In &rarr;
               </button>
             </div>
@@ -249,7 +249,7 @@
                   <span>Weather &amp;<br/>Enviro</span>
                 </div>
               </div>
-              <button class="ap-sign-in-btn btn-gradient-blue" onclick="switchView('stations', 'bharati')">
+              <button class="ap-sign-in-btn btn-gradient-blue" id="btn-signin-bharati" onclick="handlePortalSignIn('stations', 'bharati')">
                 Sign In &rarr;
               </button>
             </div>
@@ -1070,6 +1070,14 @@
 
   </main>
 
+  <!-- Clerk JS CDN Script -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
