@@ -510,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   updateClock();
   setInterval(updateClock, 1000);
+  initClerkAuth();
   
   // Initial canvas draw
   setTimeout(() => {
@@ -517,3 +518,86 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSensorTrendsChart(STATE.currentTrendMetric);
   }, 100);
 });
+
+// ============================================================
+// CLERK AUTHENTICATION INTEGRATION
+// ============================================================
+
+async function initClerkAuth() {
+  const clerkKey = 'pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA';
+  const userBtnMount = document.getElementById('clerk-user-button');
+  const signinBtn = document.getElementById('nav-signin-btn');
+  const btnLabel = document.getElementById('auth-btn-label');
+
+  // 1. Check for local/session authentication
+  const sessionUser = sessionStorage.getItem('polaris_auth_user');
+  if (sessionUser) {
+    try {
+      const u = JSON.parse(sessionUser);
+      if (btnLabel) {
+        btnLabel.textContent = (u.fullName || 'Officer').split(' ')[0];
+      }
+      if (signinBtn) {
+        signinBtn.title = `Signed in as ${u.fullName} (${u.role}). Click to Sign Out.`;
+        signinBtn.style.background = 'var(--accent-green)';
+        signinBtn.href = '#';
+        signinBtn.onclick = (e) => {
+          e.preventDefault();
+          if (confirm(`Signed in as ${u.fullName}\nRole: ${u.role}\n\nDo you want to sign out?`)) {
+            sessionStorage.removeItem('polaris_auth_user');
+            window.location.reload();
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('Session parse error:', e);
+    }
+  }
+
+  // 2. Connect to Clerk JS SDK
+  try {
+    let retries = 0;
+    while (typeof Clerk === 'undefined' && retries < 15) {
+      await new Promise(r => setTimeout(r, 200));
+      retries++;
+    }
+
+    if (typeof Clerk !== 'undefined') {
+      await Clerk.load({
+        publishableKey: clerkKey,
+        appearance: {
+          variables: {
+            colorPrimary: '#0077e6',
+            fontFamily: 'Plus Jakarta Sans, sans-serif'
+          }
+        }
+      });
+
+      if (Clerk.user) {
+        // Authenticated with Clerk
+        if (signinBtn) signinBtn.style.display = 'none';
+        if (userBtnMount) {
+          Clerk.mountUserButton(userBtnMount, {
+            afterSignOutUrl: 'signin.html'
+          });
+        }
+
+        // Store user in session
+        sessionStorage.setItem('polaris_auth_user', JSON.stringify({
+          fullName: Clerk.user.fullName || Clerk.user.firstName || 'Authorized Expedition Personnel',
+          email: Clerk.user.primaryEmailAddress ? Clerk.user.primaryEmailAddress.emailAddress : '',
+          role: 'Clerk Verified User',
+          id: Clerk.user.id
+        }));
+
+        const statusText = document.querySelector('.system-status-indicator span:last-child');
+        if (statusText) {
+          statusText.textContent = `Auth: ${Clerk.user.firstName || 'Online'}`;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Clerk auth handler notice:', err);
+  }
+}
+

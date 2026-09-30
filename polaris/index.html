@@ -77,6 +77,15 @@
           <span class="switch-thumb"></span>
         </button>
 
+        <!-- AUTH USER / SIGN IN BUTTON (CLERK) -->
+        <div id="auth-header-container" class="auth-header-pill">
+          <a href="signin.html" class="nav-signin-btn" id="nav-signin-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="auth-btn-label">Sign In</span>
+          </a>
+          <div id="clerk-user-button"></div>
+        </div>
+
       </div>
 
     </div>
@@ -1070,6 +1079,14 @@
 
   </main>
 
+  <!-- Clerk JS CDN Script -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_Y2xvc2UtZXdlLTk5NzIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
