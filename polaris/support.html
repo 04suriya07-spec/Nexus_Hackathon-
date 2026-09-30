@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bright">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support Center — National Centre for Polar & Ocean Research (POLARIS)</title>
+  <meta name="description" content="Technical support, station communications, SOP knowledge base and emergency response portal for Maitri and Bharati Antarctic research stations." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Support Center Custom Styling */
+    .support-layout {
+      display: flex;
+      min-height: calc(100vh - 70px);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .support-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-medium);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .support-sidebar-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      padding: 0 12px 6px;
+    }
+
+    .sidebar-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .sidebar-btn.active {
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.35);
+      color: #0284c7;
+    }
+
+    [data-theme="dark"] .sidebar-btn.active {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .sidebar-badge {
+      margin-top: auto;
+      background: linear-gradient(135deg, #0b2e5e, #1a4a8a);
+      border-radius: 14px;
+      padding: 18px 16px;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(11, 46, 94, 0.25);
+    }
+
+    .sidebar-badge-title {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-badge-sub {
+      font-size: 11px;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-station-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #bfdbfe;
+    }
+
+    .support-main {
+      flex: 1;
+      padding: 24px 32px 60px;
+      overflow-y: auto;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .breadcrumb a:hover {
+      color: #0284c7;
+    }
+
+    /* Hero Banner */
+    .support-hero {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      padding: 32px 36px;
+      background: linear-gradient(135deg, #0b2e5e 0%, #1e4976 50%, #0f3966 100%);
+      color: #ffffff;
+      box-shadow: 0 12px 30px rgba(11, 46, 94, 0.22);
+      margin-bottom: 24px;
+    }
+
+    .support-hero-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7dd3fc;
+      margin-bottom: 6px;
+    }
+
+    .support-hero-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+      line-height: 1.2;
+    }
+
+    .support-hero-desc {
+      font-size: 14px;
+      color: #bfdbfe;
+      margin: 0 0 18px;
+    }
+
+    .station-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .station-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #ffffff;
+    }
+
+    .pill-status {
+      color: #86efac;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Emergency Strip */
+    .emergency-banner {
+      background: var(--bg-card);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-left: 5px solid #ef4444;
+      border-radius: 14px;
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08);
+    }
+
+    .emergency-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .emergency-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .emergency-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .emergency-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .btn-emergency-call {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-emergency-call:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45);
+    }
+
+    /* Quick Actions */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .quick-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-2px);
+      border-color: #0284c7;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .quick-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .quick-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .quick-card-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Content Panels Grid */
+    .panels-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 992px) {
+      .panels-2col {
+        grid-template-columns: 1fr;
+      }
+      .support-layout {
+        flex-direction: column;
+      }
+      .support-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-medium);
+      }
+      .support-main {
+        padding: 20px 16px;
+      }
+    }
+
+    .support-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      padding: 9px 14px 9px 36px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: #0284c7;
+      background: var(--bg-card);
+    }
+
+    .search-icon-pos {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+    }
+
+    /* KB List */
+    .kb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kb-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kb-item:hover {
+      border-color: var(--border-medium);
+      background: var(--bg-card);
+      transform: translateX(3px);
+    }
+
+    .kb-item-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .kb-item-meta {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* Common Issues Grid */
+    .issues-subgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .issue-tile {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-medium);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .issue-tile:hover {
+      border-color: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    .issue-tile-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .issue-tile-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .issue-tile-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    /* Contacts Grid */
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .contact-card {
+      border: 1px solid var(--border-medium);
+      border-radius: 14px;
+      padding: 18px;
+      background: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(14, 165, 233, 0.15);
+      color: #0284c7;
+    }
+
+    .contact-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .contact-status {
+      font-size: 11px;
+      color: #16a34a;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-role {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    /* Incident Rows */
+    .incident-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-radius: 10px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .incident-row:last-child {
+      border-bottom: none;
+    }
+
+    .badge-pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .badge-warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: #d97706;
+    }
+
+    .badge-info {
+      background: rgba(14, 165, 233, 0.15);
+      color: #0284c7;
+    }
+
+    .badge-success {
+      background: rgba(34, 197, 94, 0.15);
+      color: #16a34a;
+    }
+
+    /* System Status Rows */
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 12.5px;
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Troubleshooting Form */
+    .ticket-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #0284c7;
+      background: var(--bg-card);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn-submit-ticket {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit-ticket:hover {
+      background: #0369a1;
+    }
+
+    /* Live Chat Widget */
+    .chat-widget-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9999;
+      font-size: 24px;
+      transition: transform 0.2s;
+    }
+
+    .chat-widget-fab:hover {
+      transform: scale(1.06);
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      height: 480px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .chat-window.open {
+      display: flex;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-header-title {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    .chat-header-sub {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-secondary);
+    }
+
+    .chat-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .chat-bubble.bot {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-bubble.user {
+      background: #0284c7;
+      color: #ffffff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-input-bar {
+      padding: 12px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-medium);
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input-bar input {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .chat-input-bar button {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       TOP GOVERNMENT & NCPOR NAVBAR
+       ============================================================ -->
+  <header class="site-header">
+    <div class="header-container">
+      
+      <!-- Brand & Emblem -->
+      <a href="index.html" class="brand-wrapper" style="text-decoration:none">
+        <img src="assets/emblem.png" alt="State Emblem of India" class="emblem-icon" />
+        <div class="brand-text">
+          <span class="brand-title">National Centre for Polar &amp; Ocean Research</span>
+          <span class="brand-subtitle">Ministry of Earth Sciences, Government of India</span>
+        </div>
+      </a>
+
+      <!-- Main Navigation -->
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link-btn" style="text-decoration:none">Home</a>
+        <a href="index.html#stations" class="nav-link-btn" style="text-decoration:none">Stations</a>
+        <a href="index.html#command" class="nav-link-btn" style="text-decoration:none">Command Control</a>
+        <button class="nav-link-btn" onclick="alert('National Polar Data Repository - All datasets synchronized.')">Live Data</button>
+        <button class="nav-link-btn" onclick="alert('Indian Antarctic Expeditions Documentation & Research Protocols.')">Resources</button>
+        <a href="support.html" class="nav-link-btn active" style="text-decoration:none">Support</a>
+      </nav>
+
+      <!-- Right: Status, India Flag, Time & Theme Switcher -->
+      <div class="header-right">
+        
+        <div class="system-status-indicator">
+          <span class="pulse-dot-green"></span>
+          <span>Support Ops Online</span>
+        </div>
+
+        <div class="gov-india-badge">
+          <svg class="flag-tiranga" viewBox="0 0 30 20">
+            <rect width="30" height="6.67" fill="#FF9933"/>
+            <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+            <rect y="13.34" width="30" height="6.67" fill="#138808"/>
+            <circle cx="15" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.7"/>
+          </svg>
+          <div class="gov-text-wrap">
+            <span class="gov-title">Government of India</span>
+            <span class="gov-tagline">Ministry of Earth Sciences</span>
+          </div>
+        </div>
+
+        <!-- THEME TOGGLE: BRIGHT <-> DARK -->
+        <button class="theme-switch-btn" id="theme-toggle-btn" onclick="toggleSupportTheme()" title="Switch Bright/Dark Theme">
+          <span class="switch-icon sun-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+          <span class="switch-icon moon-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span class="switch-thumb"></span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SUPPORT CENTER LAYOUT
+       ============================================================ -->
+  <div class="support-layout">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="support-sidebar">
+      <div class="support-sidebar-label">Support Center</div>
+      <button class="sidebar-btn active" onclick="switchSection('overview')">
+        <span>🏠</span> Overview
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('get-help')">
+        <span>❓</span> Get Help
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('kb')">
+        <span>📖</span> Knowledge Base
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('contacts')">
+        <span>👥</span> Technical Contacts
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('issues')">
+        <span>⚠️</span> Common Issues
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('remote')">
+        <span>🖥️</span> Remote Support
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('history')">
+        <span>⏱️</span> Incident History
+      </button>
+      <button class="sidebar-btn" onclick="switchSection('status')">
+        <span>📊</span> System Status
+      </button>
+
+      <div class="sidebar-badge">
+        <div class="sidebar-badge-title">Supporting Science<br/>Beyond Boundaries</div>
+        <div class="sidebar-badge-sub">🇮🇳 Govt. of India · MoES</div>
+        <div class="sidebar-station-list">
+          <div>📍 MAITRI (70°45'S, 11°44'E)</div>
+          <div>📍 BHARATI (69°24'S, 76°11'E)</div>
+          <div>🏛️ NCPOR GOA HQ</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="support-main">
+      <div class="breadcrumb">
+        <a href="index.html">POLARIS</a> &gt; <span id="current-crumb">Support Center Overview</span>
+      </div>
+
+      <!-- Hero Banner -->
+      <section class="support-hero">
+        <div class="support-hero-tag">NCPOR POLAR SUPPORT NETWORK</div>
+        <h1 class="support-hero-title">Antarctic Support Center</h1>
+        <p class="support-hero-desc">Unified Operations &amp; Engineering Helpdesk for Maitri, Bharati, and NCPOR Goa — People. Systems. Always Connected.</p>
+        <div class="station-pills">
+          <div class="station-pill">
+            <span class="pulse-dot-green"></span>
+            <strong>Maitri Station:</strong>
+            <span class="pill-status">Online · Primary Power Nominal</span>
+          </div>
+          <div class="station-pill">
+            <span class="pulse-dot-green"></span>
+            <strong>Bharati Station:</strong>
+            <span class="pill-status">Online · SATCOM Active</span>
+          </div>
+          <div class="station-pill">
+            <span class="pulse-dot-green"></span>
+            <strong>NCPOR Goa:</strong>
+            <span class="pill-status">Mission Control Linked</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Emergency Hotline Strip -->
+      <section class="emergency-banner">
+        <div class="emergency-left">
+          <div class="emergency-icon-wrap">🚨</div>
+          <div>
+            <div class="emergency-title">Emergency Tactical Assistance</div>
+            <div class="emergency-desc">For critical telemetry alerts, life-support interruptions, or field distress at Maitri &amp; Bharati.</div>
+          </div>
+        </div>
+        <button class="btn-emergency-call" onclick="callEmergencyHotline()">
+          <span>📞</span> Call Emergency Support (24×7)
+        </button>
+      </section>
+
+      <!-- Quick Actions Grid -->
+      <div class="quick-actions-grid" id="quick-actions-section">
+        <div class="quick-card" onclick="alert('NCPOR Command Control Hot-Relay: +91 832 252 5606\nSATCOM Channel: GSAT-17 TAC-01')">
+          <div class="quick-card-icon" style="background:rgba(2, 132, 199, 0.15); color:#0284c7;">📞</div>
+          <div class="quick-card-title">Call Command Control</div>
+          <div class="quick-card-desc">Direct satellite voice patch to NCPOR Command Control desk in Goa.</div>
+        </div>
+        <div class="quick-card" onclick="switchSection('remote')">
+          <div class="quick-card-icon" style="background:rgba(245, 158, 11, 0.15); color:#d97706;">📝</div>
+          <div class="quick-card-title">Open Incident Ticket</div>
+          <div class="quick-card-desc">Log telemetry anomalies, generator alerts, or scientific payload failures.</div>
+        </div>
+        <div class="quick-card" onclick="switchSection('remote')">
+          <div class="quick-card-icon" style="background:rgba(147, 51, 234, 0.15); color:#9333ea;">🖥️</div>
+          <div class="quick-card-title">Remote Troubleshooting</div>
+          <div class="quick-card-desc">Diagnostic SOPs and automated fault isolation assistance.</div>
+        </div>
+        <div class="quick-card" onclick="switchSection('kb')">
+          <div class="quick-card-icon" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">📚</div>
+          <div class="quick-card-title">Expedition Protocols</div>
+          <div class="quick-card-desc">Access polar engineering SOPs, power schematics, and winterization checklists.</div>
+        </div>
+      </div>
+
+      <!-- SECTION: Knowledge Base & Common Issues -->
+      <div class="panels-2col" id="sec-overview-kb">
+        <!-- Knowledge Base -->
+        <div class="support-panel" id="panel-kb">
+          <div class="panel-header">
+            <div class="panel-title"><span>📖</span> Operational Knowledge Base</div>
+            <a href="#kb" onclick="switchSection('kb')" style="font-size:12px; color:#0284c7; text-decoration:none; font-weight:700;">View All SOPs &rarr;</a>
+          </div>
+          <div class="search-input-wrap">
+            <span class="search-icon-pos">🔍</span>
+            <input type="text" id="kb-filter-input" placeholder="Search SOPs, power, water, SATCOM..." oninput="filterKnowledgeBase()" />
+          </div>
+          <div class="kb-list" id="kb-list-container">
+            <div class="kb-item" onclick="openSopModal('SOP-PWR-12: Power System Troubleshooting at Maitri', '1. Verify DG-2 vibration sensors. If exceeding 3.5 mm/s, reduce load to 45%.\n2. Sync DG-3 cold standby into bus within 8 minutes.\n3. Inspect anti-vibration mountings and fuel pressure regulator.')">
+              <div>
+                <div class="kb-item-title">SOP-PWR-12: Power Microgrid Troubleshooting</div>
+                <div class="kb-item-meta">Power &amp; Utilities · Updated Jan 2025 · Maitri DG Units</div>
+              </div>
+              <span style="color:#0284c7">&rarr;</span>
+            </div>
+            <div class="kb-item" onclick="openSopModal('SOP-LOG-04: Fuel Handling and Storage Guidelines', '1. Jet A-1 winterized reserves with FSII anti-icing additive.\n2. Fuel transfer lines must be heat-traced to prevent crystallization.\n3. Check tank ullage and sediment filtration daily.')">
+              <div>
+                <div class="kb-item-title">SOP-LOG-04: Fuel Handling &amp; Winterization</div>
+                <div class="kb-item-meta">Logistics · Updated Dec 2024 · Jet A-1 Fuel Reserves</div>
+              </div>
+              <span style="color:#0284c7">&rarr;</span>
+            </div>
+            <div class="kb-item" onclick="openSopModal('SOP-WTR-08: Water Supply & Treatment Guide', '1. Priyadarshini Lake pipeline requires trace-heating maintained above +3.0°C.\n2. Reverse Osmosis permeate conductivity threshold < 280 µS/cm.\n3. Keep dual backup pump in auto-switch mode.')">
+              <div>
+                <div class="kb-item-title">SOP-WTR-08: Lake Pipeline &amp; RO Treatment</div>
+                <div class="kb-item-meta">Life Support · Updated Jan 2025 · Priyadarshini Lake</div>
+              </div>
+              <span style="color:#0284c7">&rarr;</span>
+            </div>
+            <div class="kb-item" onclick="openSopModal('SOP-COM-07: SATCOM Link Continuity Protocol', '1. Primary link: GSAT-17 C-band. Secondary: INMARSAT BGAN.\n2. In severe katabatic winds > 55 knots, stow radome dish to lock position.\n3. Enable Local Autonomous Mode if ping exceeds 2500ms.')">
+              <div>
+                <div class="kb-item-title">SOP-COM-07: Satellite Link &amp; Autonomous Fallback</div>
+                <div class="kb-item-meta">Communications · Updated Dec 2024 · GSAT-17 Ground Station</div>
+              </div>
+              <span style="color:#0284c7">&rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Issues -->
+        <div class="support-panel" id="panel-issues">
+          <div class="panel-header">
+            <div class="panel-title"><span>⚠️</span> Common Incident Categories</div>
+            <span style="font-size:11px; color:var(--text-tertiary);">Quick Triage</span>
+          </div>
+          <div class="issues-subgrid">
+            <div class="issue-tile" onclick="openIssueDiagnostic('Power Microgrid', 'Advisory: Check DG-2 vibration levels and oil pressure. Ensure auto-load shedding is operational.')">
+              <div class="issue-tile-icon">⚡</div>
+              <div class="issue-tile-name">Power Grid</div>
+              <div class="issue-tile-desc">Load spikes, generator vibration, UPS faults</div>
+            </div>
+            <div class="issue-tile" onclick="openIssueDiagnostic('Fuel Transfer', 'Check FSII fuel additive level, heated line sensors, and reserve manifold valves.')">
+              <div class="issue-tile-icon">⛽</div>
+              <div class="issue-tile-name">Fuel Systems</div>
+              <div class="issue-tile-desc">Line freeze, transfer pump pressure</div>
+            </div>
+            <div class="issue-tile" onclick="openIssueDiagnostic('Water Supply', 'Trace heat loop should be > +3.5°C. Check lake intake pump suction head.')">
+              <div class="issue-tile-icon">💧</div>
+              <div class="issue-tile-name">Water Line</div>
+              <div class="issue-tile-desc">Pipeline freeze-up, RO membrane status</div>
+            </div>
+            <div class="issue-tile" onclick="openIssueDiagnostic('Weather Sensors', 'Calibrate sonic anemometer after blizzard conditions; check heated sensor head.')">
+              <div class="issue-tile-icon">🌡️</div>
+              <div class="issue-tile-name">Meteorology</div>
+              <div class="issue-tile-desc">Anemometer icing, barometric drift</div>
+            </div>
+            <div class="issue-tile" onclick="openIssueDiagnostic('SATCOM Antenna', 'Radome wind rating limit 55 knots. Switch to local buffering if signal attenuation exceeds 12 dB.')">
+              <div class="issue-tile-icon">📡</div>
+              <div class="issue-tile-name">SATCOM</div>
+              <div class="issue-tile-desc">Radome tracking, latency spike, dish stow</div>
+            </div>
+            <div class="issue-tile" onclick="openIssueDiagnostic('Scientific Equipment', 'Clean laser optics on LIDAR telescope; check cleanroom HVAC air change rates.')">
+              <div class="issue-tile-icon">🔬</div>
+              <div class="issue-tile-name">Payloads</div>
+              <div class="issue-tile-desc">Spectrometer, LIDAR, seismograph faults</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Technical Contacts -->
+      <div class="support-panel" style="margin-bottom:28px;" id="panel-contacts">
+        <div class="panel-header">
+          <div class="panel-title"><span>👥</span> Station Technical Contacts &amp; Duty Officers</div>
+          <span style="font-size:11px; color:#16a34a; font-weight:700;">● ALL STATIONS ACTIVE</span>
+        </div>
+        <div class="contacts-grid">
+          <div class="contact-card">
+            <div class="contact-top">
+              <div class="contact-avatar">🏔️</div>
+              <div>
+                <div class="contact-name">Maitri Research Station</div>
+                <div class="contact-status">● Duty Officer On Call</div>
+              </div>
+            </div>
+            <div class="contact-role">Lead Engineer (Power &amp; Utilities)</div>
+            <div class="contact-details">
+              <div>📞 SAT Phone: +91 1234 000 111</div>
+              <div>✉️ maitri-support@ncpor.res.in</div>
+              <div>🛰️ Radio Channel: TAC-VHF-01</div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-top">
+              <div class="contact-avatar">🧊</div>
+              <div>
+                <div class="contact-name">Bharati Research Station</div>
+                <div class="contact-status">● Duty Officer On Call</div>
+              </div>
+            </div>
+            <div class="contact-role">Operations &amp; Telemetry Specialist</div>
+            <div class="contact-details">
+              <div>📞 SAT Phone: +91 1234 000 222</div>
+              <div>✉️ bharati-support@ncpor.res.in</div>
+              <div>🛰️ Radio Channel: TAC-VHF-02</div>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-top">
+              <div class="contact-avatar">🏛️</div>
+              <div>
+                <div class="contact-name">NCPOR Headquarters Goa</div>
+                <div class="contact-status">● Mission Control 24×7</div>
+              </div>
+            </div>
+            <div class="contact-role">Antarctic Logistics &amp; Engineering Cell</div>
+            <div class="contact-details">
+              <div>📞 Phone: +91 832 252 5606</div>
+              <div>✉️ mission-control@ncpor.res.in</div>
+              <div>🌐 Headland Sada, Vasco da Gama, Goa</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Incident History & System Status -->
+      <div class="panels-2col" style="margin-bottom:28px;">
+        <!-- Incident Log -->
+        <div class="support-panel" id="panel-history">
+          <div class="panel-header">
+            <div class="panel-title"><span>⏱️</span> Live Incident History</div>
+            <span class="badge-pill badge-warn">2 ACTIVE</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="incident-row">
+              <div>
+                <div style="font-size:13px; font-weight:700;">DG-2 Vibration Warning at Maitri</div>
+                <div style="font-size:11px; color:var(--text-tertiary);">INC-4402 · Maitri Station · Today 11:05</div>
+              </div>
+              <span class="badge-pill badge-warn">WARNING</span>
+            </div>
+            <div class="incident-row">
+              <div>
+                <div style="font-size:13px; font-weight:700;">Katabatic Gusts Near Bharati Radome</div>
+                <div style="font-size:11px; color:var(--text-tertiary);">INC-4409 · Bharati Station · Today 14:18</div>
+              </div>
+              <span class="badge-pill badge-warn">MONITORING</span>
+            </div>
+            <div class="incident-row">
+              <div>
+                <div style="font-size:13px; font-weight:700;">Priyadarshini Pipeline Heat-Trace Drop</div>
+                <div style="font-size:11px; color:var(--text-tertiary);">INC-4398 · Maitri Station · Today 08:45</div>
+              </div>
+              <span class="badge-pill badge-info">INSPECTED</span>
+            </div>
+            <div class="incident-row">
+              <div>
+                <div style="font-size:13px; font-weight:700;">SATCOM High Latency Transient</div>
+                <div style="font-size:11px; color:var(--text-tertiary);">INC-4380 · Bharati Station · Yesterday</div>
+              </div>
+              <span class="badge-pill badge-success">RESOLVED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="support-panel" id="panel-status">
+          <div class="panel-header">
+            <div class="panel-title"><span>📊</span> Telemetry Health Check</div>
+            <span class="badge-pill badge-success">ALL RUNNING</span>
+          </div>
+          <div>
+            <div class="status-row">
+              <span>🛰️ GSAT-17 SATCOM Carrier</span>
+              <strong style="color:#16a34a;">Nominal (12.4 Mbps · 640ms)</strong>
+            </div>
+            <div class="status-row">
+              <span>⚡ Maitri Microgrid DG-2</span>
+              <strong style="color:#d97706;">Advisory (3.8 mm/s vibration)</strong>
+            </div>
+            <div class="status-row">
+              <span>⚡ Bharati CHP Unit 1 &amp; 3</span>
+              <strong style="color:#16a34a;">Online (380 kW / 88% load)</strong>
+            </div>
+            <div class="status-row">
+              <span>💧 Maitri Priyadarshini Pipeline</span>
+              <strong style="color:#16a34a;">Stable (+4.2°C trace-heat)</strong>
+            </div>
+            <div class="status-row">
+              <span>💧 Bharati RO Desalination</span>
+              <strong style="color:#16a34a;">Nominal (79% reserve)</strong>
+            </div>
+            <div class="status-row">
+              <span>🏛️ Goa Ground Relay</span>
+              <strong style="color:#16a34a;">Synchronized (2s tick)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Remote Troubleshooting Ticket Form -->
+      <div class="support-panel" style="margin-bottom:28px;" id="panel-remote">
+        <div class="panel-header">
+          <div class="panel-title"><span>🖥️</span> Remote Support &amp; Incident Dispatch</div>
+          <span style="font-size:11px; color:var(--text-tertiary);">Direct routing to NCPOR Goa Engineering</span>
+        </div>
+        <form class="ticket-form" onsubmit="handleTicketSubmit(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Station *</label>
+              <select class="form-select" id="ticket-station" required>
+                <option value="Maitri">Maitri Research Station (70°S)</option>
+                <option value="Bharati">Bharati Research Station (69°S)</option>
+                <option value="NCPOR Goa">NCPOR Goa Operations Center</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subsystem Category *</label>
+              <select class="form-select" id="ticket-category" required>
+                <option value="Power">Power Generation &amp; Microgrid</option>
+                <option value="Fuel">Fuel Storage &amp; Transfer Lines</option>
+                <option value="Water">Water Systems &amp; Trace Heating</option>
+                <option value="SATCOM">Satellite Communications &amp; Radome</option>
+                <option value="Meteorology">Weather Station &amp; Sensors</option>
+                <option value="Scientific">Scientific Payloads &amp; Instruments</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Issue Subject *</label>
+            <input type="text" class="form-input" id="ticket-subject" placeholder="e.g., DG-2 vibration tripping threshold at 3.8 mm/s" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Telemetry Symptoms &amp; Actions Taken *</label>
+            <textarea class="form-textarea" id="ticket-description" placeholder="Specify sensor readouts, ambient temp, load percentage, and steps taken by on-site team..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-ticket">
+            <span>🚀</span> Transmit Support Ticket to Mission Operations
+          </button>
+        </form>
+
+        <div id="ticket-success-box" style="display:none; margin-top:16px; padding:16px; border-radius:12px; background:rgba(34, 197, 94, 0.12); border:1px solid rgba(34, 197, 94, 0.3); text-align:center;">
+          <div style="font-size:20px; margin-bottom:4px;">✅</div>
+          <div style="font-size:14px; font-weight:800; color:#16a34a;" id="ticket-number-msg">Ticket Dispatched: NCPOR-TK-4418</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Direct telemetry packet forwarded to Goa Mission Control. Duty engineer assigned.</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer style="padding-top:20px; border-top:1px solid var(--border-medium); display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-tertiary); gap:12px;">
+        <div>&copy; 2026 National Centre for Polar &amp; Ocean Research (NCPOR), Ministry of Earth Sciences, Govt. of India</div>
+        <div style="display:flex; gap:16px;">
+          <a href="index.html" style="color:#0284c7; text-decoration:none;">&larr; Return to Main Operations Portal</a>
+          <span style="color:#f59e0b; font-family:monospace;">[SIMULATED TELEMETRY ENGINE]</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ============================================================
+       FLOATING AIRA LIVE SUPPORT CHATBOT
+       ============================================================ -->
+  <button class="chat-widget-fab" onclick="toggleChatWindow()" title="Chat with AIRA Support AI">
+    🤖
+  </button>
+
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      <div>
+        <div class="chat-header-title">AIRA Antarctic Support Assistant</div>
+        <div class="chat-header-sub">● AI Mission Knowledge Base Online</div>
+      </div>
+      <button onclick="toggleChatWindow()" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer;">&times;</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-bubble bot">
+        Greetings! I am AIRA, your Antarctic Technical Support AI. Ask me about power generation, water line trace-heating, SATCOM links, weather windows, or protocol SOPs.
+      </div>
+    </div>
+
+    <div class="chat-input-bar">
+      <input type="text" id="chat-user-input" placeholder="Ask about DG-2 vibration, water, fuel..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+      <button onclick="sendChatMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- JavaScript for Interactions & Theme -->
+  <script>
+    // Theme sync
+    function initSupportTheme() {
+      const saved = localStorage.getItem('polaris_theme') || 'bright';
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+
+    function toggleSupportTheme() {
+      const cur = document.documentElement.getAttribute('data-theme') || 'bright';
+      const next = cur === 'dark' ? 'bright' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('polaris_theme', next);
+    }
+
+    initSupportTheme();
+
+    // Section Switching
+    function switchSection(secId) {
+      const crumb = document.getElementById('current-crumb');
+      const buttons = document.querySelectorAll('.sidebar-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+
+      if (event && event.currentTarget && event.currentTarget.classList) {
+        event.currentTarget.classList.add('active');
+      }
+
+      const map = {
+        'overview': { name: 'Support Center Overview', el: 'quick-actions-section' },
+        'get-help': { name: 'Emergency & Helpdesk Actions', el: 'quick-actions-section' },
+        'kb': { name: 'Operational Knowledge Base', el: 'panel-kb' },
+        'contacts': { name: 'Technical Contacts', el: 'panel-contacts' },
+        'issues': { name: 'Common Issues & Diagnostics', el: 'panel-issues' },
+        'remote': { name: 'Remote Troubleshooting & Ticket Submission', el: 'panel-remote' },
+        'history': { name: 'Live Incident History', el: 'panel-history' },
+        'status': { name: 'System Telemetry Status', el: 'panel-status' }
+      };
+
+      if (map[secId]) {
+        crumb.textContent = map[secId].name;
+        const target = document.getElementById(map[secId].el);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    // Emergency hotline call trigger
+    function callEmergencyHotline() {
+      alert("🚨 PRIORITY EMERGENCY PROTOCOL TRIGGERED\n\nNCPOR Emergency Operations Center (Goa):\nDirect Line: +91 832 252 5606\nSatellite Comms: GSAT-17 Channel EMERGENCY-01\n\nStand by for immediate connection...");
+    }
+
+    // Filter Knowledge Base
+    function filterKnowledgeBase() {
+      const query = document.getElementById('kb-filter-input').value.toLowerCase();
+      const items = document.querySelectorAll('#kb-list-container .kb-item');
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? 'flex' : 'none';
+      });
+    }
+
+    // SOP Modal
+    function openSopModal(title, text) {
+      alert("📋 " + title + "\n\n" + text);
+    }
+
+    // Issue Diagnostic
+    function openIssueDiagnostic(title, desc) {
+      alert("⚙️ " + title + " Diagnostic Action\n\n" + desc);
+    }
+
+    // Ticket Form
+    function handleTicketSubmit(e) {
+      e.preventDefault();
+      const station = document.getElementById('ticket-station').value;
+      const cat = document.getElementById('ticket-category').value;
+      const subj = document.getElementById('ticket-subject').value;
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const ticketId = 'NCPOR-TK-' + randomNum;
+
+      const successBox = document.getElementById('ticket-success-box');
+      const ticketMsg = document.getElementById('ticket-number-msg');
+      ticketMsg.textContent = 'Ticket Dispatched: ' + ticketId + ' (' + station + ' · ' + cat + ')';
+      successBox.style.display = 'block';
+
+      document.getElementById('ticket-subject').value = '';
+      document.getElementById('ticket-description').value = '';
+
+      successBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // AIRA Chatbot
+    function toggleChatWindow() {
+      const win = document.getElementById('chat-window');
+      win.classList.toggle('open');
+      if (win.classList.contains('open')) {
+        document.getElementById('chat-user-input').focus();
+      }
+    }
+
+    const AIRA_ANSWERS = {
+      vibration: "DG-2 vibration at Maitri is currently 3.8 mm/s (warning threshold 3.5, trip threshold 4.5 mm/s). Follow SOP-PWR-12: reduce load to 45%, sync DG-3 cold standby, inspect anti-vibration mountings.",
+      power: "Maitri primary microgrid is operating on DG-1 & DG-2. Bharati Scania CHP units 1 & 3 are running at 88% load with 380 kW output. All battery banks nominal.",
+      water: "Maitri Priyadarshini Lake pipeline trace heating is nominal at +4.2°C with 76% freshwater reserve. Bharati RO desalination permeate conductivity is 240 µS/cm.",
+      fuel: "Maitri Jet A-1 fuel reserves are at 68% capacity; Bharati at 81% capacity. Both storage tank farms are pre-conditioned with anti-icing FSII additive.",
+      weather: "Maitri: -12.4°C, wind 18 knots from SE. Bharati: -8.6°C, wind 12 knots. 48-hour expedition operational window is clear.",
+      satcom: "GSAT-17 C-band transponder link is stable at 12.4 Mbps, 640ms latency. Radome wind lock active if gusts exceed 55 knots.",
+      default: "I have recorded your query into the NCPOR polar support index. For immediate intervention, contact Duty Engineers via SAT-VHF or raise an official support ticket."
+    };
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-user-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const container = document.getElementById('chat-messages');
+
+      // User bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.textContent = msg;
+      container.appendChild(userBubble);
+
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      // Simulated reply
+      setTimeout(() => {
+        const lower = msg.toLowerCase();
+        let reply = AIRA_ANSWERS.default;
+        if (lower.includes('vibrat') || lower.includes('generator') || lower.includes('dg-2') || lower.includes('dg2')) reply = AIRA_ANSWERS.vibration;
+        else if (lower.includes('power') || lower.includes('chp') || lower.includes('grid')) reply = AIRA_ANSWERS.power;
+        else if (lower.includes('water') || lower.includes('pipeline') || lower.includes('ro')) reply = AIRA_ANSWERS.water;
+        else if (lower.includes('fuel') || lower.includes('jet') || lower.includes('tank')) reply = AIRA_ANSWERS.fuel;
+        else if (lower.includes('weather') || lower.includes('temp') || lower.includes('wind')) reply = AIRA_ANSWERS.weather;
+        else if (lower.includes('satcom') || lower.includes('satellite') || lower.includes('gsat')) reply = AIRA_ANSWERS.satcom;
+
+        const botBubble = document.createElement('div');
+        botBubble.className = 'chat-bubble bot';
+        botBubble.textContent = reply;
+        container.appendChild(botBubble);
+        container.scrollTop = container.scrollHeight;
+      }, 500);
+    }
+  </script>
+</body>
+</html>
