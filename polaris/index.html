@@ -334,10 +334,10 @@
           <!-- Station Selector Buttons (Maitri vs Bharati) -->
           <div class="top-station-switchers">
             <div class="station-pill-card active" id="spc-maitri" onclick="selectStation('maitri')">
-              <img class="spc-thumb" src="assets/bright_station.png" alt="Maitri" />
+              <img class="spc-thumb" id="spc-thumb-maitri" src="assets/station_maitri_thumb_bright.png" alt="Maitri Research Station" />
               <div class="spc-info">
                 <div class="spc-name-row">
-                  <span class="spc-radio-indicator"></span>
+                  <span class="spc-radio-indicator orange-fill"></span>
                   <span class="spc-name">Maitri</span>
                 </div>
                 <span class="spc-coords">(70&deg;45'S, 11&deg;44'E)</span>
@@ -345,7 +345,7 @@
             </div>
 
             <div class="station-pill-card" id="spc-bharati" onclick="selectStation('bharati')">
-              <img class="spc-thumb" src="assets/bright_home.png" alt="Bharati" />
+              <img class="spc-thumb" id="spc-thumb-bharati" src="assets/station_bharati_thumb_bright.png" alt="Bharati Research Station" />
               <div class="spc-info">
                 <div class="spc-name-row">
                   <span class="spc-radio-indicator"></span>
@@ -404,7 +404,7 @@
               <div class="dt-header-bar">
                 <div class="dt-station-title-group">
                   <h2 class="dt-station-title" id="ops-station-name-heading">Maitri Research Station</h2>
-                  <span class="online-chip">&bull; ONLINE</span>
+                  <span class="online-chip"><span class="dot-green"></span> ONLINE</span>
                   <span class="dt-station-coords" id="ops-station-coords-label">70&deg;45'S, 11&deg;44'E &bull; EAST ANTARCTICA</span>
                 </div>
                 
@@ -412,70 +412,71 @@
                   <button class="view-mode-pill active">3D View</button>
                   <button class="view-mode-pill" onclick="alert('Switching to Topographic Map Layer')">Map View</button>
                   <button class="view-mode-pill" onclick="alert('Switching to Architectural Site Blueprint')">Site Plan</button>
+                  <button class="view-mode-pill btn-icon-square" onclick="alert('Toggle Fullscreen 3D Viewport')" title="Fullscreen">&#x26F6;</button>
                 </div>
               </div>
 
               <!-- Interactive Visual Container with Hotspots -->
               <div class="station-interactive-visual">
-                <img id="station-main-bg" class="main-twin-img" src="assets/bright_station.png" alt="Station Digital Twin" />
+                <img id="station-main-bg" class="main-twin-img" src="assets/station_maitri_panorama_bright.png" alt="Station Digital Twin" />
 
                 <!-- Hotspots dynamically pinned on the station modules -->
-                <div class="station-hotspot" style="top: 28%; left: 39%;" onclick="openHotspotInfo('Communications Mast', 'GSAT-17 Uplink / High-Gain Array: 99.4% Link Quality')">
+                <div class="station-hotspot" style="top: 26%; left: 35%;" onclick="openHotspotInfo('Communications Mast', 'GSAT-17 Uplink / High-Gain Array: 99.4% Link Quality')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/><line x1="12" y1="14" x2="12" y2="22"/></svg>
                     <span>Communications Mast</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 40%; left: 24%;" onclick="openHotspotInfo('Living Modules', 'Habitation quarters: 24 personnel, 21.2°C, 48% humidity nominal')">
+                <div class="station-hotspot" style="top: 39%; left: 21%;" onclick="openHotspotInfo('Living Modules', 'Habitation quarters: 24 personnel, 21.2°C, 48% humidity nominal')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                     <span>Living Modules</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 40%; left: 45%;" onclick="openHotspotInfo('Research Lab', 'Atmospheric & Geomagnetic Laboratory: 6 instruments streaming')">
+                <div class="station-hotspot" style="top: 38%; left: 42%;" onclick="openHotspotInfo('Research Lab', 'Atmospheric & Geomagnetic Laboratory: 6 instruments streaming')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
                     <span>Research Lab</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 42%; left: 63%;" onclick="openHotspotInfo('Power Generator', 'DG-01 & DG-02 Units: 420 kW / 510 kW capacity (82% load)')">
+                <div class="station-hotspot" style="top: 41%; left: 61%;" onclick="openHotspotInfo('Power Generator', 'DG-01 & DG-02 Units: 420 kW / 510 kW capacity (82% load)')">
                   <div class="hotspot-pill-tag orange-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                     <span>Power Generator</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 60%; left: 30%;" onclick="openHotspotInfo('Water Treatment', 'Reverse osmosis & melt-water processing: 38 m³ reserve (76%)')">
+                <div class="station-hotspot" style="top: 59%; left: 26%;" onclick="openHotspotInfo('Water Treatment', 'Reverse osmosis & melt-water processing: 38 m³ reserve (76%)')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                     <span>Water Treatment</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 58%; left: 49%;" onclick="openHotspotInfo('Vehicle Bay', 'PistenBully Snowcats & Snowmobiles: 3 active, 2 standby')">
+                <div class="station-hotspot" style="top: 57%; left: 46%;" onclick="openHotspotInfo('Vehicle Bay', 'PistenBully Snowcats & Snowmobiles: 3 active, 2 standby')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
                     <span>Vehicle Bay</span>
                   </div>
                 </div>
 
-                <div class="station-hotspot" style="top: 62%; left: 64%;" onclick="openHotspotInfo('Fuel Storage', 'HSD Fuel Reserve: 102 kl / 150 kl (68% capacity, 58 days endurance)')">
+                <div class="station-hotspot" style="top: 61%; left: 63%;" onclick="openHotspotInfo('Fuel Storage', 'HSD Fuel Reserve: 102 kl / 150 kl (68% capacity, 58 days endurance)')">
                   <div class="hotspot-pill-tag">
                     <span class="hotspot-pin-beacon"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18M18 10a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v12"/></svg>
                     <span>Fuel Storage</span>
                   </div>
                 </div>
 
-                <!-- Camera Pins -->
-                <div class="station-hotspot" style="top: 41%; left: 14%;">
-                  <span class="cam-indicator-pill">&#x1F4F7; Cam 01</span>
-                </div>
-                <div class="station-hotspot" style="top: 38%; left: 73%;">
-                  <span class="cam-indicator-pill">&#x1F4F7; Cam 02</span>
-                </div>
               </div>
             </div>
 
@@ -484,31 +485,64 @@
               <div class="lcs-header">
                 <div class="lcs-title-wrap">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                  <span>Live Camera Feeds &bull; <span class="text-green">4 / 4 Online</span></span>
+                  <span><strong>Live Camera Feeds</strong> &nbsp;&bull;&nbsp; <span class="dot-green"></span> <span class="text-green">4 / 4 Online</span></span>
                 </div>
-                <a href="#viewall" class="kpi-view-all" onclick="alert('Opening Full HD Quad Camera Matrix')">View All Cameras &rarr;</a>
+                <div class="lcs-actions">
+                  <a href="#viewall" class="kpi-view-all" onclick="alert('Opening Full HD Quad Camera Matrix')">View All Cameras &rarr;</a>
+                  <div class="cam-arrows">
+                    <button class="cam-arrow-btn">&lsaquo;</button>
+                    <button class="cam-arrow-btn">&rsaquo;</button>
+                  </div>
+                </div>
               </div>
 
               <div class="cam-grid-4">
                 <div class="single-cam-card">
-                  <img src="assets/bright_home.png" alt="Cam 01 Main Station View" />
-                  <span class="cam-live-badge">LIVE</span>
-                  <span class="cam-meta-footer">Cam 01: Main Station</span>
+                  <div class="cam-thumb-wrap">
+                    <img id="cam-img-1" src="assets/cam1_thumb_bright.png" alt="Cam 01 Main Station View" />
+                    <span class="cam-live-badge">LIVE</span>
+                  </div>
+                  <div class="cam-card-meta">
+                    <span class="dot-green"></span>
+                    <span class="cam-num">Cam 01</span>
+                    <span class="cam-desc">Main Station View</span>
+                  </div>
                 </div>
+
                 <div class="single-cam-card">
-                  <img src="assets/bright_command.png" alt="Cam 02 Generator Area" />
-                  <span class="cam-live-badge">LIVE</span>
-                  <span class="cam-meta-footer">Cam 02: Generator Area</span>
+                  <div class="cam-thumb-wrap">
+                    <img id="cam-img-2" src="assets/cam2_thumb_bright.png" alt="Cam 02 Generator Area" />
+                    <span class="cam-live-badge">LIVE</span>
+                  </div>
+                  <div class="cam-card-meta">
+                    <span class="dot-green"></span>
+                    <span class="cam-num">Cam 02</span>
+                    <span class="cam-desc">Generator Area</span>
+                  </div>
                 </div>
+
                 <div class="single-cam-card">
-                  <img src="assets/bright_station.png" alt="Cam 03 Vehicle Bay" />
-                  <span class="cam-live-badge">LIVE</span>
-                  <span class="cam-meta-footer">Cam 03: Vehicle Bay</span>
+                  <div class="cam-thumb-wrap">
+                    <img id="cam-img-3" src="assets/cam3_thumb_bright.png" alt="Cam 03 Vehicle Bay" />
+                    <span class="cam-live-badge">LIVE</span>
+                  </div>
+                  <div class="cam-card-meta">
+                    <span class="dot-green"></span>
+                    <span class="cam-num">Cam 03</span>
+                    <span class="cam-desc">Vehicle Bay</span>
+                  </div>
                 </div>
+
                 <div class="single-cam-card">
-                  <img src="assets/dark_station.png" alt="Cam 04 Science Deck" />
-                  <span class="cam-live-badge">LIVE</span>
-                  <span class="cam-meta-footer">Cam 04: Science Deck</span>
+                  <div class="cam-thumb-wrap">
+                    <img id="cam-img-4" src="assets/cam4_thumb_bright.png" alt="Cam 04 Science Deck" />
+                    <span class="cam-live-badge">LIVE</span>
+                  </div>
+                  <div class="cam-card-meta">
+                    <span class="dot-green"></span>
+                    <span class="cam-num">Cam 04</span>
+                    <span class="cam-desc">Science Deck</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -519,82 +553,140 @@
               <!-- Key Station Metrics -->
               <div class="key-metrics-card">
                 <div class="alb-title-bar">
-                  <span class="alb-title">Key Station Metrics</span>
+                  <div class="alb-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>Key Station Metrics</span>
+                  </div>
                 </div>
                 <div class="kmc-grid-6">
+                  
                   <div class="kmc-item">
-                    <span class="kmc-label">Power Supply</span>
-                    <span class="kmc-val text-green">82%</span>
-                    <span class="kmc-sub">420 / 510 kW</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      <span class="kmc-label">Power Supply</span>
+                    </div>
+                    <div class="kmc-val">82%</div>
+                    <div class="kmc-progress-track"><div class="kmc-progress-fill green" style="width: 82%;"></div></div>
+                    <span class="kmc-sub">420 kW / 510 kW</span>
                   </div>
+
                   <div class="kmc-item">
-                    <span class="kmc-label">Water System</span>
-                    <span class="kmc-val text-blue">76%</span>
-                    <span class="kmc-sub">38 / 50 m&sup3;</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                      <span class="kmc-label">Water System</span>
+                    </div>
+                    <div class="kmc-val">76%</div>
+                    <div class="kmc-progress-track"><div class="kmc-progress-fill blue" style="width: 76%;"></div></div>
+                    <span class="kmc-sub">38 m&sup3; / 50 m&sup3;</span>
                   </div>
+
                   <div class="kmc-item">
-                    <span class="kmc-label">Fuel Storage</span>
-                    <span class="kmc-val text-orange">68%</span>
-                    <span class="kmc-sub">102 / 150 kl</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-orange)" stroke-width="2.5"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+                      <span class="kmc-label">Fuel Storage</span>
+                    </div>
+                    <div class="kmc-val">68%</div>
+                    <div class="kmc-progress-track"><div class="kmc-progress-fill orange" style="width: 68%;"></div></div>
+                    <span class="kmc-sub">102 kl / 150 kl</span>
                   </div>
+
                   <div class="kmc-item">
-                    <span class="kmc-label">Weather (Now)</span>
-                    <span class="kmc-val">-12.4&deg;C</span>
-                    <span class="kmc-sub">18 km/h SSE</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                      <span class="kmc-label">Weather (Now)</span>
+                    </div>
+                    <div class="kmc-val">-12.4&deg;C</div>
+                    <span class="kmc-sub">18 km/h (SSE)</span>
+                    <span class="kmc-status-tag green">Clear Skies</span>
                   </div>
+
                   <div class="kmc-item">
-                    <span class="kmc-label">Station Crew</span>
-                    <span class="kmc-val text-green">24 / 24</span>
-                    <span class="kmc-sub">&bull; All Safe</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                      <span class="kmc-label">Crew On Station</span>
+                    </div>
+                    <div class="kmc-val">24 / 24</div>
+                    <span class="kmc-status-tag green">&bull; All Safe</span>
                   </div>
+
                   <div class="kmc-item">
-                    <span class="kmc-label">Data Quality</span>
-                    <span class="kmc-val text-green">98%</span>
-                    <span class="kmc-sub">Nominal</span>
+                    <div class="kmc-head">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                      <span class="kmc-label">Data Quality</span>
+                    </div>
+                    <div class="kmc-val">98%</div>
+                    <span class="kmc-status-tag green">&bull; All Systems Nominal</span>
                   </div>
+
                 </div>
               </div>
 
               <!-- Sensor Trends Chart -->
               <div class="sensor-trends-card">
                 <div class="alb-title-bar">
-                  <span class="alb-title">Sensor Trends (24h)</span>
+                  <div class="alb-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span>Sensor Trends <span class="sub-paren">(Last 24 Hours)</span></span>
+                  </div>
                 </div>
                 <div class="st-tabs-row">
                   <button class="st-tab-btn active" onclick="switchSensorTrend('power', this)">Power</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('temp', this)">Temp</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('wind', this)">Wind</button>
-                  <button class="st-tab-btn" onclick="switchSensorTrend('fuel', this)">Fuel</button>
+                  <button class="st-tab-btn" onclick="switchSensorTrend('temp', this)">Temperature</button>
+                  <button class="st-tab-btn" onclick="switchSensorTrend('wind', this)">Wind Speed</button>
+                  <button class="st-tab-btn" onclick="switchSensorTrend('fuel', this)">Fuel Level</button>
                 </div>
-                <canvas id="sensor-trend-canvas" width="340" height="90"></canvas>
+                <div class="canvas-chart-wrap">
+                  <div class="canvas-y-axis">
+                    <span>kW</span>
+                    <span>400</span>
+                    <span>200</span>
+                    <span>0</span>
+                  </div>
+                  <canvas id="sensor-trend-canvas" width="340" height="90"></canvas>
+                </div>
+                <div class="canvas-x-axis">
+                  <span>00:00</span>
+                  <span>06:00</span>
+                  <span>12:00</span>
+                  <span>18:00</span>
+                  <span>24:00</span>
+                </div>
               </div>
 
               <!-- Station Events Log -->
               <div class="station-events-card">
                 <div class="alb-title-bar">
-                  <span class="alb-title">Station Events</span>
+                  <div class="alb-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Station Events</span>
+                  </div>
                   <a href="#events" class="kpi-view-all" onclick="alert('Opening Full Audit Log')">View All &rarr;</a>
                 </div>
                 <div class="events-scroll-list">
                   <div class="event-micro-row">
+                    <span class="dot-event green"></span>
                     <span class="emr-time">14:32</span>
-                    <span class="emr-desc">Water treatment cycle nominal</span>
+                    <span class="emr-desc">Water treatment system nominal</span>
                   </div>
                   <div class="event-micro-row">
+                    <span class="dot-event blue"></span>
                     <span class="emr-time">12:18</span>
                     <span class="emr-desc">Routine weather balloon launch</span>
                   </div>
                   <div class="event-micro-row">
-                    <span class="emr-time">09:46</span>
-                    <span class="emr-desc">Generator 02 bearing inspected</span>
+                    <span class="dot-event orange"></span>
+                    <span class="emr-time">08:46</span>
+                    <span class="emr-desc">Generator 2 maintenance completed</span>
                   </div>
                   <div class="event-micro-row">
+                    <span class="dot-event blue"></span>
                     <span class="emr-time">06:20</span>
-                    <span class="emr-desc">Wind speed advisory (24 km/h)</span>
+                    <span class="emr-desc">Wind speed increased (24 km/h)</span>
                   </div>
                   <div class="event-micro-row">
+                    <span class="dot-event blue"></span>
                     <span class="emr-time">04:12</span>
-                    <span class="emr-desc">178 GB research telemetry sent</span>
+                    <span class="emr-desc">New research data uploaded (178 GB)</span>
                   </div>
                 </div>
               </div>
@@ -603,77 +695,101 @@
 
           </div>
 
-          <!-- Right Column: KPI Cards + AI Insights -->
+          <!-- Right Column: 2x3 KPI Grid + AI Insights -->
           <div class="ops-right-panel">
             
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-                  <span>Cameras</span>
+            <div class="kpi-grid-2x3">
+              
+              <!-- Card 1: Cameras -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                    <span>Cameras</span>
+                  </div>
+                </div>
+                <div class="kpi-camera-body">
+                  <div class="kpi-cam-text">
+                    <div class="kpi-main-readout text-green">4 / 4 Online</div>
+                    <span class="kmc-sub">Live station feeds</span>
+                  </div>
+                  <img id="widget-cam-thumb" class="kpi-thumb-preview" src="assets/widget_cam_preview_bright.png" alt="Live cameras preview" />
                 </div>
                 <span class="kpi-view-all" onclick="alert('All 4 Station Optical Feeds Active')">View All &rarr;</span>
               </div>
-              <div class="kpi-main-readout text-green">4 / 4 Online</div>
-              <span class="kmc-sub">Live station streams</span>
-            </div>
 
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  <span>Machine Health</span>
+              <!-- Card 2: Machine Health -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>Machine Health</span>
+                  </div>
+                  <span class="card-chevron">&rsaquo;</span>
                 </div>
-                <span class="text-orange" style="font-size:11px;font-weight:700">2 Attention &rsaquo;</span>
+                <div class="kpi-main-readout"><span class="text-green">12 / 14</span> Healthy</div>
+                <div class="kpi-sub-warn text-orange"><span class="badge-num">2</span> Attention</div>
               </div>
-              <div class="kpi-main-readout"><span class="text-green">12 / 14</span> Healthy</div>
-            </div>
 
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                  <span>Crew Status</span>
+              <!-- Card 3: Crew Status -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <span>Crew Status</span>
+                  </div>
                 </div>
+                <div class="kpi-main-readout">24 <span class="unit">On Station</span></div>
+                <span class="text-green status-line">&bull; All Safe &amp; Well</span>
                 <span class="kpi-view-all" onclick="alert('Expedition Medical: All vitals normal.')">View Details &rarr;</span>
               </div>
-              <div class="kpi-main-readout">24 On Station</div>
-              <span class="text-green" style="font-size:11px;font-weight:700">&bull; All Safe &amp; Well</span>
-            </div>
 
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
-                  <span>Research Operations</span>
+              <!-- Card 4: Research Operations -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.69 16.4A2 2 0 0 0 6.24 19h11.52a2 2 0 0 0 1.55-2.6L14 9.31V2"/></svg>
+                    <span>Research Operations</span>
+                  </div>
                 </div>
+                <div class="kpi-main-readout">5 <span class="unit">Active Projects</span></div>
+                <span class="text-orange status-line">2 Field Activities</span>
                 <span class="kpi-view-all" onclick="alert('5 Ongoing Experiments: Geomagnetism, Seismology, Glaciology, Meteorology, Biology')">View Projects &rarr;</span>
               </div>
-              <div class="kpi-main-readout">5 Active Projects</div>
-              <span class="kmc-sub">2 Field Activities In Progress</span>
-            </div>
 
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                  <span>Supplies &amp; Logistics</span>
+              <!-- Card 5: Supplies & Logistics -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <span>Supplies &amp; Logistics</span>
+                  </div>
                 </div>
-                <span class="text-green" style="font-size:11px;font-weight:700">Normal 78%</span>
+                <div class="supplies-row">
+                  <span class="text-green font-bold">&bull; Normal</span>
+                  <span class="text-green font-bold">78%</span>
+                </div>
+                <div class="kmc-progress-track"><div class="kmc-progress-fill green" style="width: 78%;"></div></div>
+                <span class="kmc-sub">Next re-supply in 42 days</span>
+                <span class="kpi-view-all" onclick="alert('Inventory: 18 months shelf life remaining.')">View Inventory &rarr;</span>
               </div>
-              <span class="kmc-sub" style="margin-top:4px;">Next resupply in 42 days</span>
-            </div>
 
-            <div class="kpi-compact-card">
-              <div class="header-row">
-                <div class="kpi-title-wrap">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  <span>Environment</span>
+              <!-- Card 6: Environment -->
+              <div class="kpi-compact-card">
+                <div class="header-row">
+                  <div class="kpi-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                    <span>Environment</span>
+                  </div>
                 </div>
-                <span class="kpi-view-all" onclick="alert('Station Meteorological Summary: Clear weather, UV low, Barometric pressure 982 hPa')">View Live &rarr;</span>
+                <div class="env-metric-row">
+                  <span>&#x2744; -12.4&deg;C</span>
+                  <span>&#x1F4A8; 18 km/h <span class="unit">(SSE)</span></span>
+                </div>
+                <span class="text-green status-line">&bull; Good Station Conditions</span>
+                <span class="kpi-view-all" onclick="alert('Station Meteorological Summary: Clear weather, UV low, Barometric pressure 982 hPa')">View Live Data &rarr;</span>
               </div>
-              <div class="kpi-main-readout">-12.4&deg;C &bull; 18 km/h</div>
-              <span class="text-green" style="font-size:11px;font-weight:700">&bull; Good Station Conditions</span>
+
             </div>
 
             <!-- AI Assistant Insights Box -->
@@ -683,7 +799,7 @@
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   <span>AI Assistant Insights</span>
                 </div>
-                <span style="font-size:10.5px;color:var(--text-muted);">3 new</span>
+                <span class="ai-insights-count">3 new insights</span>
               </div>
 
               <div class="ai-insight-bullet">
@@ -696,9 +812,9 @@
               </div>
               <div class="ai-insight-bullet">
                 <span class="ai-dot green"></span>
-                <span>Fuel levels sufficient for 58 days at current consumption rate.</span>
+                <span>Fuel levels sufficient for 58 days at current consumption.</span>
               </div>
-              <a href="#ai" class="kpi-view-all" style="margin-top:4px;" onclick="alert('AIRA Automated Decision Engine: All predictive thresholds within nominal envelope.')">View All Insights &rarr;</a>
+              <a href="#ai" class="kpi-view-all" style="margin-top:6px;" onclick="alert('AIRA Automated Decision Engine: All predictive thresholds within nominal envelope.')">View All Insights &rarr;</a>
             </div>
 
           </div>

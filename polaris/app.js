@@ -88,13 +88,33 @@ function setTheme(theme) {
   }
 
   // Station and Command page backgrounds
+  const maitriThumb = document.getElementById('spc-thumb-maitri');
+  if (maitriThumb) {
+    maitriThumb.src = theme === 'dark' ? 'assets/station_maitri_thumb_dark.png' : 'assets/station_maitri_thumb_bright.png';
+  }
+
+  const bharatiThumb = document.getElementById('spc-thumb-bharati');
+  if (bharatiThumb) {
+    bharatiThumb.src = theme === 'dark' ? 'assets/station_bharati_thumb_dark.png' : 'assets/station_bharati_thumb_bright.png';
+  }
+
   const stationBg = document.getElementById('station-main-bg');
   if (stationBg) {
-    if (STATE.selectedStation === 'maitri') {
-      stationBg.src = theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
-    } else {
-      stationBg.src = theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+    stationBg.src = theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
+  }
+
+  // Camera strip thumbnails
+  for (let i = 1; i <= 4; i++) {
+    const camImg = document.getElementById(`cam-img-${i}`);
+    if (camImg) {
+      camImg.src = theme === 'dark' ? `assets/cam${i}_thumb_dark.png` : `assets/cam${i}_thumb_bright.png`;
     }
+  }
+
+  // Right-hand widget camera preview
+  const widgetCam = document.getElementById('widget-cam-thumb');
+  if (widgetCam) {
+    widgetCam.src = theme === 'dark' ? 'assets/widget_cam_preview_dark.png' : 'assets/widget_cam_preview_bright.png';
   }
 
   // Redraw canvases
@@ -157,15 +177,15 @@ function selectStation(station) {
 
   if (station === 'maitri') {
     if (titleEl) titleEl.textContent = 'Maitri Research Station';
-    if (coordsEl) coordsEl.textContent = "70°45'S, 11°44'E • EAST ANTARCTICA (Queen Maud Land)";
+    if (coordsEl) coordsEl.textContent = "70°45'S, 11°44'E • EAST ANTARCTICA";
     if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_station.png' : 'assets/bright_station.png';
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
     }
   } else {
     if (titleEl) titleEl.textContent = 'Bharati Research Station';
-    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA (Larsemann Hills)";
+    if (coordsEl) coordsEl.textContent = "69°24'S, 76°11'E • EAST ANTARCTICA";
     if (stationBg) {
-      stationBg.src = STATE.theme === 'dark' ? 'assets/dark_home.png' : 'assets/bright_home.png';
+      stationBg.src = STATE.theme === 'dark' ? 'assets/station_maitri_panorama_dark.png' : 'assets/station_maitri_panorama_bright.png';
     }
   }
 }
